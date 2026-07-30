@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Windows Proxy YARA Rule · RustyRocket</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../css/style.css"/>
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="topnav-brand" href="../index.html">
+    <div class="brand-icon">🚀</div>
+    RustyRocket
+  </a>
+  <div class="topnav-links">
+    <a href="samples.html">Samples</a>
+    <a href="mitigation.html">Mitigation</a>
+    <a href="yara.html" class="active">YARA Rules</a>
+    <a href="network.html">Network</a>
+  </div>
+</nav>
+
+<div class="docs-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <main class="doc-content">
+    <h1>Windows_RustyRocket_Proxy</h1>
+    <div class="page-meta">
+      <span>📅 13 March 2026</span>
+      <span>🏷 Accenture Security ATHENA (jk, cw)</span>
+    </div>
+
+    <p>
+      <code>Windows_RustyRocket_Proxy.yar</code> detects Windows x86-64 PE binaries that
+      implement the RustyRocket proxy component. It combines opcode-level patterns with
+      proxy-specific error strings found in the Rust runtime.
+    </p>
+
+    <h2 id="known-hashes">Known Hashes</h2>
+    <ul>
+      <li><code class="hash-cell" style="font-size:.78rem">886D107074F61D203AD15719DE37CD2582DA4CF47998B456A1CED71E9F1AE98A</code> — proxy.exe</li>
+      <li><code class="hash-cell" style="font-size:.78rem">6acd457f18bc2f1e190e5a7a7189aec61ed93927ea174ac7e00aeba6b521d8a9</code> — proxy.exe</li>
+      <li><code class="hash-cell" style="font-size:.78rem">2011d47bcd639ccc3b2a887aa3bba95ed5288f09b7e0f0bce2358938968d3478</code> — ku8w13gi.exe</li>
+    </ul>
+
+    <h2 id="rule">Rule</h2>
+
+    <pre><code><span class="yara-keyword">rule</span> Windows_RustyRocket_Proxy
+{
+  <span class="yara-keyword">meta:</span>
+    <span class="yara-string">description</span> = <span class="yara-meta-val">"Detects Windows versions of Rusty Rocket proxy"</span>
+    <span class="yara-string">author</span>      = <span class="yara-meta-val">"Accenture Security ATHENA (jk, cw)"</span>
+    <span class="yara-string">date</span>        = <span class="yara-meta-val">"2026-03-13"</span>
+
+  <span class="yara-keyword">strings:</span>
+    <span class="yara-comment">// Division-based opaque predicate</span>
+    $div_pred = {
+      <span class="yara-hex">8B 05 ?? ?? ?? ??</span>   <span class="yara-comment">// mov eax, dword [rip+pool_A]</span>
+      <span class="yara-hex">31 D2</span>               <span class="yara-comment">// xor edx, edx</span>
+      <span class="yara-hex">F7 35 ?? ?? ?? ??</span>   <span class="yara-comment">// div dword [rip+pool_B]</span>
+    }
+
+    <span class="yara-comment">// Paired memory read pattern</span>
+    $paired_read = {
+      <span class="yara-hex">8B 05 ?? ?? ?? ??</span>                              <span class="yara-comment">// mov eax, [rip+pool_A]</span>
+      ( <span class="yara-hex">33</span> | <span class="yara-hex">2B</span> | <span class="yara-hex">03</span> | <span class="yara-hex">23</span> | <span class="yara-hex">0B</span> ) <span class="yara-hex">05 ?? ?? ?? ??</span>  <span class="yara-comment">// xor/sub/add/and/or eax,[rip+pool_B]</span>
+    }
+
+    <span class="yara-comment">// Proxy error strings from Rust TLS runtime</span>
+    $proxy_handshake_eof     = <span class="yara-meta-val">"tls handshake eof"</span> ascii
+    $proxy_unexpected_poll   = <span class="yara-meta-val">"unexpected polling after handshake"</span> ascii
+    $proxy_join_cancel       = <span class="yara-meta-val">"JoinError::Cancelled("</span> ascii
+    $proxy_task_cancel       = <span class="yara-meta-val">"task was cancelled"</span> ascii
+
+    <span class="yara-comment">// C2 server strings (presence → NOT a proxy, is a C2 agent)</span>
+    $c2_axum         = <span class="yara-meta-val">"_axum_fallback"</span> ascii
+    $c2_config_struct= <span class="yara-meta-val">"access_tokengatewaysstruct Config"</span> ascii
+    $c2_invalid_route= <span class="yara-meta-val">"Invalid route "</span> ascii
+
+  <span class="yara-keyword">condition:</span>
+    uint16(0) == 0x5A4D
+    and uint32(uint32(0x3C)) == 0x00004550   <span class="yara-comment">// PE signature</span>
+    and uint16(uint32(0x3C) + 4) == 0x8664   <span class="yara-comment">// AMD64</span>
+    and #div_pred > 30
+    and #paired_read > 100
+    and $proxy_handshake_eof
+    and $proxy_unexpected_poll
+    and $proxy_join_cancel
+    and $proxy_task_cancel
+    and not $c2_axum
+    and not $c2_config_struct
+    and not $c2_invalid_route
+}</code></pre>
+
+    <h2 id="notes">Rule Notes</h2>
+    <ul>
+      <li>High instance-count thresholds (<code>#div_pred &gt; 30</code>, <code>#paired_read &gt; 100</code>) reduce false positives — legitimate Rust binaries rarely hit these counts.</li>
+      <li>The C2 exclusion strings ensure the rule fires only on the proxy component, not the agent binary which shares some Rust runtime strings.</li>
+      <li>All four Rust TLS error strings must be present simultaneously; each alone is insufficient.</li>
+    </ul>
+
+    <p style="margin-top:2rem">
+      Also see:
+      <a href="yara.html">All_RustyRocket</a> ·
+      <a href="yara-proxy-lin.html">Linux Proxy Rule</a> ·
+      <a href="yara-launcher.html">RocketLaunch Rule</a>
+    </p>
+  </main>
+
+  <aside class="toc-rail">
+    <div class="toc-rail-label">On this page</div>
+    <a href="#known-hashes">Known Hashes</a>
+    <a href="#rule">Rule</a>
+    <a href="#notes">Rule Notes</a>
+  </aside>
+</div>
+
+<footer>
+  <span>RustyRocket IOC Report · Accenture Security ATHENA</span>
+  <div class="footer-links">
+    <a href="samples.html">Samples</a>
+    <a href="mitigation.html">Mitigation</a>
+    <a href="network.html">Network Fingerprints</a>
+  </div>
+</footer>
+
+<script src="../js/nav.js"></script>
+<script>renderSidebar('yara-proxy-win.html');</script>
+</body>
+</html>

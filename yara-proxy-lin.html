@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sample Hashes · RustyRocket</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../css/style.css"/>
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="topnav-brand" href="../index.html">
+    <div class="brand-icon">🚀</div>
+    RustyRocket
+  </a>
+  <div class="topnav-links">
+    <a href="samples.html" class="active">Samples</a>
+    <a href="mitigation.html">Mitigation</a>
+    <a href="yara.html">YARA Rules</a>
+    <a href="network.html">Network</a>
+  </div>
+</nav>
+
+<div class="docs-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <main class="doc-content">
+    <h1>RustyRocket Samples</h1>
+    <div class="page-meta">
+      <span>📅 March 2026</span>
+      <span>🏷 Accenture Security ATHENA</span>
+      <span>📋 24 samples</span>
+    </div>
+
+    <p>
+      This list includes the RustyRocket agent malware for Windows and Linux, RustyRocket proxies
+      for Windows and Linux, and the RocketLaunch tool. Each row maps to the applicable YARA
+      detection rule.
+    </p>
+
+    <div class="callout">
+      <strong>Note:</strong> One entry (<code>c1b67a62…</code>, <em>output.txt</em>) is marked N/A — it is
+      either a memory dump or a malformed binary and does not match any current YARA signature.
+    </div>
+
+    <h2>Hash Table</h2>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>SHA-256</th>
+            <th>Filename</th>
+            <th>Platform</th>
+            <th>YARA Rule</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="hash-cell">587d343b3d9e1201ba5a8fdd7a3a3f809052aa7dfba3f7c557189ef63a999f08</td>
+            <td>Agent.exe</td>
+            <td>Windows</td>
+            <td><span class="tag">All_RustyRocket</span></td>
+          </tr>
+          <tr>
+            <td class="hash-cell">961b6184447ab4cb76295ea2f324e227aff459d0e68849c46c49ecdf641e2551</td>
+            <td>Ag.exe</td>
+            <td>Windows</td>
+            <td><span class="tag">All_RustyRocket</span></td>
+          </tr>
+          <tr>
+            <td class="hash-cell">36255601ca5d6882d34c0d53a5a816ef0b979828038f9caf5f1a2afdfcffc329</td>
+            <td>Winhost.exe</td>
+            <td>Windows</td>
+            <td><span class="tag">All_RustyRocket</span></td>
+          </tr>
+          <tr>
+            <td class="hash-cell">67b487ddd924e078144bb9e2c48fe8b7924221f1e55c3f2df67d65daa3415fd4</td>
+            <td>ag2.exe</td>
+            <td>Windows</td>
+            <td><span class="tag">All_RustyRocket</span></td>
+          </tr>
+          <tr>
+            <td class="hash-cell">6034d6aa9a13378be6cd611cb5495b50eb7dc8463ef435e3b6d8c68a57e9b8e1</td>
+            <td>agent.exe</td>
+            <td>Windows</td>
+            <td><span class="tag">All_RustyRocket</span></td>
+          </tr>
+          <tr>
+            <td class="hash-cell">5b9017e700d3dd26e18043fb6e041241c704bcc08608a9f5898212dc7e722198</td>
+            <td>OracleAgent.exe</td>
+            <td>Windows</td>
+            <td><span class="tag">All_RustyRocket</span></td>
+          </tr>
+          <tr>
+            <td class="hash-cell">0e63a49230d6ad3c05b57c9b35eb98b21f75cc15ff135008c1087c69478beea6</td>
+            <td>svctest.exe</td>
+            <td>Windows</td>
+            <td><span class="tag">All_RustyRocket</span></td>
+          </tr>
+          <tr>
+            <td class="hash-cell">e7ad1b1974e8f04949936545d1297c4e3b1334a9da0ae31ab1d508174197bbce</td>
+            <td>agent.exe</td>
+            <td>Windows</td>
+            <td><span class="tag">All_RustyRocket</span></td>
+          </tr>
+          <tr>
+            <td class="hash-cell">98dc0cd6290566866f3b1682335c680b9bbdb1020fc52e47315fd33eb9fa221e</td>
+            <td>agent.exe</td>
+            <td>Windows</td>
+            <td><span class="tag">All_RustyRocket</span></td>
+          </tr>
+          <tr>
+            <td class="hash-cell">8b37116210f70e7768c736d657fcc143a1f009c9a69194ccc338d6e8dedb3c07</td>
+            <td>9dzzrg.exe</td>
+            <td>Windows</td>
+            <td><span class="tag">All_RustyRocket</span></td>
+          </tr>
+          <tr>
+            <td class="hash-cell">88553c3e3df81a66927480fd1029d577c7805c0dd20114807a6f41b50a230e96</td>
+            <td>oed0tcd1.exe</td>
+            <td>Windows</td>
+            <td><span class="tag">All_RustyRocket</span></td>
+          </tr>
+          <tr>
+            <td class="hash-cell">041dca4a1d8c80f05c399dd750acf026ed5f94f1da08dc4f0f0d0ba9884916ff</td>
+            <td>l73hbvk.exe</td>
+            <td>Windows</td>
+            <td><span class="tag">All_RustyRocket</span></td>
+          </tr>
+          <tr>
+            <td class="hash-cell">63150c955be4158c9b9e111de114daa59a4ffd1eab92a469c1f09dce84a698c6</td>
+            <td>jssx8wfs2.exe</td>
+            <td>Windows</td>
+            <td><span class="tag">All_RustyRocket</span></td>
+          </tr>
+          <tr>
+            <td class="hash-cell">180a40b7758b9b053f7f3f41511275f94b01eee88dd9b93edf003a607ee655a0</td>
+            <td>6u6ljir.exe</td>
+            <td>Windows</td>
+            <td><span class="tag">All_RustyRocket</span></td>
+          </tr>
+          <tr>
+            <td class="hash-cell">a30609489c111decdd3f8693cff016d9a8f629a0d85fdac858add7698f9b2659</td>
+            <td>xd7734d.exe</td>
+            <td>Windows</td>
+            <td><span class="tag">All_RustyRocket</span></td>
+          </tr>
+          <tr>
+            <td class="hash-cell">c5ffa5ac08f0feba11d767d1b2d8b096b729e90cc2874e0c8f624a5a68466131</td>
+            <td>agent</td>
+            <td>Linux</td>
+            <td><span class="tag">All_RustyRocket</span></td>
+          </tr>
+          <tr>
+            <td class="hash-cell">d92377d14dc2c3cd818fcf3a37343ec30a3495b9ba2eedaa2d41b698ee159b08</td>
+            <td>proxy</td>
+            <td>Linux</td>
+            <td><span class="tag">Linux_RustyRocket_Proxy</span></td>
+          </tr>
+          <tr>
+            <td class="hash-cell" style="color:var(--muted)">c1b67a62239f328b98f9d2a168565754b6779918ddaab74bb58020b95f3ec7cc</td>
+            <td>output.txt</td>
+            <td>—</td>
+            <td><span class="tag" style="opacity:.5">N/A</span></td>
+          </tr>
+          <tr>
+            <td class="hash-cell">6acd457f18bc2f1e190e5a7a7189aec61ed93927ea174ac7e00aeba6b521d8a9</td>
+            <td>proxy.exe</td>
+            <td>Windows</td>
+            <td><span class="tag">Windows_RustyRocket_Proxy</span></td>
+          </tr>
+          <tr>
+            <td class="hash-cell">2011d47bcd639ccc3b2a887aa3bba95ed5288f09b7e0f0bce2358938968d3478</td>
+            <td>ku8w13gi.exe</td>
+            <td>Windows</td>
+            <td><span class="tag">Windows_RustyRocket_Proxy</span></td>
+          </tr>
+          <tr>
+            <td class="hash-cell">886d107074f61d203ad15719de37cd2582da4cf47998b456a1ced71e9f1ae98a</td>
+            <td>proxy.exe</td>
+            <td>Windows</td>
+            <td><span class="tag">Windows_RustyRocket_Proxy</span></td>
+          </tr>
+          <tr>
+            <td class="hash-cell">c2bc8ad1fa0dedb763e85a52c390462dfbccf6594b88664e33c672a9fb8b7a16</td>
+            <td>svcrun.exe</td>
+            <td>Windows</td>
+            <td><span class="tag">Windows_RustyRocket_Service_Launcher</span></td>
+          </tr>
+          <tr>
+            <td class="hash-cell">bca8b0f74af2ad6e0afdc561073edc69f721ea5812da559242651754cbbc6d93</td>
+            <td>svcrun.exe</td>
+            <td>Windows</td>
+            <td><span class="tag">Windows_RustyRocket_Service_Launcher</span></td>
+          </tr>
+          <tr>
+            <td class="hash-cell">743f9dbb32f86322c5f55f1e9051c5cd88092f10adcdac45aa648ac06e229b8a</td>
+            <td>agent.exe_DC</td>
+            <td>Windows</td>
+            <td><span class="tag">All_RustyRocket</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="margin-top:2rem">
+      → Continue to <a href="yara.html">YARA Detection Rules</a> to use these hashes in your security tooling.
+    </p>
+  </main>
+
+  <aside class="toc-rail">
+    <div class="toc-rail-label">On this page</div>
+    <a href="#hash-table">Hash Table</a>
+  </aside>
+</div>
+
+<footer>
+  <span>RustyRocket IOC Report · Accenture Security ATHENA</span>
+  <div class="footer-links">
+    <a href="yara.html">YARA Rules</a>
+    <a href="mitigation.html">Mitigation</a>
+    <a href="network.html">Network Fingerprints</a>
+  </div>
+</footer>
+
+<script src="../js/nav.js"></script>
+<script>renderSidebar('samples.html');</script>
+</body>
+</html>

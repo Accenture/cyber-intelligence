@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mitigation · RustyRocket</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../css/style.css"/>
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="topnav-brand" href="../index.html">
+    <div class="brand-icon">🚀</div>
+    RustyRocket
+  </a>
+  <div class="topnav-links">
+    <a href="samples.html">Samples</a>
+    <a href="mitigation.html" class="active">Mitigation</a>
+    <a href="yara.html">YARA Rules</a>
+    <a href="network.html">Network</a>
+  </div>
+</nav>
+
+<div class="docs-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <main class="doc-content">
+    <h1>Mitigation</h1>
+    <div class="page-meta">
+      <span>📅 March 2026</span>
+      <span>🏷 Accenture Security ATHENA</span>
+    </div>
+
+    <p>
+      Effective RustyRocket detection and mitigation require a combination of file, memory,
+      and network detections. The following recommendations reduce RustyRocket risk across
+      all known variants.
+    </p>
+
+    <h2 id="file-detection">File &amp; Memory Detection</h2>
+
+    <ul>
+      <li>
+        <strong>Scan for Windows and Linux RustyRocket samples</strong> within your network
+        using the YARA rules provided in this report. The <a href="yara.html"><code>All_RustyRocket</code></a>
+        rule covers both platforms simultaneously.
+      </li>
+    </ul>
+
+    <h2 id="network-detection">Network Detection</h2>
+
+    <ul>
+      <li>
+        <strong>Monitor for unexpected TLS connections</strong> between hosts that do not
+        regularly communicate with each other.
+      </li>
+      <li>
+        <strong>Alert on invalid TLS SNI values</strong> such as <code>"server"</code>,
+        <code>"router"</code>, or <code>"proxy"</code> — RustyRocket uses these as C2
+        handshake markers.
+      </li>
+      <li>
+        <strong>Deploy JA4 and JA3 fingerprint alerts</strong> using the fingerprints in the
+        <a href="network.html">Network Fingerprints</a> section to flag potential RustyRocket
+        TLS traffic at the network layer.
+      </li>
+      <li>
+        <strong>Monitor for increases in TLS traffic</strong> to unknown or newly-seen domain
+        names, especially those with randomized subdomains matching RustyRocket's generation
+        pattern.
+      </li>
+      <li>
+        <strong>Strip and inspect TLS where capable:</strong> look for WebSocket connections
+        or TLS-within-TLS tunnelling inside ostensibly normal HTTPS sessions — a key
+        RustyRocket evasion technique.
+      </li>
+    </ul>
+
+    <div class="callout">
+      <strong>Priority action:</strong> The combination of invalid SNI values and the JA4
+      fingerprint (<code>t13d041000_16476d049b0b_f568d6c2d1f6</code>) provides the
+      highest-confidence network-layer detection signal with minimal false-positive risk.
+    </div>
+
+    <h2 id="yara-quick-ref">YARA Quick Reference</h2>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Rule Name</th>
+            <th>Covers</th>
+            <th>Platform</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="yara.html"><code>All_RustyRocket</code></a></td>
+            <td>Agent samples (all variants)</td>
+            <td>Windows + Linux</td>
+          </tr>
+          <tr>
+            <td><a href="yara-proxy-win.html"><code>Windows_RustyRocket_Proxy</code></a></td>
+            <td>Windows proxy binaries</td>
+            <td>Windows</td>
+          </tr>
+          <tr>
+            <td><a href="yara-proxy-lin.html"><code>Linux_RustyRocket_Proxy</code></a></td>
+            <td>Linux proxy binaries</td>
+            <td>Linux</td>
+          </tr>
+          <tr>
+            <td><a href="yara-launcher.html"><code>Windows_RocketLaunch</code></a></td>
+            <td>RocketLaunch service installer tool</td>
+            <td>Windows</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      → See the full <a href="yara.html">YARA Rules</a> section for deployable rule files.
+    </p>
+  </main>
+
+  <aside class="toc-rail">
+    <div class="toc-rail-label">On this page</div>
+    <a href="#file-detection">File &amp; Memory</a>
+    <a href="#network-detection">Network Detection</a>
+    <a href="#yara-quick-ref">YARA Quick Reference</a>
+  </aside>
+</div>
+
+<footer>
+  <span>RustyRocket IOC Report · Accenture Security ATHENA</span>
+  <div class="footer-links">
+    <a href="samples.html">Samples</a>
+    <a href="yara.html">YARA Rules</a>
+    <a href="network.html">Network Fingerprints</a>
+  </div>
+</footer>
+
+<script src="../js/nav.js"></script>
+<script>renderSidebar('mitigation.html');</script>
+</body>
+</html>

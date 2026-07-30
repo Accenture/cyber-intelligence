@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Network Fingerprints · RustyRocket</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../css/style.css"/>
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="topnav-brand" href="../index.html">
+    <div class="brand-icon">🚀</div>
+    RustyRocket
+  </a>
+  <div class="topnav-links">
+    <a href="samples.html">Samples</a>
+    <a href="mitigation.html">Mitigation</a>
+    <a href="yara.html">YARA Rules</a>
+    <a href="network.html" class="active">Network</a>
+  </div>
+</nav>
+
+<div class="docs-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <main class="doc-content">
+    <h1>Network Fingerprints</h1>
+    <div class="page-meta">
+      <span>📅 March 2026</span>
+      <span>🏷 Accenture Security ATHENA</span>
+    </div>
+
+    <p>
+      RustyRocket's TLS stack produces consistent fingerprints that can be used to identify
+      C2 traffic at the network layer, even when the payload is encrypted. Deploy these in
+      your IDS/NSM tooling alongside the SNI-based indicators.
+    </p>
+
+    <h2 id="fingerprints">TLS Fingerprints</h2>
+
+    <div class="fingerprint-box">
+      <div class="fp-label">JA4 Fingerprint</div>
+      <div class="fp-value">t13d041000_16476d049b0b_f568d6c2d1f6</div>
+    </div>
+
+    <div class="fingerprint-box">
+      <div class="fp-label">JA3 Fingerprint</div>
+      <div class="fp-value">eb1d94daa7e0344597e756a1fb6e7054</div>
+    </div>
+
+    <h2 id="indicators">SNI Indicators</h2>
+
+    <p>
+      Alert on TLS <code>ClientHello</code> packets containing any of the following
+      invalid or suspicious SNI values known to be used by RustyRocket during the C2
+      handshake:
+    </p>
+
+    <pre><code><span class="yara-string">"server"</span>
+<span class="yara-string">"router"</span>
+<span class="yara-string">"proxy"</span></code></pre>
+
+    <p>
+      These are not legitimate domain names and will not appear in normal TLS traffic.
+      Any match should be treated as a high-confidence indicator of compromise.
+    </p>
+
+    <h2 id="tls-in-tls">TLS-within-TLS Tunnelling</h2>
+
+    <p>
+      RustyRocket proxies are capable of nesting TLS connections inside an outer TLS session.
+      Where your network security tooling supports TLS inspection, enable it and alert on:
+    </p>
+
+    <ul>
+      <li>Unexpected WebSocket upgrade requests inside HTTPS sessions</li>
+      <li>TLS handshakes appearing inside already-decrypted HTTPS streams</li>
+      <li>Anomalous session volumes to low-reputation or newly-registered domains</li>
+    </ul>
+
+    <div class="callout">
+      <strong>Detection note:</strong> The proxy's Rust TLS stack emits distinctive
+      error strings (<code>tls handshake eof</code>, <code>unexpected polling after handshake</code>,
+      <code>JoinError::Cancelled(</code>) that may appear in debug logs or be recoverable
+      from memory. These are also targeted by the <a href="yara-proxy-win.html">Windows Proxy YARA rule</a>.
+    </div>
+
+    <h2 id="usage">Deploying Fingerprints</h2>
+
+    <p>
+      Both JA4 and JA3 fingerprints can be used directly in common NSM platforms:
+    </p>
+
+    <ul>
+      <li><strong>Zeek:</strong> Add the fingerprint to your <code>ja3</code> or <code>ja4</code> Intel feeds.</li>
+      <li><strong>Suricata:</strong> Use <code>ja3.hash</code> or <code>ja4</code> keyword in rules.</li>
+      <li><strong>SIEM:</strong> Index <code>tls.ja3</code> / <code>tls.ja4</code> fields and create threshold alerts.</li>
+    </ul>
+
+    <p>
+      → Return to <a href="mitigation.html">Mitigation Guide</a> for the full response checklist.
+    </p>
+  </main>
+
+  <aside class="toc-rail">
+    <div class="toc-rail-label">On this page</div>
+    <a href="#fingerprints">TLS Fingerprints</a>
+    <a href="#indicators">SNI Indicators</a>
+    <a href="#tls-in-tls">TLS-within-TLS</a>
+    <a href="#usage">Deploying Fingerprints</a>
+  </aside>
+</div>
+
+<footer>
+  <span>RustyRocket IOC Report · Accenture Security ATHENA</span>
+  <div class="footer-links">
+    <a href="samples.html">Samples</a>
+    <a href="yara.html">YARA Rules</a>
+    <a href="mitigation.html">Mitigation</a>
+  </div>
+</footer>
+
+<script src="../js/nav.js"></script>
+<script>renderSidebar('network.html');</script>
+</body>
+</html>

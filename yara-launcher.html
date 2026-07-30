@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Linux Proxy YARA Rule · RustyRocket</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../css/style.css"/>
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="topnav-brand" href="../index.html">
+    <div class="brand-icon">🚀</div>
+    RustyRocket
+  </a>
+  <div class="topnav-links">
+    <a href="samples.html">Samples</a>
+    <a href="mitigation.html">Mitigation</a>
+    <a href="yara.html" class="active">YARA Rules</a>
+    <a href="network.html">Network</a>
+  </div>
+</nav>
+
+<div class="docs-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <main class="doc-content">
+    <h1>Linux_RustyRocket_Proxy</h1>
+    <div class="page-meta">
+      <span>📅 11 March 2026</span>
+      <span>🏷 Accenture Security ATHENA (cw)</span>
+      <span>🔖 v1.0</span>
+    </div>
+
+    <p>
+      <code>Linux_RustyRocket_Proxy.yar</code> detects the Linux x86-64 ELF variant of the
+      RustyRocket proxy. It requires the <code>elf</code> YARA module and uses a combination
+      of obfuscated string fragments, rustls error strings, and proxy-specific markers.
+    </p>
+
+    <h2 id="known-hashes">Known Hash</h2>
+    <ul>
+      <li><code class="hash-cell" style="font-size:.78rem">d92377d14dc2c3cd818fcf3a37343ec30a3495b9ba2eedaa2d41b698ee159b08</code> — proxy (ELF)</li>
+    </ul>
+
+    <h2 id="rule">Rule</h2>
+
+    <pre><code><span class="yara-keyword">import</span> <span class="yara-meta-val">"elf"</span>
+
+<span class="yara-keyword">rule</span> Linux_RustyRocket_Proxy
+{
+  <span class="yara-keyword">meta:</span>
+    <span class="yara-string">Author</span>   = <span class="yara-meta-val">"Accenture Security ATHENA (cw)"</span>
+    <span class="yara-string">Date</span>     = <span class="yara-meta-val">"11 March 2026"</span>
+    <span class="yara-string">Desc</span>     = <span class="yara-meta-val">"Detects Linux variant of Rusty Rocket Proxy"</span>
+    <span class="yara-string">Version</span>  = <span class="yara-meta-val">"1.0"</span>
+
+  <span class="yara-keyword">strings:</span>
+    <span class="yara-comment">// Obfuscated string fragments (obfstr crate — partial UTF-8 sequences)</span>
+    $obfstr_version = { <span class="yara-hex">76 65 72 73</span> }   <span class="yara-comment">// "vers"</span>
+    $obfstr_about   = { <span class="yara-hex">61 62 6F 75</span> }   <span class="yara-comment">// "abou"</span>
+    $obfstr_usage   = { <span class="yara-hex">75 73 61 67</span> }   <span class="yara-comment">// "usag"</span>
+
+    <span class="yara-comment">// rustls certificate error strings</span>
+    $rustls_1 = <span class="yara-meta-val">"BadDer"</span> ascii
+    $rustls_2 = <span class="yara-meta-val">"CertExpired"</span> ascii
+    $rustls_3 = <span class="yara-meta-val">"UnknownIssuer"</span> ascii
+    $rustls_4 = <span class="yara-meta-val">"InvalidCertValidity"</span> ascii
+
+    <span class="yara-comment">// TLS cipher suite identifiers</span>
+    $tls_1 = <span class="yara-meta-val">"TLS13_AES_128_GCM_SHA256"</span> ascii
+    $tls_2 = <span class="yara-meta-val">"TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"</span> ascii
+
+    <span class="yara-comment">// Proxy listener and address strings</span>
+    $proxy_1    = <span class="yara-meta-val">"could not resolve to any address"</span> ascii
+    $proxy_2    = <span class="yara-meta-val">"ConnectionRefused"</span> ascii
+    $proxy_443  = <span class="yara-meta-val">"0.0.0.0:443PROXY"</span>
+    $proxy_ADDRS= <span class="yara-meta-val">"GproxyaddrsADDRS"</span>
+
+    <span class="yara-comment">// Agent config string (presence → NOT a proxy)</span>
+    $filter = <span class="yara-meta-val">"cidrsaddrsdomainssubdomainechstruct"</span>
+
+  <span class="yara-keyword">condition:</span>
+    uint32(0) == 0x464C457F              <span class="yara-comment">// ELF magic</span>
+    and elf.machine == elf.EM_X86_64
+    and filesize > 2MB
+    and 2 of ($obfstr_*)               <span class="yara-comment">// At least 2 obfstr constants</span>
+    and 3 of ($rustls_*)               <span class="yara-comment">// rustls indicators</span>
+    and all of ($tls_*)
+    and all of ($proxy_*)
+    and not $filter
+}</code></pre>
+
+    <h2 id="notes">Rule Notes</h2>
+    <ul>
+      <li>Requires the <code>elf</code> YARA module — ensure your scanner supports it (<code>yara-python</code> &gt;= 3.x, YARA &gt;= 3.4).</li>
+      <li>The <code>filesize &gt; 2MB</code> constraint eliminates small stub binaries; the statically-linked Rust proxy is substantially larger.</li>
+      <li>The <code>$filter</code> exclusion prevents matching the agent binary, which shares some proxy strings in a combined build.</li>
+      <li>Obfstr fragments target the <a href="https://github.com/nicowillis/obfstr"><code>obfstr</code></a> compile-time string obfuscation crate — only partial sequences need to match.</li>
+    </ul>
+
+    <p style="margin-top:2rem">
+      Also see:
+      <a href="yara.html">All_RustyRocket</a> ·
+      <a href="yara-proxy-win.html">Windows Proxy Rule</a> ·
+      <a href="yara-launcher.html">RocketLaunch Rule</a>
+    </p>
+  </main>
+
+  <aside class="toc-rail">
+    <div class="toc-rail-label">On this page</div>
+    <a href="#known-hashes">Known Hash</a>
+    <a href="#rule">Rule</a>
+    <a href="#notes">Rule Notes</a>
+  </aside>
+</div>
+
+<footer>
+  <span>RustyRocket IOC Report · Accenture Security ATHENA</span>
+  <div class="footer-links">
+    <a href="samples.html">Samples</a>
+    <a href="mitigation.html">Mitigation</a>
+    <a href="network.html">Network Fingerprints</a>
+  </div>
+</footer>
+
+<script src="../js/nav.js"></script>
+<script>renderSidebar('yara-proxy-lin.html');</script>
+</body>
+</html>

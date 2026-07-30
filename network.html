@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RocketLaunch YARA Rule · RustyRocket</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../css/style.css"/>
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="topnav-brand" href="../index.html">
+    <div class="brand-icon">🚀</div>
+    RustyRocket
+  </a>
+  <div class="topnav-links">
+    <a href="samples.html">Samples</a>
+    <a href="mitigation.html">Mitigation</a>
+    <a href="yara.html" class="active">YARA Rules</a>
+    <a href="network.html">Network</a>
+  </div>
+</nav>
+
+<div class="docs-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <main class="doc-content">
+    <h1>Windows_RocketLaunch</h1>
+    <div class="page-meta">
+      <span>📅 9 March 2026</span>
+      <span>🏷 Accenture ATHENA (JK / CW)</span>
+    </div>
+
+    <p>
+      <code>Windows_RustyRocket_Service_Launcher.yar</code> detects <strong>RocketLaunch</strong>
+      — the tool used to install and launch RustyRocket as a Windows service before exiting.
+      It is distinct from the agent itself: it calls <code>StartServiceCtrlDispatcherW</code>
+      but does <em>not</em> implement the service control handler callbacks, making it
+      identifiable by absence.
+    </p>
+
+    <h2 id="known-hashes">Known Hashes</h2>
+    <ul>
+      <li><code class="hash-cell" style="font-size:.78rem">c2bc8ad1fa0dedb763e85a52c390462dfbccf6594b88664e33c672a9fb8b7a16</code> — svcrun.exe</li>
+      <li><code class="hash-cell" style="font-size:.78rem">bca8b0f74af2ad6e0afdc561073edc69f721ea5812da559242651754cbbc6d93</code> — svcrun.exe</li>
+    </ul>
+
+    <h2 id="rule">Rule</h2>
+
+    <pre><code><span class="yara-keyword">rule</span> Windows_RocketLaunch
+{
+  <span class="yara-keyword">meta:</span>
+    <span class="yara-string">Author</span> = <span class="yara-meta-val">"Accenture ATHENA (JK / CW)"</span>
+    <span class="yara-string">Date</span>   = <span class="yara-meta-val">"9 March 2026"</span>
+    <span class="yara-string">Desc</span>   = <span class="yara-meta-val">"Detects tool used to launch RustyRocket as a service and then exit"</span>
+
+  <span class="yara-keyword">strings:</span>
+    $opcodes = {
+      <span class="yara-hex">02004c8d45f831d2e8ce050200</span>
+      [-] <span class="yara-hex">02004c8d0d</span>
+      [-] <span class="yara-hex">02004c8d45b8ba????????e8fc010200</span>
+      [-] <span class="yara-hex">3b020031c0</span>
+      [-] <span class="yara-hex">4d85ff7528</span>
+      [-] <span class="yara-hex">458d51d04183fa0a0f8242ffffff</span>
+      [-] <span class="yara-hex">4183fe22752a</span>
+      [-] <span class="yara-hex">ff4628ba????????4889f1e843e8ffff84c075bb</span>
+      [-] <span class="yara-hex">4883c4585b5d5f5e415c415d415e415fc3</span>
+      [-] <span class="yara-hex">488d85f205000066480f6ec0488d85f004000066480f6ef0660f6cf04531ed4c8da5a0040000488d9d80050000</span>
+      [-] <span class="yara-hex">89c280e20f448d4230448d4a3780fa0a410fb6d0450fb6c1440f42c24488840d8005000083f8107232</span>
+      [-] <span class="yara-hex">904883c4205b5f5e415e5dc3</span>
+      [-] <span class="yara-hex">6683790600744e</span>
+      [-] <span class="yara-hex">5541574156415541545657534883ec58488d6c245048c74500feffffff4c89c34889d74d85c048894dd0742a</span>
+      [-] <span class="yara-hex">81f9????????4d0f42de4939d30f833a010000</span>
+      [-] <span class="yara-hex">4c8b65e8488b75e0e9f9000000</span>
+      [-] <span class="yara-hex">488b5c2430488b6c2438488b7424404883c4205fc3</span>
+      [-] <span class="yara-hex">4d8be5498bde4d2be7493936</span>
+      [-] <span class="yara-hex">48895424105541574156415541545657534883ec28488daa800000000ba????????488b4d20e816cdfeff904883c4285b5f5e415c415d415e415f5dc3</span>
+    }
+
+    $StartSvc   = <span class="yara-meta-val">"StartServiceCtrlDispatcherW"</span>
+    $Rust       = <span class="yara-meta-val">"rust_panic"</span>
+
+    <span class="yara-comment">// Service control handler callbacks — absent in RocketLaunch</span>
+    $NotFound1  = <span class="yara-meta-val">"RegisterServiceCtrlHandler"</span>
+    $NotFound2  = <span class="yara-meta-val">"SetServiceStatus"</span>
+    $NotFound3  = <span class="yara-meta-val">"ServiceCtrlHandler"</span>
+    $NotFound4  = <span class="yara-meta-val">"ReportServiceStatus"</span>
+
+  <span class="yara-keyword">condition:</span>
+    uint16(0) == 0x5A4D
+    and ($opcodes)
+    and ($StartSvc and $Rust)
+    and none of ($NotFound*)
+}</code></pre>
+
+    <h2 id="notes">Rule Notes</h2>
+    <ul>
+      <li>
+        The key detection logic is the <strong>absence</strong> of service control handler
+        strings (<code>$NotFound*</code>). A legitimate Windows service must register a handler;
+        RocketLaunch calls the dispatcher but immediately exits, so these strings are absent.
+      </li>
+      <li>
+        The <code>$Rust</code> string (<code>rust_panic</code>) confirms this is a
+        Rust-compiled binary, distinguishing it from other minimal service launchers.
+      </li>
+      <li>
+        The opcode sequence targets the core service dispatch loop with jump-table interleaving
+        (<code>[-]</code> indicates byte-range wildcards between blocks).
+      </li>
+    </ul>
+
+    <p style="margin-top:2rem">
+      Also see:
+      <a href="yara.html">All_RustyRocket</a> ·
+      <a href="yara-proxy-win.html">Windows Proxy Rule</a> ·
+      <a href="yara-proxy-lin.html">Linux Proxy Rule</a>
+    </p>
+  </main>
+
+  <aside class="toc-rail">
+    <div class="toc-rail-label">On this page</div>
+    <a href="#known-hashes">Known Hashes</a>
+    <a href="#rule">Rule</a>
+    <a href="#notes">Rule Notes</a>
+  </aside>
+</div>
+
+<footer>
+  <span>RustyRocket IOC Report · Accenture Security ATHENA</span>
+  <div class="footer-links">
+    <a href="samples.html">Samples</a>
+    <a href="mitigation.html">Mitigation</a>
+    <a href="network.html">Network Fingerprints</a>
+  </div>
+</footer>
+
+<script src="../js/nav.js"></script>
+<script>renderSidebar('yara-launcher.html');</script>
+</body>
+</html>
