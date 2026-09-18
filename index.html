@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Settra Blinder — IOCs & Detection | Accenture Apex Labs</title>
+<title>Threat Intelligence | Accenture Apex Labs</title>
 <style>
   :root {
     --bg: #0a0c10;
@@ -11,20 +11,14 @@
     --surface2: #1a1d26;
     --border: #262b38;
     --accent: #e8473f;
-    --accent2: #ff6b35;
     --text: #e4e6ed;
     --muted: #7a8099;
-    --code-bg: #0d1117;
-    --code-border: #1e2534;
-    --green: #3fb950;
-    --yellow: #d29922;
     --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
     --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
     --nav-h: 60px;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   html { scroll-behavior: smooth; }
 
   body {
@@ -76,27 +70,6 @@
     50% { opacity: 0.35; }
   }
 
-  .nav-links {
-    display: flex;
-    gap: 0;
-    list-style: none;
-  }
-
-  .nav-links a {
-    display: block;
-    padding: .4rem 1rem;
-    font-size: 12.5px;
-    font-weight: 500;
-    letter-spacing: .03em;
-    text-transform: uppercase;
-    color: var(--muted);
-    text-decoration: none;
-    border-radius: 4px;
-    transition: color .2s;
-  }
-
-  .nav-links a:hover { color: var(--text); }
-
   .nav-tag {
     font-size: 11px;
     font-family: var(--font-mono);
@@ -112,7 +85,7 @@
   /* ─── HERO ────────────────────────────────────────── */
   .hero {
     padding-top: calc(var(--nav-h) + 80px);
-    padding-bottom: 80px;
+    padding-bottom: 60px;
     padding-left: 2rem;
     padding-right: 2rem;
     max-width: 900px;
@@ -140,7 +113,7 @@
   }
 
   h1 {
-    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    font-size: clamp(2.2rem, 5vw, 3.2rem);
     font-weight: 800;
     letter-spacing: -.02em;
     line-height: 1.1;
@@ -153,34 +126,8 @@
   .hero-lead {
     font-size: 17px;
     color: var(--muted);
-    max-width: 680px;
-    margin-bottom: 2.5rem;
-  }
-
-  .hero-meta {
-    display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
-  }
-
-  .meta-item {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .meta-label {
-    font-size: 10.5px;
-    font-family: var(--font-mono);
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-
-  .meta-val {
-    font-size: 13.5px;
-    font-weight: 600;
-    color: var(--text);
+    max-width: 640px;
+    margin-bottom: 0;
   }
 
   .hero-divider {
@@ -190,276 +137,114 @@
     margin: 3rem 0 0;
   }
 
-  /* ─── MAIN LAYOUT ─────────────────────────────────── */
-  .layout {
-    max-width: 1100px;
+  /* ─── REPORTS GRID ────────────────────────────────── */
+  .reports-section {
+    max-width: 900px;
     margin: 0 auto;
-    padding: 0 2rem 6rem;
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    gap: 3rem;
-    align-items: start;
+    padding: 3rem 2rem 6rem;
   }
 
-  /* ─── SIDEBAR ─────────────────────────────────────── */
-  .sidebar {
-    position: sticky;
-    top: calc(var(--nav-h) + 1.5rem);
-  }
-
-  .sidebar-section { margin-bottom: 2rem; }
-
-  .sidebar-label {
+  .section-label {
     font-size: 10px;
     font-family: var(--font-mono);
     letter-spacing: .12em;
     text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: .6rem;
+    margin-bottom: 1.5rem;
     padding-left: .75rem;
     border-left: 2px solid var(--border);
   }
 
-  .sidebar-nav { list-style: none; }
-
-  .sidebar-nav li a {
-    display: block;
-    padding: .3rem .75rem;
-    font-size: 13px;
-    color: var(--muted);
-    text-decoration: none;
-    border-left: 2px solid var(--border);
-    transition: color .15s, border-color .15s;
+  .reports-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 1.25rem;
   }
 
-  .sidebar-nav li a:hover,
-  .sidebar-nav li a.active {
-    color: var(--text);
-    border-left-color: var(--accent);
-  }
-
-  /* ─── CONTENT ─────────────────────────────────────── */
-  .content section { margin-bottom: 4.5rem; }
-
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .section-number {
-    font-size: 11px;
-    font-family: var(--font-mono);
-    font-weight: 700;
-    color: var(--accent);
-    background: rgba(232,71,63,.1);
-    border: 1px solid rgba(232,71,63,.2);
-    border-radius: 4px;
-    padding: 2px 7px;
-    flex-shrink: 0;
-  }
-
-  h2 {
-    font-size: 1.35rem;
-    font-weight: 700;
-    color: #fff;
-    letter-spacing: -.01em;
-  }
-
-  h3 {
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--text);
-    margin: 1.8rem 0 .7rem;
-    letter-spacing: .005em;
-  }
-
-  p { color: var(--muted); margin-bottom: 1rem; }
-
-  /* ─── SAMPLE TABLE ────────────────────────────────── */
-  .table-wrap {
-    overflow-x: auto;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12.5px;
-  }
-
-  thead tr { background: var(--surface2); }
-
-  thead th {
-    padding: .65rem 1rem;
-    text-align: left;
-    font-size: 10.5px;
-    font-family: var(--font-mono);
-    font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: var(--muted);
-    white-space: nowrap;
-    border-bottom: 1px solid var(--border);
-  }
-
-  tbody tr {
-    border-bottom: 1px solid var(--border);
-    transition: background .12s;
-  }
-
-  tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: var(--surface); }
-
-  tbody td {
-    padding: .6rem 1rem;
-    vertical-align: middle;
-  }
-
-  td.hash {
-    font-family: var(--font-mono);
-    font-size: 11.5px;
-    color: #a8b5d4;
-    word-break: break-all;
-  }
-
-  td.label {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--muted);
-    white-space: nowrap;
-    font-weight: 600;
-  }
-
-  td.val {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--text);
-    word-break: break-all;
-  }
-
-  .tag {
-    display: inline-block;
-    font-size: 10.5px;
-    font-family: var(--font-mono);
-    font-weight: 600;
-    padding: 2px 7px;
-    border-radius: 3px;
-    white-space: nowrap;
-  }
-
-  .tag-all    { background: rgba(59,130,246,.12); color: #60a5fa; border: 1px solid rgba(59,130,246,.25); }
-  .tag-na     { background: rgba(100,116,139,.12); color: #94a3b8; border: 1px solid rgba(100,116,139,.25); }
-
-  /* ─── MITIGATION LIST ─────────────────────────────── */
-  .mitigation-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: .75rem;
-  }
-
-  .mitigation-list li {
-    display: flex;
-    gap: 1rem;
-    padding: .9rem 1.1rem;
+  .report-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 13.5px;
-    color: var(--muted);
-    line-height: 1.5;
-    transition: border-color .15s;
-  }
-
-  .mitigation-list li:hover { border-color: rgba(232,71,63,.35); }
-
-  .mitigation-list li::before {
-    content: '›';
-    color: var(--accent);
-    font-size: 1rem;
-    font-weight: 700;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-
-  /* ─── CODE BLOCKS ─────────────────────────────────── */
-  .yara-block {
-    background: var(--code-bg);
-    border: 1px solid var(--code-border);
-    border-radius: 8px;
-    margin-bottom: 1.75rem;
+    border-radius: 10px;
+    padding: 1.75rem;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: border-color .2s, background .2s;
+    position: relative;
     overflow: hidden;
   }
 
-  .yara-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: .55rem 1rem;
-    background: #0a0f1a;
-    border-bottom: 1px solid var(--code-border);
+  .report-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity .2s;
   }
 
-  .yara-name {
-    font-family: var(--font-mono);
-    font-size: 11.5px;
-    font-weight: 700;
-    color: var(--green);
-    letter-spacing: .04em;
-  }
-
-  .yara-meta-tags { display: flex; gap: .5rem; }
-
-  .yara-meta-tag {
-    font-size: 10px;
-    font-family: var(--font-mono);
-    color: var(--muted);
+  .report-card:hover {
+    border-color: rgba(232,71,63,.4);
     background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 1px 6px;
   }
 
-  pre {
-    overflow-x: auto;
-    padding: 1.25rem 1.25rem;
-  }
+  .report-card:hover::before { opacity: 1; }
 
-  code {
+  .card-eyebrow {
+    font-size: 10.5px;
     font-family: var(--font-mono);
-    font-size: 12px;
-    line-height: 1.75;
-    color: #cdd9f5;
-    white-space: pre;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--accent);
   }
 
-  .kw  { color: #ff7b72; }
-  .st  { color: #a5d6ff; }
-  .cm  { color: #5a6a8a; font-style: italic; }
-  .fn  { color: #d2a8ff; }
-  .hex { color: #79c0ff; }
-  .nm  { color: #ffa657; }
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -.01em;
+    line-height: 1.25;
+  }
 
-  /* ─── CALLOUT ─────────────────────────────────────── */
-  .callout {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
-    border-radius: 0 6px 6px 0;
-    padding: .9rem 1.1rem;
-    margin-bottom: 1.5rem;
+  .card-desc {
     font-size: 13.5px;
     color: var(--muted);
     line-height: 1.6;
+    flex: 1;
   }
 
-  .callout strong { color: var(--text); }
+  .card-meta {
+    display: flex;
+    gap: .6rem;
+    flex-wrap: wrap;
+    margin-top: .25rem;
+  }
+
+  .card-tag {
+    font-size: 10.5px;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .tag-windows { background: rgba(59,130,246,.12); color: #60a5fa; border: 1px solid rgba(59,130,246,.25); }
+  .tag-linux   { background: rgba(168,85,247,.12);  color: #c084fc; border: 1px solid rgba(168,85,247,.25); }
+  .tag-edr     { background: rgba(251,146,60,.12);  color: #fb923c; border: 1px solid rgba(251,146,60,.25); }
+  .tag-network { background: rgba(52,211,153,.12);  color: #34d399; border: 1px solid rgba(52,211,153,.25); }
+
+  .card-arrow {
+    font-size: 18px;
+    color: var(--accent);
+    margin-top: .25rem;
+    transition: transform .2s;
+  }
+
+  .report-card:hover .card-arrow { transform: translateX(4px); }
 
   /* ─── FOOTER ──────────────────────────────────────── */
   footer {
@@ -475,9 +260,7 @@
 
   /* ─── RESPONSIVE ──────────────────────────────────── */
   @media (max-width: 768px) {
-    .layout { grid-template-columns: 1fr; }
-    .sidebar { display: none; }
-    .nav-links { display: none; }
+    .reports-grid { grid-template-columns: 1fr; }
     h1 { font-size: 2rem; }
   }
 </style>
@@ -490,248 +273,60 @@
     <span class="dot"></span>
     Accenture Apex Labs · Threat Intelligence
   </a>
-  <ul class="nav-links">
-    <li><a href="#sample">Sample</a></li>
-    <li><a href="#analysis">Analysis</a></li>
-    <li><a href="#mitigation">Mitigation</a></li>
-    <li><a href="#yara">YARA Rule</a></li>
-  </ul>
   <span class="nav-tag">TLP:CLEAR</span>
 </nav>
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-eyebrow">Malware Intelligence Report</div>
-  <h1><span>Settra Blinder</span><br>IOCs &amp; Detection</h1>
+  <div class="hero-eyebrow">Cyber Threat Intelligence</div>
+  <h1>Accenture <span>Apex Labs</span><br>IOCs &amp; Detection</h1>
   <p class="hero-lead">
-    Indicators of compromise, technical analysis, YARA detection rule, and mitigation guidance for Settra Blinder — a 64-bit Windows EDR evasion toolkit exploiting vulnerable kernel drivers to blind endpoint defences.
+    Indicators of compromise, detection rules, and network fingerprints for cyber threat activity discovered through Accenture Cyber Intelligence research. All content is TLP:CLEAR and free to use in your defensive stack.
   </p>
-  <div class="hero-meta">
-    <div class="meta-item">
-      <span class="meta-label">Published</span>
-      <span class="meta-val">July 2026</span>
-    </div>
-    <div class="meta-item">
-      <span class="meta-label">Author</span>
-      <span class="meta-val">Accenture Apex Labs</span>
-    </div>
-    <div class="meta-item">
-      <span class="meta-label">Platform</span>
-      <span class="meta-val">Windows x64</span>
-    </div>
-    <div class="meta-item">
-      <span class="meta-label">Samples</span>
-      <span class="meta-val">1</span>
-    </div>
-  </div>
   <div class="hero-divider"></div>
 </div>
 
-<!-- MAIN -->
-<div class="layout">
+<!-- REPORTS -->
+<div class="reports-section">
+  <div class="section-label">Published Reports</div>
+  <div class="reports-grid">
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-section">
-      <div class="sidebar-label">Sections</div>
-      <ul class="sidebar-nav">
-        <li><a href="#sample">Sample &amp; Hashes</a></li>
-        <li><a href="#analysis">Technical Analysis</a></li>
-        <li><a href="#mitigation">Mitigation</a></li>
-        <li><a href="#yara">YARA Rule</a></li>
-      </ul>
-    </div>
-    <div class="sidebar-section">
-      <div class="sidebar-label">Rule Files</div>
-      <ul class="sidebar-nav">
-        <li><a href="#yara-settra">settra_blinder.yar</a></li>
-      </ul>
-    </div>
-  </aside>
-
-  <!-- CONTENT -->
-  <main class="content">
-
-    <!-- SAMPLE -->
-    <section id="sample">
-      <div class="section-header">
-        <span class="section-number">01</span>
-        <h2>Sample &amp; Hashes</h2>
+    <!-- RustyRocket -->
+    <a class="report-card" href="rustyrocket/">
+      <div class="card-eyebrow">Malware Intelligence · March 2026</div>
+      <div class="card-title">RustyRocket — IOCs &amp; Detection</div>
+      <div class="card-desc">
+        Indicators of compromise, YARA detection rules, and network fingerprints for the RustyRocket implant family — covering Windows and Linux agents, proxies, and the RocketLaunch service installer. Includes 24 sample hashes and JA4/JA3 TLS fingerprints.
       </div>
-      <p>Settra Blinder is a 64-bit Windows PE command-line tool designed to disable Endpoint Detection and Response protections via kernel-level attack techniques.</p>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Property</th><th>Value</th></tr>
-          </thead>
-          <tbody>
-            <tr><td class="label">Filename</td><td class="val">edr_blind.exe</td></tr>
-            <tr><td class="label">Filetype</td><td class="val">PE32+ executable (console) x86-64 (stripped to external PDB), for MS Windows</td></tr>
-            <tr><td class="label">Size</td><td class="val">79,360 bytes</td></tr>
-            <tr><td class="label">MD5</td><td class="hash">d5e6b89d4ae598ad889a46d352ce722f</td></tr>
-            <tr><td class="label">SHA1</td><td class="hash">bdc63e59aa9e9317ba4f40222748be1729a810b2</td></tr>
-            <tr><td class="label">SHA256</td><td class="hash">32d6657506d861c206a5c47c62bba4c82231d4a12f12d258908a46f7e5f637bc</td></tr>
-            <tr><td class="label">YARA Rule</td><td><span class="tag tag-all">settra_blinder</span></td></tr>
-          </tbody>
-        </table>
+      <div class="card-meta">
+        <span class="card-tag tag-windows">Windows</span>
+        <span class="card-tag tag-linux">Linux</span>
+        <span class="card-tag tag-network">Network Fingerprints</span>
       </div>
-    </section>
+      <div class="card-arrow">→</div>
+    </a>
 
-    <!-- ANALYSIS -->
-    <section id="analysis">
-      <div class="section-header">
-        <span class="section-number">02</span>
-        <h2>Technical Analysis</h2>
+    <!-- Settra Blinder -->
+    <a class="report-card" href="settra-blinder/">
+      <div class="card-eyebrow">Malware Intelligence · July 2026</div>
+      <div class="card-title">Settra Blinder — IOCs &amp; Detection</div>
+      <div class="card-desc">
+        Indicators of compromise, technical analysis, and YARA detection rule for Settra Blinder — a 64-bit Windows EDR evasion toolkit exploiting vulnerable kernel drivers via BYOVD techniques to blind endpoint defences.
       </div>
-      <p>Settra Blinder demonstrates sophisticated kernel-level attack capabilities across several technique categories:</p>
-
-      <div class="callout">
-        <strong>BYOVD — Bring Your Own Vulnerable Driver:</strong> Exploits legitimately signed but vulnerable drivers to gain kernel read/write primitives. Known targeted drivers include RTCore64.sys (<span style="color:#a5d6ff;font-family:var(--font-mono);font-size:12px">CVE-2019-18093</span>) and AsrDrv101.sys (<span style="color:#a5d6ff;font-family:var(--font-mono);font-size:12px">CVE-2020-12446</span>).
+      <div class="card-meta">
+        <span class="card-tag tag-windows">Windows x64</span>
+        <span class="card-tag tag-edr">EDR Evasion</span>
       </div>
+      <div class="card-arrow">→</div>
+    </a>
 
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Technique</th><th>Description</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="label">BYOVD Exploitation</td>
-              <td class="val">Loads vulnerable signed drivers (RTCore64.sys, AsrDrv101.sys) to gain kernel memory access without triggering DSE</td>
-            </tr>
-            <tr>
-              <td class="label">Direct Syscall Invocation</td>
-              <td class="val">Bypasses user-mode API hooks by invoking syscalls directly, evading EDR instrumentation at the API layer</td>
-            </tr>
-            <tr>
-              <td class="label">PPL Bypass</td>
-              <td class="val">Circumvents Process Protection Level controls to access and manipulate protected security processes</td>
-            </tr>
-            <tr>
-              <td class="label">Ps Callback Enumeration</td>
-              <td class="val">Enumerates and disables PsSetCreateProcessNotifyRoutine, PsSetCreateThreadNotifyRoutine, and PsSetLoadImageNotifyRoutineEx kernel callbacks used by EDR sensors</td>
-            </tr>
-            <tr>
-              <td class="label">ETW-TI Patching</td>
-              <td class="val">Patches Event Tracing for Windows Threat Intelligence providers via direct memory manipulation, blinding kernel telemetry collection</td>
-            </tr>
-            <tr>
-              <td class="label">AMSI Patching</td>
-              <td class="val">Disables the Antimalware Scan Interface through in-memory patching, preventing script and content scanning</td>
-            </tr>
-            <tr>
-              <td class="label">PPID Spoofing</td>
-              <td class="val">Spoofs process parent IDs to simulate creation from legitimate system processes such as explorer.exe</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- MITIGATION -->
-    <section id="mitigation">
-      <div class="section-header">
-        <span class="section-number">03</span>
-        <h2>Mitigation</h2>
-      </div>
-      <p>Accenture Cyber Intelligence recommends the following measures to mitigate the risk posed by Settra Blinder:</p>
-      <ul class="mitigation-list">
-        <li>Implement and maintain updated kernel patches to prevent exploitation of known vulnerable drivers.</li>
-        <li>Deploy Driver Signature Enforcement (DSE) and Secure Boot to prevent unsigned or vulnerable driver loading.</li>
-        <li>Implement strict access controls to prevent unauthorized access to kernel interfaces and system management functions.</li>
-        <li>Keep operating system and kernel patches updated to mitigate vulnerabilities that could be exploited via BYOVD techniques.</li>
-        <li>Enable system logging including kernel-level events, driver activities, and security configuration changes to support detection and forensic investigation.</li>
-      </ul>
-    </section>
-
-    <!-- YARA -->
-    <section id="yara">
-      <div class="section-header">
-        <span class="section-number">04</span>
-        <h2>YARA Rule</h2>
-      </div>
-      <p>The following YARA rule detects Settra Blinder based on CLI argument strings, vulnerable driver device paths, kernel callback routine names, and runtime log strings. Security teams are encouraged to deploy this rule across endpoint and file-scanning solutions.</p>
-
-      <div id="yara-settra" class="yara-block">
-        <div class="yara-header">
-          <span class="yara-name">settra_blinder.yar</span>
-          <div class="yara-meta-tags">
-            <span class="yara-meta-tag">Windows x64</span>
-            <span class="yara-meta-tag">10 Jul 2026</span>
-          </div>
-        </div>
-        <pre><code><span class="kw">rule</span> <span class="fn">settra_blinder</span>
-{
-  <span class="kw">meta:</span>
-    <span class="nm">description</span> = <span class="st">"Detects EDR Blinder"</span>
-    <span class="nm">author</span>      = <span class="st">"Accenture Cyber Intelligence"</span>
-    <span class="nm">date</span>        = <span class="st">"2026-07-10"</span>
-    <span class="nm">hash</span>        = <span class="st">"32d6657506d861c206a5c47c62bba4c82231d4a12f12d258908a46f7e5f637bc"</span>
-
-  <span class="kw">strings:</span>
-    <span class="cm">// CLI argument strings</span>
-    <span class="nm">$args1</span> = <span class="st">"--asrdrv"</span> ascii wide
-    <span class="nm">$args2</span> = <span class="st">"--ppid"</span> ascii wide
-    <span class="nm">$args3</span> = <span class="st">"--kill-loop"</span> ascii wide
-    <span class="nm">$args4</span> = <span class="st">"--stpm"</span> ascii wide
-
-    <span class="cm">// Vulnerable driver device paths (BYOVD targets)</span>
-    <span class="nm">$drvdev1</span> = <span class="st">"\\\\.\\RTCore64"</span> ascii wide
-    <span class="nm">$drvdev2</span> = <span class="st">"\\\\.\\AsrDrv101"</span> ascii wide
-    <span class="nm">$drvdev3</span> = <span class="st">"\\\\.\\gdrv"</span> ascii wide
-    <span class="nm">$drvdev4</span> = <span class="st">"\\\\.\\HpPortIox64"</span> ascii wide
-    <span class="nm">$drvdev5</span> = <span class="st">"\\\\.\\PhysMem"</span> ascii wide
-    <span class="nm">$drvdev6</span> = <span class="st">"\\\\.\\WinRing0_1_2_0"</span> ascii wide
-    <span class="nm">$drvdev7</span> = <span class="st">"\\\\.\\STProcessMonitorDriver"</span> ascii wide
-
-    <span class="cm">// Kernel callback routine names</span>
-    <span class="nm">$krlstruct1</span> = <span class="st">"PsSetCreateProcessNotifyRoutine"</span> ascii wide
-    <span class="nm">$krlstruct2</span> = <span class="st">"PsSetCreateThreadNotifyRoutine"</span> ascii wide
-    <span class="nm">$krlstruct3</span> = <span class="st">"PsSetLoadImageNotifyRoutineEx"</span> ascii wide
-    <span class="nm">$krlstruct4</span> = <span class="st">"PsSetLoadImageNotifyRoutine"</span> ascii wide
-    <span class="nm">$krlstruct5</span> = <span class="st">"PsCreateProcess"</span> ascii wide
-    <span class="nm">$krlstruct6</span> = <span class="st">"PsCreateThread"</span> ascii wide
-    <span class="nm">$krlstruct7</span> = <span class="st">"PsLoadImage"</span> ascii wide
-    <span class="nm">$krlstruct8</span> = <span class="st">"ObProcess"</span> ascii wide
-    <span class="nm">$krlstruct9</span> = <span class="st">"ObThread"</span> ascii wide
-
-    <span class="cm">// Runtime log strings</span>
-    <span class="nm">$log1</span> = <span class="st">"[*] === ETW Threat Intelligence Provider Bypass ==="</span> ascii wide
-    <span class="nm">$log2</span> = <span class="st">"[*] === PPL Bypass ==="</span> ascii wide
-    <span class="nm">$log3</span> = <span class="st">"[*] === ETW + AMSI self-patch ==="</span> ascii wide
-    <span class="nm">$log4</span> = <span class="st">"[*] === Minifilter Scan ==="</span> ascii wide
-
-  <span class="kw">condition:</span>
-    3 of (<span class="nm">$args*</span>) and 4 of (<span class="nm">$drvdev*</span>) and 5 of (<span class="nm">$krlstruct*</span>) and 2 of (<span class="nm">$log*</span>)
-}</code></pre>
-      </div>
-
-      <p style="margin-top:1rem;font-size:13px;">The condition requires a minimum threshold across all four string groups — reducing false positives while tolerating minor sample variation. Any binary matching 3+ CLI args, 4+ driver paths, 5+ kernel callback names, and 2+ log strings is a high-confidence match.</p>
-    </section>
-
-  </main>
+  </div>
 </div>
 
+<!-- FOOTER -->
 <footer>
-  <span>Accenture Apex Labs</span> · Threat Intelligence · TLP:CLEAR · July 2026
+  <span>Accenture Apex Labs</span> · Threat Intelligence · TLP:CLEAR
 </footer>
 
-<script>
-  const sections = document.querySelectorAll('section[id]');
-  const links = document.querySelectorAll('.sidebar-nav a');
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        links.forEach(l => l.classList.remove('active'));
-        const active = document.querySelector(`.sidebar-nav a[href="#${e.target.id}"]`);
-        if (active) active.classList.add('active');
-      }
-    });
-  }, { rootMargin: '-20% 0px -70% 0px' });
-
-  sections.forEach(s => observer.observe(s));
-</script>
 </body>
 </html>
