@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Threat Intelligence | Accenture Security APEX Labs</title>
+<meta name="description" content="Indicators of compromise, detection rules, and network fingerprints from Accenture Security APEX Labs. All content is TLP:CLEAR.">
+<link rel="canonical" href="https://accenture.github.io/cyber-intelligence/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Threat Intelligence | Accenture Security APEX Labs">
+<meta property="og:description" content="Indicators of compromise, detection rules, and network fingerprints from Accenture Security APEX Labs. All content is TLP:CLEAR.">
+<meta property="og:url" content="https://accenture.github.io/cyber-intelligence/">
 <link rel="icon" type="image/svg+xml" href="assets/accenture-greater-than.svg">
 <style>
   /*
@@ -139,7 +145,8 @@
 
   .nav-links a {
     display: block;
-    padding: .4rem 1rem;
+    padding: .4rem .75rem;   /* matches the report pages */
+    white-space: nowrap;
     font-size: 14px;
     font-weight: 400;
     color: var(--black);
@@ -174,13 +181,6 @@
     max-width: 1100px;
     margin: 0 auto;
     padding: 80px 2rem 56px;
-  }
-
-  .hero-eyebrow {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--purple-dark);
-    margin-bottom: 1.25rem;
   }
 
   h1 {
@@ -341,14 +341,126 @@
     margin-bottom: 2px;
   }
 
+  /* ─── SKIP LINK ───────────────────────────────────── */
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -100px;
+    z-index: 200;
+    padding: .5rem 1rem;
+    background: var(--white);
+    color: var(--black);
+    border: 2px solid var(--purple-dark);
+  }
+
+  .skip-link:focus { top: 1rem; }
+
+  /* Keep in-page targets clear of the sticky nav */
+  section[id] { scroll-margin-top: calc(var(--nav-h) + 1rem); }
+
+  /* ─── CONTENT SECTIONS ────────────────────────────── */
+  .content-section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1rem 2rem 5rem;
+  }
+
+  .content-section a {
+    color: var(--purple-dark);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .content-section p + p,
+  .content-section pre + p { margin-top: .75rem; }
+
+  strong { font-weight: 600; }
+
+  code { font-family: var(--font-mono); font-size: .95em; }
+
+  .content-section h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: .5rem;
+  }
+
+  /* Decorative icons from the Accenture icon library */
+  .section-icon { display: block; width: 40px; height: 40px; margin-bottom: .75rem; }
+
+  .includes-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));   /* one row of five on desktop */
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 1000px) {
+    .includes-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+
+  .include-item {
+    border-top: 1px solid var(--grey-light);
+    padding-top: 1.25rem;
+  }
+
+  .content-section .include-item h3 { font-size: 16px; margin-bottom: .25rem; }
+  .include-item p { font-size: 14px; }
+
+  .usage-grid,
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2.5rem 3rem;
+  }
+
+  .usage-wide { grid-column: 1 / -1; }
+
+  pre.command {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.5;
+    background: var(--grey-pale);
+    border: 1px solid var(--grey-light);
+    border-left: 4px solid var(--purple);
+    padding: 1rem 1.25rem;
+    margin-top: .75rem;
+    overflow-x: auto;
+  }
+
+  pre.command code { font-size: inherit; }
+
+  .disclaimer {
+    margin-top: 2.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--grey-light);
+    max-width: 760px;
+  }
+
+  .content-section .disclaimer h3 { font-size: 16px; margin-bottom: .25rem; }
+  .disclaimer p { font-size: 14px; }
+
+  .about-body {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    max-width: 820px;
+  }
+
+  .about-body .section-icon { width: 56px; height: 56px; flex-shrink: 0; }
+
   /* ─── RESPONSIVE / MOTION ─────────────────────────── */
   @media (max-width: 768px) {
     nav { padding: .75rem 1rem; }
     .nav-left { gap: 1rem; }
+    .nav-links { display: none; }
     .brand-name { font-size: 15px; }
     .hero { padding: 48px 1rem 40px; }
     .reports-section { padding: 1rem 1rem 4rem; }
     .reports-grid { grid-template-columns: 1fr; }
+    .content-section { padding: 1rem 1rem 3.5rem; }
+    .includes-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .usage-grid, .info-grid { grid-template-columns: 1fr; }
+    .about-body { flex-direction: column; gap: 1rem; }
     footer { padding: 1.5rem 1rem; }
     .footer-inner { flex-wrap: wrap; }
   }
@@ -362,8 +474,10 @@
 </head>
 <body>
 
+<a class="skip-link" href="#main">Skip to main content</a>
+
 <!-- NAV -->
-<nav>
+<nav aria-label="Primary">
   <div class="nav-left">
     <!-- Official Accenture logo (first interaction with the brand). Replace the asset path with the official file. -->
     <a class="nav-logo" href="#"><img src="assets/accenture-logo.svg" alt="Accenture" width="106" height="28"></a>
@@ -372,28 +486,50 @@
       <span class="apex-expansion"><b>A</b>dversary <b>P</b>ursuit, <b>E</b>ngagement, and E<b>x</b>ploitation</span>
     </a>
   </div>
+  <ul class="nav-links">
+    <li><a href="#reports">Reports</a></li>
+    <li><a href="#using">How to use</a></li>
+    <li><a href="#sharing">Sharing</a></li>
+    <li><a href="#about">About</a></li>
+  </ul>
   <span class="tlp-label">TLP:CLEAR</span>
 </nav>
 
+<main id="main">
+
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-eyebrow">Cyber threat intelligence</div>
   <h1><span class="team-name">Accenture Security APEX Labs</span><br>IOCs &amp; detection</h1>
   <p class="hero-lead">
-    Indicators of compromise, detection rules, and network fingerprints for cyber threat activity discovered through Accenture Cyber Intelligence research. All content is TLP:CLEAR and free to use in your defensive stack.
+    We publish findings from Accenture Cyber Intelligence research to help defenders detect and respond to active threats. Reports bring together indicators of compromise, YARA detection rules, network fingerprints and mitigation guidance, ready to use in your own tools. All content is TLP:CLEAR, so you're free to use and share it.
   </p>
   <div class="hero-divider"></div>
 </div>
 
-<!-- REPORTS -->
-<div class="reports-section">
-  <h2 class="section-label">Published reports</h2>
+<!-- REPORTS: newest first -->
+<section class="reports-section" id="reports" aria-labelledby="reports-title">
+  <h2 class="section-label" id="reports-title">Published reports</h2>
   <div class="reports-grid">
+
+    <!-- Settra Blinder -->
+    <a class="report-card" href="settra-blinder/">
+      <img class="card-icon" src="assets/icons/report.svg" alt="" width="40" height="40">
+      <div class="card-eyebrow">Malware intelligence · <time datetime="2026-07">July 2026</time></div>
+      <div class="card-title">Settra Blinder — IOCs &amp; detection</div>
+      <div class="card-desc">
+        Indicators of compromise, technical analysis, and YARA detection rule for Settra Blinder — a 64-bit Windows EDR evasion toolkit exploiting vulnerable kernel drivers via BYOVD techniques to blind endpoint defences.
+      </div>
+      <div class="card-meta">
+        <span class="card-tag">Windows x64</span>
+        <span class="card-tag">EDR evasion</span>
+      </div>
+      <div class="card-arrow" aria-hidden="true">→</div>
+    </a>
 
     <!-- RustyRocket -->
     <a class="report-card" href="rustyrocket/">
       <img class="card-icon" src="assets/icons/report.svg" alt="" width="40" height="40">
-      <div class="card-eyebrow">Malware intelligence · March 2026</div>
+      <div class="card-eyebrow">Malware intelligence · <time datetime="2026-03">March 2026</time></div>
       <div class="card-title">RustyRocket — IOCs &amp; detection</div>
       <div class="card-desc">
         Indicators of compromise, YARA detection rules, and network fingerprints for the RustyRocket implant family — covering Windows and Linux agents, proxies, and the RocketLaunch service installer. Includes 24 sample hashes and JA4/JA3 TLS fingerprints.
@@ -403,26 +539,114 @@
         <span class="card-tag">Linux</span>
         <span class="card-tag">Network fingerprints</span>
       </div>
-      <div class="card-arrow">→</div>
-    </a>
-
-    <!-- Settra Blinder -->
-    <a class="report-card" href="settra-blinder/">
-      <img class="card-icon" src="assets/icons/report.svg" alt="" width="40" height="40">
-      <div class="card-eyebrow">Malware intelligence · July 2026</div>
-      <div class="card-title">Settra Blinder — IOCs &amp; detection</div>
-      <div class="card-desc">
-        Indicators of compromise, technical analysis, and YARA detection rule for Settra Blinder — a 64-bit Windows EDR evasion toolkit exploiting vulnerable kernel drivers via BYOVD techniques to blind endpoint defences.
-      </div>
-      <div class="card-meta">
-        <span class="card-tag">Windows x64</span>
-        <span class="card-tag">EDR evasion</span>
-      </div>
-      <div class="card-arrow">→</div>
+      <div class="card-arrow" aria-hidden="true">→</div>
     </a>
 
   </div>
-</div>
+</section>
+
+<!-- WHAT REPORTS INCLUDE -->
+<section class="content-section" id="includes" aria-labelledby="includes-title">
+  <h2 class="section-label" id="includes-title">What reports include</h2>
+  <div class="includes-grid">
+    <div class="include-item">
+      <img class="section-icon" src="assets/icons/report.svg" alt="" width="40" height="40">
+      <h3>Threat analysis</h3>
+      <p>Technical findings on malware and attacker tooling</p>
+    </div>
+    <div class="include-item">
+      <img class="section-icon" src="assets/icons/ioc.svg" alt="" width="40" height="40">
+      <h3>Indicators</h3>
+      <p>Hashes of known malicious samples</p>
+    </div>
+    <div class="include-item">
+      <img class="section-icon" src="assets/icons/detection.svg" alt="" width="40" height="40">
+      <h3>Detection rules</h3>
+      <p>YARA rules for files and memory on Windows and Linux</p>
+    </div>
+    <div class="include-item">
+      <img class="section-icon" src="assets/icons/network.svg" alt="" width="40" height="40">
+      <h3>Network fingerprints</h3>
+      <p>JA4 and JA3 TLS fingerprints and protocol indicators</p>
+    </div>
+    <div class="include-item">
+      <img class="section-icon" src="assets/icons/mitigation.svg" alt="" width="40" height="40">
+      <h3>Mitigation</h3>
+      <p>Practical guidance for detection and response</p>
+    </div>
+  </div>
+</section>
+
+<!-- USING THIS INTELLIGENCE -->
+<section class="content-section" id="using" aria-labelledby="using-title">
+  <h2 class="section-label" id="using-title">Using this intelligence</h2>
+  <div class="usage-grid">
+    <div>
+      <h3>Indicators</h3>
+      <p>Add the sample hashes to EDR blocklists and SIEM watchlists, and search historical endpoint telemetry for earlier executions.</p>
+    </div>
+    <div>
+      <h3>Network fingerprints</h3>
+      <p>Alert on the JA4 and JA3 fingerprints in your NDR or SIEM pipeline, and prefer JA4 where your tooling supports it. Other software built on the same TLS library can share a fingerprint, so check destination, SNI and host context before blocking.</p>
+    </div>
+    <div class="usage-wide">
+      <h3>YARA rules</h3>
+      <p>Copy a rule from its report page, save it as a <code>.yar</code> file and run it with the <a href="https://virustotal.github.io/yara/">YARA</a> command-line tool. You can also load it into any EDR, sandbox or file-scanning pipeline that accepts YARA rules.</p>
+      <pre class="command"><code># Scan a directory recursively and print the matching strings
+yara -r -s rule.yar /path/to/scan
+
+# Scan the memory of a running process (usually needs administrator or root rights)
+yara -s rule.yar &lt;PID&gt;</code></pre>
+      <p>Some rules import YARA modules such as <code>pe</code> or <code>elf</code>, which are included in standard YARA builds.</p>
+    </div>
+    <div>
+      <h3>Mitigation guidance</h3>
+      <p>Each report ends with recommendations specific to the threat. Use them to prioritise hardening and monitoring work.</p>
+    </div>
+    <div>
+      <h3>Test before you block</h3>
+      <p>Run new rules in alert-only mode first to measure false positives in your environment.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SHARING AND FEEDBACK -->
+<section class="content-section" id="sharing" aria-labelledby="sharing-title">
+  <h2 class="section-label" id="sharing-title">Sharing and feedback</h2>
+  <div class="info-grid">
+    <div>
+      <img class="section-icon" src="assets/icons/share.svg" alt="" width="40" height="40">
+      <h3>Traffic Light Protocol</h3>
+      <p>All content on this site is marked <strong>TLP:CLEAR</strong> under <a href="https://www.first.org/tlp/">FIRST TLP 2.0</a>. Recipients may share it without restriction, subject to standard copyright rules.</p>
+      <p>You are welcome to load the indicators and rules into your own tools and to redistribute them. Please credit Accenture Security APEX Labs. Keep the rule metadata (author, date, version) intact so others can trace updates.</p>
+    </div>
+    <div>
+      <img class="section-icon" src="assets/icons/feedback.svg" alt="" width="40" height="40">
+      <h3>Feedback</h3>
+      <p>If a rule produces false positives, misses a sample it should catch, or a report contains an error, please <a href="https://github.com/Accenture/cyber-intelligence/issues">open an issue on GitHub</a>. Include the report and rule name, the rule version, your YARA version, and the SHA-256 of any file involved.</p>
+      <p>Do not attach malware samples to issues, and do not post client, personal or other sensitive data.</p>
+    </div>
+  </div>
+  <div class="disclaimer">
+    <h3>Disclaimer</h3>
+    <p>This intelligence is provided as is, without warranty of any kind, to support network defence. Indicators age, and detections can produce false positives. Validate everything in your own environment before taking blocking or response action.</p>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="content-section" id="about" aria-labelledby="about-title">
+  <h2 class="section-label" id="about-title">About</h2>
+  <div class="about-body">
+    <img class="section-icon" src="assets/icons/about.svg" alt="" width="56" height="56">
+    <div>
+      <p>Accenture Security APEX Labs (Adversary Pursuit, Engagement, and Exploitation) publishes the reports on this site. They share indicators, detection rules and mitigation guidance from Accenture Cyber Intelligence research with the wider defender community.</p>
+      <p>Accenture Cyber Intelligence (CI) provides advanced threat intelligence, adversary research and detection capabilities to help organisations stay ahead of emerging threats.</p>
+      <p>For more about Accenture's security services, visit <a href="https://www.accenture.com/us-en/services/cybersecurity">Accenture Cybersecurity</a>.</p>
+    </div>
+  </div>
+</section>
+
+</main>
 
 <!-- FOOTER -->
 <footer>

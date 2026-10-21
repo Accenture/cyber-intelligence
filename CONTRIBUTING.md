@@ -29,9 +29,11 @@ Each report is a single, self-contained HTML page. GitHub Pages serves the site 
 ## Publishing a new report
 
 1. Create a folder named after the threat (lowercase, hyphenated) containing the report as `index.html`.
-2. Add a report card to the landing page, `index.html`.
+2. Add a report card as the first card under Published reports on the landing page, `index.html` (newest first). Mark the date up as `<time datetime="YYYY-MM">`.
 3. Add a row to the top of the [Published reports](README.md#published-reports) table in the README (newest first), linking to the report. Keep report content (hashes, rules, analysis) on the report page, not in the README.
 4. Before merging, check that every hash and rule matches the source analysis and that the TLP marking is correct.
+
+The landing page repeats the README's client-facing sections: what reports include, using this intelligence, TLP, feedback, disclaimer and about. If you change one, change the other to match.
 
 ## Brand rules
 
