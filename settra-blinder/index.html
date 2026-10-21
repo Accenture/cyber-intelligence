@@ -101,7 +101,8 @@
 
   .nav-links a {
     display: block;
-    padding: .4rem 1rem;
+    padding: .4rem .75rem;   /* tightened to make room for the 16px TLP label */
+    white-space: nowrap;
     font-size: 14px;
     font-weight: 500;
     color: var(--black);
@@ -112,17 +113,24 @@
 
   .nav-links a:hover { box-shadow: inset 0 -2px 0 var(--purple); }
 
-  /* TLP:CLEAR is defined as white text on a black background */
-  .nav-tag {
+  /*
+    TLP label, per FIRST TLP 2.0 (https://www.first.org/tlp/): shown in the header and footer
+    of every page, right-justified, at least 12pt (16px). TLP:CLEAR colour-coding is
+    #FFFFFF text on a #000000 background.
+  */
+  .tlp-label {
     flex-shrink: 0;
-    font-size: 13px;
+    font-size: 16px;
     font-weight: 700;
+    line-height: 1.25;
     letter-spacing: .04em;
     color: var(--white);
     background: var(--black);
-    border: 1px solid var(--black);
-    padding: 3px 10px;
+    padding: 4px 10px;
+    white-space: nowrap;
   }
+
+  .footer-inner .tlp-label { margin-left: auto; }
 
   /* ─── HERO ────────────────────────────────────────── */
   .hero {
@@ -525,6 +533,7 @@
     .sidebar { display: none; }
     .fingerprint-grid { grid-template-columns: 1fr; }
     footer { padding: 1.5rem 1rem; }
+    .footer-inner { flex-wrap: wrap; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -551,7 +560,7 @@
     <li><a href="#mitigation">Mitigation</a></li>
     <li><a href="#yara">YARA rule</a></li>
   </ul>
-  <span class="nav-tag">TLP:CLEAR</span>
+  <span class="tlp-label">TLP:CLEAR</span>
 </nav>
 
 <!-- HERO -->
@@ -772,9 +781,10 @@
   <div class="footer-inner">
     <a class="nav-logo" href="../"><img src="../assets/accenture-greater-than.svg" alt="Accenture" width="22" height="24"></a>
     <div>
-      <div class="footer-name">Accenture Security APEX Labs · Threat Intelligence · TLP:CLEAR · July 2026</div>
+      <div class="footer-name">Accenture Security APEX Labs · Threat Intelligence · July 2026</div>
       <span class="apex-expansion"><b>A</b>dversary <b>P</b>ursuit, <b>E</b>ngagement, and E<b>x</b>ploitation</span>
     </div>
+    <span class="tlp-label">TLP:CLEAR</span>
   </div>
 </footer>
 

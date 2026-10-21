@@ -21,7 +21,7 @@ This repository hosts the threat intelligence reports that Accenture Security AP
 The reports are published as web pages at **[accenture.github.io/cyber-intelligence](https://accenture.github.io/cyber-intelligence/)**. All content is **TLP:CLEAR** and free to use in your defensive stack.
 
 
-## What each report includes
+## What reports include
 
 <table>
   <tr>
@@ -32,8 +32,6 @@ The reports are published as web pages at **[accenture.github.io/cyber-intellige
     <td align="center" width="20%"><img src="assets/icons/mitigation.svg" width="48" alt=""><br><b>Mitigation</b><br><sub>Practical guidance for detection and response</sub></td>
   </tr>
 </table>
-
-Sections vary by report.
 
 ## Contents
 
