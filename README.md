@@ -5,12 +5,17 @@
   </picture>
 </p>
 
-<h1 align="center"><img src="assets/apex-labs-title.svg" alt="APEX Labs" height="48"></h1>
+<h1 align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/apex-labs-title-dark.svg">
+    <img src="assets/apex-labs-title-light.svg" alt="APEX Labs" height="78">
+  </picture>
+</h1>
 
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/apex-tagline-dark.svg">
-    <img src="assets/apex-tagline-light.svg" alt="Adversary Pursuit, Engagement, and Exploitation" height="36">
+    <img src="assets/apex-tagline-light.svg" alt="Adversary Pursuit, Engagement, and Exploitation" height="25">
   </picture>
 </p>
 

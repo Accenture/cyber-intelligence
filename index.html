@@ -7,6 +7,36 @@
 <link rel="icon" type="image/svg+xml" href="assets/accenture-greater-than.svg">
 <style>
   /*
+    Brand typefaces. Graphik (primary) loads from the web-licensed kit in assets/fonts.
+    Regular (400): body copy, captions, small print. Semibold (600): headlines, headings,
+    highlighted text. Medium (500): only for text under 12pt on a dark background.
+  */
+  @font-face {
+    font-family: 'Graphik Web';
+    src: url('assets/fonts/Graphik/Graphik-Regular-Web.woff2') format('woff2'),
+         url('assets/fonts/Graphik/Graphik-Regular-Web.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Graphik Web';
+    src: url('assets/fonts/Graphik/Graphik-Medium-Web.woff2') format('woff2'),
+         url('assets/fonts/Graphik/Graphik-Medium-Web.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Graphik Web';
+    src: url('assets/fonts/Graphik/Graphik-Semibold-Web.woff2') format('woff2'),
+         url('assets/fonts/Graphik/Graphik-Semibold-Web.woff') format('woff');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /*
     Accenture Security APEX Labs: light mode (brand guidance: light is the first choice for text-heavy pages).
     Palette is limited to the official purple spectrum and neutrals.
   */
@@ -23,7 +53,11 @@
     --grey-pale: #f1f1ef;
 
     /* Graphik is the brand typeface; Arial only when Graphik is unavailable. Courier is the only approved monospace. */
-    --font-sans: 'Graphik', Arial, sans-serif;
+    /* 'Graphik Web' is the hosted kit; 'Graphik' picks up an installed copy if the kit cannot load. */
+    --font-sans: 'Graphik Web', 'Graphik', Arial, sans-serif;
+    /* GT Sectra Fine (secondary) is for call-outs and quotes. No web-licensed files are hosted, so it
+       is used where installed and otherwise falls back to Graphik. */
+    --font-serif: 'GT Sectra Fine', 'Graphik Web', 'Graphik', Arial, sans-serif;
     --font-mono: 'Courier New', Courier, monospace;
     --nav-h: 76px;
   }
@@ -87,13 +121,14 @@
 
   .apex-expansion {
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 400;
     line-height: 1.35;
   }
 
-  /* APEX initials and the "APEX Labs" name carry the core brand purple, matching the README heading */
-  .apex-expansion b { font-weight: 700; color: var(--purple); }
-  .apex { font-weight: 600; color: var(--purple); }
+  /* APEX initials carry the core brand purple */
+  .apex-expansion b { font-weight: 600; color: var(--purple); }
+  /* Team names: Graphik Regular, title case, black or white only (brand guidance) */
+  .team-name { font-weight: 400; }
 
   .nav-links {
     display: flex;
@@ -106,7 +141,7 @@
     display: block;
     padding: .4rem 1rem;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 400;
     color: var(--black);
     text-decoration: none;
     box-shadow: inset 0 -2px 0 transparent;
@@ -123,7 +158,7 @@
   .tlp-label {
     flex-shrink: 0;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.25;
     letter-spacing: .04em;
     color: var(--white);
@@ -276,7 +311,7 @@
 
   .card-arrow {
     font-size: 24px;
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1;
     color: var(--purple-dark);
     transition: transform .2s;
@@ -302,7 +337,7 @@
 
   .footer-name {
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 400;
     margin-bottom: 2px;
   }
 
@@ -333,7 +368,7 @@
     <!-- Official Accenture logo (first interaction with the brand). Replace the asset path with the official file. -->
     <a class="nav-logo" href="#"><img src="assets/accenture-logo.svg" alt="Accenture" width="106" height="28"></a>
     <a class="nav-brand" href="#">
-      <span class="brand-name">Accenture Security <span class="apex">APEX Labs</span></span>
+      <span class="brand-name">Accenture Security APEX Labs</span>
       <span class="apex-expansion"><b>A</b>dversary <b>P</b>ursuit, <b>E</b>ngagement, and E<b>x</b>ploitation</span>
     </a>
   </div>
@@ -343,7 +378,7 @@
 <!-- HERO -->
 <div class="hero">
   <div class="hero-eyebrow">Cyber threat intelligence</div>
-  <h1>Accenture Security <span class="apex">APEX Labs</span><br>IOCs &amp; detection</h1>
+  <h1><span class="team-name">Accenture Security APEX Labs</span><br>IOCs &amp; detection</h1>
   <p class="hero-lead">
     Indicators of compromise, detection rules, and network fingerprints for cyber threat activity discovered through Accenture Cyber Intelligence research. All content is TLP:CLEAR and free to use in your defensive stack.
   </p>
@@ -394,7 +429,7 @@
   <div class="footer-inner">
     <a class="nav-logo" href="#"><img src="assets/accenture-logo.svg" alt="Accenture" width="91" height="24"></a>
     <div>
-      <div class="footer-name">Accenture Security <span class="apex">APEX Labs</span> · Threat Intelligence</div>
+      <div class="footer-name">Accenture Security APEX Labs · Threat Intelligence</div>
       <span class="apex-expansion"><b>A</b>dversary <b>P</b>ursuit, <b>E</b>ngagement, and E<b>x</b>ploitation</span>
     </div>
     <span class="tlp-label">TLP:CLEAR</span>

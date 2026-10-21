@@ -6,6 +6,36 @@
 <title>Settra Blinder — IOCs & detection | Accenture Security APEX Labs</title>
 <style>
   /*
+    Brand typefaces. Graphik (primary) loads from the web-licensed kit in assets/fonts.
+    Regular (400): body copy, captions, small print. Semibold (600): headlines, headings,
+    highlighted text. Medium (500): only for text under 12pt on a dark background.
+  */
+  @font-face {
+    font-family: 'Graphik Web';
+    src: url('../assets/fonts/Graphik/Graphik-Regular-Web.woff2') format('woff2'),
+         url('../assets/fonts/Graphik/Graphik-Regular-Web.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Graphik Web';
+    src: url('../assets/fonts/Graphik/Graphik-Medium-Web.woff2') format('woff2'),
+         url('../assets/fonts/Graphik/Graphik-Medium-Web.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Graphik Web';
+    src: url('../assets/fonts/Graphik/Graphik-Semibold-Web.woff2') format('woff2'),
+         url('../assets/fonts/Graphik/Graphik-Semibold-Web.woff') format('woff');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /*
     Accenture Security APEX Labs: light mode (brand guidance: light is the first choice for text-heavy pages).
     Palette is limited to the official purple spectrum and neutrals.
   */
@@ -22,7 +52,11 @@
     --grey-pale: #f1f1ef;
 
     /* Graphik is the brand typeface; Arial only when Graphik is unavailable. Courier is the only approved monospace. */
-    --font-sans: 'Graphik', Arial, sans-serif;
+    /* 'Graphik Web' is the hosted kit; 'Graphik' picks up an installed copy if the kit cannot load. */
+    --font-sans: 'Graphik Web', 'Graphik', Arial, sans-serif;
+    /* GT Sectra Fine (secondary) is for call-outs and quotes. No web-licensed files are hosted, so it
+       is used where installed and otherwise falls back to Graphik. */
+    --font-serif: 'GT Sectra Fine', 'Graphik Web', 'Graphik', Arial, sans-serif;
     --font-mono: 'Courier New', Courier, monospace;
     --nav-h: 76px;
   }
@@ -86,11 +120,11 @@
 
   .apex-expansion {
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 400;
     line-height: 1.35;
   }
 
-  .apex-expansion b { font-weight: 700; }
+  .apex-expansion b { font-weight: 600; }
 
   .nav-links {
     display: flex;
@@ -104,7 +138,7 @@
     padding: .4rem .75rem;   /* tightened to make room for the 16px TLP label */
     white-space: nowrap;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 400;
     color: var(--black);
     text-decoration: none;
     box-shadow: inset 0 -2px 0 transparent;
@@ -121,7 +155,7 @@
   .tlp-label {
     flex-shrink: 0;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.25;
     letter-spacing: .04em;
     color: var(--white);
@@ -185,6 +219,9 @@
     font-weight: 600;
     color: var(--black);
   }
+
+  /* Team names: Graphik Regular, title case, black or white only (brand guidance) */
+  .team-name { font-weight: 400; }
 
   .hero-divider {
     width: 96px;
@@ -421,7 +458,7 @@
 
   .yara-meta-tag {
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 400;
     color: var(--black);
     background: var(--grey-pale);
     border: 1px solid var(--grey-light);
@@ -487,6 +524,7 @@
 
   /* ─── CALLOUT ─────────────────────────────────────── */
   .callout {
+    font-family: var(--font-serif);
     background: var(--grey-pale);
     border: 1px solid var(--grey-light);
     border-left: 4px solid var(--purple);
@@ -517,7 +555,7 @@
 
   .footer-name {
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 400;
     margin-bottom: 2px;
   }
 
@@ -577,7 +615,7 @@
     </div>
     <div class="meta-item">
       <span class="meta-label">Author</span>
-      <span class="meta-val">Accenture Security APEX Labs</span>
+      <span class="meta-val team-name">Accenture Security APEX Labs</span>
     </div>
     <div class="meta-item">
       <span class="meta-label">Platform</span>
