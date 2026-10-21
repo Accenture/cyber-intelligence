@@ -3,244 +3,269 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Threat Intelligence | Accenture Apex Labs</title>
+<title>Threat Intelligence | Accenture Security APEX Labs</title>
 <style>
+  /*
+    Accenture Security APEX Labs: light mode (brand guidance: light is the first choice for text-heavy pages).
+    Palette is limited to the official purple spectrum and neutrals.
+  */
   :root {
-    --bg: #0a0c10;
-    --surface: #111318;
-    --surface2: #1a1d26;
-    --border: #262b38;
-    --accent: #e8473f;
-    --text: #e4e6ed;
-    --muted: #7a8099;
-    --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
-    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-    --nav-h: 60px;
+    --white: #ffffff;
+    --black: #000000;
+    --purple-darkest: #460073;
+    --purple-dark: #7500c0;
+    --purple: #a100ff;
+    --purple-light: #c2a3ff;
+    --purple-lightest: #e6dcff;
+    --grey-mid: #818180;
+    --grey-light: #cfcfcf;
+    --grey-pale: #f1f1ef;
+
+    /* Graphik is the brand typeface; Arial only when Graphik is unavailable. Courier is the only approved monospace. */
+    --font-sans: 'Graphik', Arial, sans-serif;
+    --font-mono: 'Courier New', Courier, monospace;
+    --nav-h: 76px;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
 
   body {
-    background: var(--bg);
-    color: var(--text);
+    background: var(--white);
+    color: var(--black);
     font-family: var(--font-sans);
-    font-size: 15px;
-    line-height: 1.65;
+    font-size: 16px;
+    line-height: 1.6;
+    text-align: left;
     -webkit-font-smoothing: antialiased;
+  }
+
+  a:focus-visible {
+    outline: 3px solid var(--purple-dark);
+    outline-offset: 3px;
   }
 
   /* ─── NAV ─────────────────────────────────────────── */
   nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    height: var(--nav-h);
-    background: rgba(10,12,16,0.92);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    min-height: var(--nav-h);
+    background: var(--white);
+    border-bottom: 1px solid var(--grey-light);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 2rem;
+    gap: 1.5rem;
+    padding: .75rem 2rem;
     z-index: 100;
   }
 
-  .nav-brand {
+  .nav-left {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: .04em;
-    text-transform: uppercase;
-    color: var(--text);
+    gap: 2rem;            /* generous distance between logo and team name */
+    min-width: 0;
+  }
+
+  .nav-logo { display: block; flex-shrink: 0; }
+  .nav-logo img { display: block; height: 28px; width: auto; }
+
+  .nav-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    color: var(--black);
     text-decoration: none;
   }
 
-  .nav-brand .dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 8px var(--accent);
-    animation: pulse 2.4s ease-in-out infinite;
+  .brand-name {
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.25;
   }
 
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.35; }
+  .apex-expansion {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.35;
   }
 
+  .apex-expansion b { font-weight: 700; }
+
+  .nav-links {
+    display: flex;
+    gap: 0;
+    list-style: none;
+    margin-left: auto;
+  }
+
+  .nav-links a {
+    display: block;
+    padding: .4rem 1rem;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--black);
+    text-decoration: none;
+    box-shadow: inset 0 -2px 0 transparent;
+    transition: box-shadow .2s;
+  }
+
+  .nav-links a:hover { box-shadow: inset 0 -2px 0 var(--purple); }
+
+  /* TLP:CLEAR is defined as white text on a black background */
   .nav-tag {
-    font-size: 11px;
-    font-family: var(--font-mono);
-    font-weight: 600;
-    letter-spacing: .06em;
-    color: var(--accent);
-    background: rgba(232,71,63,.12);
-    border: 1px solid rgba(232,71,63,.3);
-    border-radius: 4px;
-    padding: 3px 8px;
+    flex-shrink: 0;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    color: var(--white);
+    background: var(--black);
+    border: 1px solid var(--black);
+    padding: 3px 10px;
   }
 
   /* ─── HERO ────────────────────────────────────────── */
   .hero {
-    padding-top: calc(var(--nav-h) + 80px);
-    padding-bottom: 60px;
-    padding-left: 2rem;
-    padding-right: 2rem;
-    max-width: 900px;
+    max-width: 1100px;
     margin: 0 auto;
+    padding: 80px 2rem 56px;
   }
 
   .hero-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11.5px;
-    font-family: var(--font-mono);
+    font-size: 14px;
     font-weight: 600;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 1.5rem;
-  }
-
-  .hero-eyebrow::before {
-    content: '';
-    display: block;
-    width: 28px; height: 1px;
-    background: var(--accent);
+    color: var(--purple-dark);
+    margin-bottom: 1.25rem;
   }
 
   h1 {
-    font-size: clamp(2.2rem, 5vw, 3.2rem);
-    font-weight: 800;
+    font-size: clamp(2.4rem, 5.5vw, 3.75rem);
+    font-weight: 600;
     letter-spacing: -.02em;
     line-height: 1.1;
-    margin-bottom: 1.25rem;
-    color: #fff;
+    margin-bottom: 1.5rem;
+    color: var(--black);
   }
 
-  h1 span { color: var(--accent); }
-
   .hero-lead {
-    font-size: 17px;
-    color: var(--muted);
+    font-size: 18px;
+    color: var(--black);
     max-width: 640px;
-    margin-bottom: 0;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .meta-label {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--black);
+  }
+
+  .meta-val {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--black);
   }
 
   .hero-divider {
-    width: 100%;
-    height: 1px;
-    background: linear-gradient(90deg, var(--border), transparent);
+    width: 96px;
+    height: 4px;
+    background: var(--purple);
     margin: 3rem 0 0;
   }
 
-  /* ─── REPORTS GRID ────────────────────────────────── */
+  /* ─── REPORTS ─────────────────────────────────────── */
   .reports-section {
-    max-width: 900px;
+    max-width: 1100px;
     margin: 0 auto;
-    padding: 3rem 2rem 6rem;
+    padding: 1rem 2rem 6rem;
   }
 
   .section-label {
-    font-size: 10px;
-    font-family: var(--font-mono);
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    color: var(--muted);
+    font-size: 2rem;
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: -.01em;
     margin-bottom: 1.5rem;
-    padding-left: .75rem;
-    border-left: 2px solid var(--border);
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--black);
   }
 
   .reports-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-    gap: 1.25rem;
+    gap: 1.5rem;
   }
 
   .report-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
+    background: var(--white);
+    border: 1px solid var(--grey-light);
+    border-top: 4px solid var(--purple);
     padding: 1.75rem;
     text-decoration: none;
+    color: var(--black);
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    transition: border-color .2s, background .2s;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .report-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--accent);
-    opacity: 0;
-    transition: opacity .2s;
+    transition: background .2s, border-color .2s;
   }
 
   .report-card:hover {
-    border-color: rgba(232,71,63,.4);
-    background: var(--surface2);
+    background: var(--grey-pale);
+    border-color: var(--black);
+    border-top-color: var(--purple);
   }
 
-  .report-card:hover::before { opacity: 1; }
-
   .card-eyebrow {
-    font-size: 10.5px;
-    font-family: var(--font-mono);
+    font-size: 14px;
     font-weight: 600;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: var(--accent);
+    color: var(--purple-dark);
   }
 
   .card-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #fff;
-    letter-spacing: -.01em;
+    font-size: 1.5rem;
+    font-weight: 600;
     line-height: 1.25;
   }
 
   .card-desc {
-    font-size: 13.5px;
-    color: var(--muted);
+    font-size: 16px;
     line-height: 1.6;
     flex: 1;
   }
 
   .card-meta {
     display: flex;
-    gap: .6rem;
+    gap: .5rem;
     flex-wrap: wrap;
-    margin-top: .25rem;
   }
 
   .card-tag {
-    font-size: 10.5px;
-    font-family: var(--font-mono);
+    font-size: 13px;
     font-weight: 600;
-    padding: 2px 7px;
-    border-radius: 3px;
+    padding: 2px 8px;
+    color: var(--black);
+    background: var(--grey-pale);
+    border: 1px solid var(--grey-light);
     white-space: nowrap;
   }
 
-  .tag-windows { background: rgba(59,130,246,.12); color: #60a5fa; border: 1px solid rgba(59,130,246,.25); }
-  .tag-linux   { background: rgba(168,85,247,.12);  color: #c084fc; border: 1px solid rgba(168,85,247,.25); }
-  .tag-edr     { background: rgba(251,146,60,.12);  color: #fb923c; border: 1px solid rgba(251,146,60,.25); }
-  .tag-network { background: rgba(52,211,153,.12);  color: #34d399; border: 1px solid rgba(52,211,153,.25); }
-
   .card-arrow {
-    font-size: 18px;
-    color: var(--accent);
-    margin-top: .25rem;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--purple-dark);
     transition: transform .2s;
   }
 
@@ -248,20 +273,41 @@
 
   /* ─── FOOTER ──────────────────────────────────────── */
   footer {
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--grey-light);
     padding: 2rem;
-    text-align: center;
-    font-size: 12px;
-    color: var(--muted);
-    font-family: var(--font-mono);
   }
 
-  footer span { color: var(--accent); }
+  .footer-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 2rem;
+  }
 
-  /* ─── RESPONSIVE ──────────────────────────────────── */
+  .footer-inner .nav-logo img { height: 24px; }
+
+  .footer-name {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+
+  /* ─── RESPONSIVE / MOTION ─────────────────────────── */
   @media (max-width: 768px) {
+    nav { padding: .75rem 1rem; }
+    .nav-left { gap: 1rem; }
+    .brand-name { font-size: 15px; }
+    .hero { padding: 48px 1rem 40px; }
+    .reports-section { padding: 1rem 1rem 4rem; }
     .reports-grid { grid-template-columns: 1fr; }
-    h1 { font-size: 2rem; }
+    footer { padding: 1.5rem 1rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { transition: none !important; }
+    .report-card:hover .card-arrow { transform: none; }
   }
 </style>
 </head>
@@ -269,17 +315,21 @@
 
 <!-- NAV -->
 <nav>
-  <a class="nav-brand" href="#">
-    <span class="dot"></span>
-    Accenture Apex Labs · Threat Intelligence
-  </a>
+  <div class="nav-left">
+    <!-- Official Accenture logo (first interaction with the brand). Replace the asset path with the official file. -->
+    <a class="nav-logo" href="#"><img src="assets/accenture-logo.svg" alt="Accenture" width="106" height="28"></a>
+    <a class="nav-brand" href="#">
+      <span class="brand-name">Accenture Security APEX Labs</span>
+      <span class="apex-expansion"><b>A</b>dversary <b>P</b>ursuit, <b>E</b>ngagement, and E<b>x</b>ploitation</span>
+    </a>
+  </div>
   <span class="nav-tag">TLP:CLEAR</span>
 </nav>
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-eyebrow">Cyber Threat Intelligence</div>
-  <h1>Accenture <span>Apex Labs</span><br>IOCs &amp; Detection</h1>
+  <div class="hero-eyebrow">Cyber threat intelligence</div>
+  <h1>Accenture Security APEX Labs<br>IOCs &amp; detection</h1>
   <p class="hero-lead">
     Indicators of compromise, detection rules, and network fingerprints for cyber threat activity discovered through Accenture Cyber Intelligence research. All content is TLP:CLEAR and free to use in your defensive stack.
   </p>
@@ -288,34 +338,34 @@
 
 <!-- REPORTS -->
 <div class="reports-section">
-  <div class="section-label">Published Reports</div>
+  <h2 class="section-label">Published reports</h2>
   <div class="reports-grid">
 
     <!-- RustyRocket -->
     <a class="report-card" href="rustyrocket/">
-      <div class="card-eyebrow">Malware Intelligence · March 2026</div>
-      <div class="card-title">RustyRocket — IOCs &amp; Detection</div>
+      <div class="card-eyebrow">Malware intelligence · March 2026</div>
+      <div class="card-title">RustyRocket — IOCs &amp; detection</div>
       <div class="card-desc">
         Indicators of compromise, YARA detection rules, and network fingerprints for the RustyRocket implant family — covering Windows and Linux agents, proxies, and the RocketLaunch service installer. Includes 24 sample hashes and JA4/JA3 TLS fingerprints.
       </div>
       <div class="card-meta">
-        <span class="card-tag tag-windows">Windows</span>
-        <span class="card-tag tag-linux">Linux</span>
-        <span class="card-tag tag-network">Network Fingerprints</span>
+        <span class="card-tag">Windows</span>
+        <span class="card-tag">Linux</span>
+        <span class="card-tag">Network fingerprints</span>
       </div>
       <div class="card-arrow">→</div>
     </a>
 
     <!-- Settra Blinder -->
     <a class="report-card" href="settra-blinder/">
-      <div class="card-eyebrow">Malware Intelligence · July 2026</div>
-      <div class="card-title">Settra Blinder — IOCs &amp; Detection</div>
+      <div class="card-eyebrow">Malware intelligence · July 2026</div>
+      <div class="card-title">Settra Blinder — IOCs &amp; detection</div>
       <div class="card-desc">
         Indicators of compromise, technical analysis, and YARA detection rule for Settra Blinder — a 64-bit Windows EDR evasion toolkit exploiting vulnerable kernel drivers via BYOVD techniques to blind endpoint defences.
       </div>
       <div class="card-meta">
-        <span class="card-tag tag-windows">Windows x64</span>
-        <span class="card-tag tag-edr">EDR Evasion</span>
+        <span class="card-tag">Windows x64</span>
+        <span class="card-tag">EDR evasion</span>
       </div>
       <div class="card-arrow">→</div>
     </a>
@@ -325,7 +375,13 @@
 
 <!-- FOOTER -->
 <footer>
-  <span>Accenture Apex Labs</span> · Threat Intelligence · TLP:CLEAR
+  <div class="footer-inner">
+    <a class="nav-logo" href="#"><img src="assets/accenture-logo.svg" alt="Accenture" width="91" height="24"></a>
+    <div>
+      <div class="footer-name">Accenture Security APEX Labs · Threat Intelligence · TLP:CLEAR</div>
+      <span class="apex-expansion"><b>A</b>dversary <b>P</b>ursuit, <b>E</b>ngagement, and E<b>x</b>ploitation</span>
+    </div>
+  </div>
 </footer>
 
 </body>
