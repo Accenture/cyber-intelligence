@@ -1,0 +1,26 @@
+{% if page.type == "report" %}{% assign home = '/' | relative_url %}{% else %}{% assign home = '' %}{% endif %}
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<!-- NAV -->
+<nav aria-label="Primary">
+  <div class="nav-left">
+{% if page.type == "report" %}
+    <!-- Official Accenture Greater Than symbol (subsequent pages) -->
+    <a class="nav-logo" href="{{ home }}"><img src="{{ '/assets/accenture-greater-than.svg' | relative_url }}" alt="Accenture" width="26" height="28"></a>
+{% else %}
+    <!-- Official Accenture logo (first interaction with the brand) -->
+    <a class="nav-logo" href="#"><img src="{{ '/assets/accenture-logo.svg' | relative_url }}" alt="Accenture" width="106" height="28"></a>
+{% endif %}
+    <a class="nav-brand" href="{% if home == '' %}#{% else %}{{ home }}{% endif %}">
+      <span class="brand-name">Accenture Security APEX Labs</span>
+      <span class="apex-expansion"><b>A</b>dversary <b>P</b>ursuit, <b>E</b>ngagement, and E<b>x</b>ploitation</span>
+    </a>
+  </div>
+  <ul class="nav-links">
+    <li><a href="{{ home }}#reports">Reports</a></li>
+    <li><a href="{{ home }}#using">How to use</a></li>
+    <li><a href="{{ home }}#sharing">Sharing</a></li>
+    <li><a href="{{ home }}#about">About</a></li>
+  </ul>
+  <span class="tlp-label">TLP:CLEAR</span>
+</nav>

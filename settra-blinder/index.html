@@ -1,607 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Settra Blinder — IOCs & detection | Accenture Security APEX Labs</title>
-<link rel="icon" type="image/svg+xml" href="../assets/accenture-greater-than.svg">
-<style>
-  /*
-    Brand typefaces. Graphik (primary) loads from the web-licensed kit in assets/fonts.
-    Regular (400): body copy, captions, small print. Semibold (600): headlines, headings,
-    highlighted text. Medium (500): only for text under 12pt on a dark background.
-  */
-  @font-face {
-    font-family: 'Graphik Web';
-    src: url('../assets/fonts/Graphik/Graphik-Regular-Web.woff2') format('woff2'),
-         url('../assets/fonts/Graphik/Graphik-Regular-Web.woff') format('woff');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-  }
-  @font-face {
-    font-family: 'Graphik Web';
-    src: url('../assets/fonts/Graphik/Graphik-Medium-Web.woff2') format('woff2'),
-         url('../assets/fonts/Graphik/Graphik-Medium-Web.woff') format('woff');
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-  }
-  @font-face {
-    font-family: 'Graphik Web';
-    src: url('../assets/fonts/Graphik/Graphik-Semibold-Web.woff2') format('woff2'),
-         url('../assets/fonts/Graphik/Graphik-Semibold-Web.woff') format('woff');
-    font-weight: 600;
-    font-style: normal;
-    font-display: swap;
-  }
-
-  /*
-    Accenture Security APEX Labs: light mode (brand guidance: light is the first choice for text-heavy pages).
-    Palette is limited to the official purple spectrum and neutrals.
-  */
-  :root {
-    --white: #ffffff;
-    --black: #000000;
-    --purple-darkest: #460073;
-    --purple-dark: #7500c0;
-    --purple: #a100ff;
-    --purple-light: #c2a3ff;
-    --purple-lightest: #e6dcff;
-    --grey-mid: #818180;
-    --grey-light: #cfcfcf;
-    --grey-pale: #f1f1ef;
-
-    /* Graphik is the brand typeface; Arial only when Graphik is unavailable. Courier is the only approved monospace. */
-    /* 'Graphik Web' is the hosted kit; 'Graphik' picks up an installed copy if the kit cannot load. */
-    --font-sans: 'Graphik Web', 'Graphik', Arial, sans-serif;
-    /* GT Sectra Fine (secondary) is for call-outs and quotes. No web-licensed files are hosted, so it
-       is used where installed and otherwise falls back to Graphik. */
-    --font-serif: 'GT Sectra Fine', 'Graphik Web', 'Graphik', Arial, sans-serif;
-    --font-mono: 'Courier New', Courier, monospace;
-    --nav-h: 76px;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--white);
-    color: var(--black);
-    font-family: var(--font-sans);
-    font-size: 16px;
-    line-height: 1.6;
-    text-align: left;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  a:focus-visible {
-    outline: 3px solid var(--purple-dark);
-    outline-offset: 3px;
-  }
-
-  /* ─── NAV ─────────────────────────────────────────── */
-  nav {
-    position: sticky;
-    top: 0;
-    min-height: var(--nav-h);
-    background: var(--white);
-    border-bottom: 1px solid var(--grey-light);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
-    padding: .75rem 2rem;
-    z-index: 100;
-  }
-
-  .nav-left {
-    display: flex;
-    align-items: center;
-    gap: 2rem;            /* generous distance between logo and team name */
-    min-width: 0;
-  }
-
-  .nav-logo { display: block; flex-shrink: 0; }
-  .nav-logo img { display: block; height: 28px; width: auto; }
-
-  .nav-brand {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    color: var(--black);
-    text-decoration: none;
-  }
-
-  .brand-name {
-    font-size: 17px;
-    font-weight: 400;
-    line-height: 1.25;
-  }
-
-  .apex-expansion {
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 1.35;
-  }
-
-  /* APEX initials carry the core brand purple */
-  .apex-expansion b { font-weight: 600; color: var(--purple); }
-
-  .nav-links {
-    display: flex;
-    gap: 0;
-    list-style: none;
-    margin-left: auto;
-  }
-
-  .nav-links a {
-    display: block;
-    padding: .4rem .75rem;   /* tightened to make room for the 16px TLP label */
-    white-space: nowrap;
-    font-size: 14px;
-    font-weight: 400;
-    color: var(--black);
-    text-decoration: none;
-    box-shadow: inset 0 -2px 0 transparent;
-    transition: box-shadow .2s;
-  }
-
-  .nav-links a:hover { box-shadow: inset 0 -2px 0 var(--purple); }
-
-  /*
-    TLP label, per FIRST TLP 2.0 (https://www.first.org/tlp/): shown in the header and footer
-    of every page, right-justified, at least 12pt (16px). TLP:CLEAR colour-coding is
-    #FFFFFF text on a #000000 background.
-  */
-  .tlp-label {
-    flex-shrink: 0;
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 1.25;
-    letter-spacing: .04em;
-    color: var(--white);
-    background: var(--black);
-    padding: 4px 10px;
-    white-space: nowrap;
-  }
-
-  .footer-inner .tlp-label { margin-left: auto; }
-
-  /* ─── HERO ────────────────────────────────────────── */
-  .hero {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 80px 2rem 56px;
-  }
-
-  .hero-eyebrow {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--purple-dark);
-    margin-bottom: 1.25rem;
-  }
-
-  h1 {
-    font-size: clamp(2.4rem, 5.5vw, 3.75rem);
-    font-weight: 600;
-    letter-spacing: -.02em;
-    line-height: 1.1;
-    margin-bottom: 1.5rem;
-    color: var(--black);
-  }
-
-  .hero-lead {
-    font-size: 18px;
-    color: var(--black);
-    max-width: 640px;
-    margin-bottom: 2.5rem;
-  }
-
-  .hero-meta {
-    display: flex;
-    gap: 2.5rem;
-    flex-wrap: wrap;
-  }
-
-  .meta-item {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .meta-label {
-    font-size: 14px;
-    font-weight: 400;
-    color: var(--black);
-  }
-
-  .meta-val {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--black);
-  }
-
-  /* Team names: Graphik Regular, title case, black or white only (brand guidance) */
-  .team-name { font-weight: 400; }
-
-  .hero-divider {
-    width: 96px;
-    height: 4px;
-    background: var(--purple);
-    margin: 3rem 0 0;
-  }
-
-  /* ─── MAIN LAYOUT ─────────────────────────────────── */
-  .layout {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 2rem 6rem;
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    gap: 3rem;
-    align-items: start;
-  }
-
-  /* ─── SIDEBAR ─────────────────────────────────────── */
-  .sidebar {
-    position: sticky;
-    top: calc(var(--nav-h) + 1.5rem);
-  }
-
-  .sidebar-section { margin-bottom: 2rem; }
-
-  .sidebar-label {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--black);
-    margin-bottom: .5rem;
-    padding-left: .75rem;
-  }
-
-  .sidebar-nav { list-style: none; }
-
-  .sidebar-nav li a {
-    display: block;
-    padding: .35rem .75rem;
-    font-size: 14px;
-    color: var(--black);
-    text-decoration: none;
-    border-left: 2px solid var(--grey-light);
-    overflow-wrap: anywhere;
-    transition: background .15s, border-color .15s;
-  }
-
-  .sidebar-nav li a:hover,
-  .sidebar-nav li a.active {
-    background: var(--grey-pale);
-    border-left-color: var(--purple);
-  }
-
-  /* ─── CONTENT ─────────────────────────────────────── */
-  .content section { margin-bottom: 4.5rem; }
-
-  .section-header {
-    display: flex;
-    align-items: baseline;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--black);
-  }
-
-  .section-number {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--purple-dark);
-    flex-shrink: 0;
-  }
-
-  h2 {
-    font-size: 2rem;
-    font-weight: 400;
-    line-height: 1.2;
-    letter-spacing: -.01em;
-    color: var(--black);
-  }
-
-  h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--black);
-    margin: 1.8rem 0 .7rem;
-  }
-
-  p {
-    color: var(--black);
-    margin-bottom: 1rem;
-    max-width: 72ch;
-  }
-
-  /* ─── TABLES ──────────────────────────────────────── */
-  .table-wrap {
-    overflow-x: auto;
-    border: 1px solid var(--grey-light);
-    margin-bottom: 1.5rem;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-  }
-
-  thead th {
-    padding: .75rem 1rem;
-    text-align: left;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--black);
-    white-space: nowrap;
-    background: var(--white);
-    border-bottom: 2px solid var(--black);
-  }
-
-  tbody tr {
-    border-bottom: 1px solid var(--grey-light);
-    transition: background .12s;
-  }
-
-  tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: var(--grey-pale); }
-
-  tbody td {
-    padding: .65rem 1rem;
-    vertical-align: middle;
-  }
-
-  td.hash {
-    font-family: var(--font-mono);
-    font-size: 14px;
-    color: var(--black);
-    word-break: break-all;
-  }
-
-  td.fname {
-    font-family: var(--font-mono);
-    font-size: 14px;
-    color: var(--black);
-    white-space: nowrap;
-  }
-
-  td.label {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--black);
-    white-space: nowrap;
-  }
-
-  td.val {
-    font-size: 14px;
-    color: var(--black);
-    overflow-wrap: anywhere;
-  }
-
-  /* One neutral tag style: color is not used to code or identify items */
-  .tag {
-    display: inline-block;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 2px 8px;
-    color: var(--black);
-    background: var(--grey-pale);
-    border: 1px solid var(--grey-light);
-    white-space: nowrap;
-  }
-
-  /* ─── MITIGATION LIST ─────────────────────────────── */
-  .mitigation-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: .75rem;
-  }
-
-  .mitigation-list li {
-    display: flex;
-    gap: 1rem;
-    padding: .9rem 1.1rem;
-    background: var(--white);
-    border: 1px solid var(--grey-light);
-    font-size: 16px;
-    color: var(--black);
-    line-height: 1.5;
-    transition: border-color .15s;
-  }
-
-  .mitigation-list li:hover { border-color: var(--purple); }
-
-  /* square marker (angular elements; the Greater Than symbol is never used as a bullet or arrow) */
-  .mitigation-list li::before {
-    content: '';
-    flex-shrink: 0;
-    width: 8px;
-    height: 8px;
-    margin-top: .55em;
-    background: var(--purple);
-  }
-
-  /* ─── CODE BLOCKS ─────────────────────────────────── */
-  .yara-block {
-    background: var(--grey-pale);
-    border: 1px solid var(--grey-light);
-    margin-bottom: 1.75rem;
-    overflow: hidden;
-  }
-
-  .yara-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
-    padding: .6rem 1rem;
-    background: var(--white);
-    border-bottom: 1px solid var(--grey-light);
-  }
-
-  .yara-name {
-    font-family: var(--font-mono);
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--purple-dark);
-  }
-
-  .yara-meta-tags {
-    display: flex;
-    gap: .5rem;
-    flex-wrap: wrap;
-  }
-
-  .yara-meta-tag {
-    font-size: 13px;
-    font-weight: 400;
-    color: var(--black);
-    background: var(--grey-pale);
-    border: 1px solid var(--grey-light);
-    padding: 1px 8px;
-  }
-
-  pre {
-    overflow-x: auto;
-    padding: 1.25rem;
-  }
-
-  code {
-    font-family: var(--font-mono);
-    font-size: 14px;
-    line-height: 1.7;
-    color: var(--black);
-    white-space: pre;
-  }
-
-  .inline-code {
-    font-family: var(--font-mono);
-    font-size: 14px;
-    color: var(--purple-darkest);
-    white-space: normal;
-  }
-
-  /* Syntax colors: purple spectrum and black only */
-  .kw  { color: var(--purple-dark); font-weight: 700; }    /* keywords */
-  .st  { color: var(--purple-darkest); }                   /* strings */
-  .cm  { color: var(--black); font-style: italic; }        /* comments */
-  .fn  { color: var(--purple-dark); font-weight: 700; }    /* rule names */
-  .hex { color: var(--purple-darkest); }                   /* hex bytes */
-  .nm  { color: var(--black); font-weight: 700; }          /* variable names */
-
-  /* ─── FINGERPRINTS ────────────────────────────────── */
-  .fingerprint-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-  }
-
-  .fp-card {
-    background: var(--grey-pale);
-    border: 1px solid var(--grey-light);
-    border-top: 4px solid var(--purple);
-    padding: 1.25rem;
-  }
-
-  .fp-label {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--black);
-    margin-bottom: .5rem;
-  }
-
-  .fp-value {
-    font-family: var(--font-mono);
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--purple-darkest);
-    word-break: break-all;
-  }
-
-  /* ─── CALLOUT ─────────────────────────────────────── */
-  .callout {
-    font-family: var(--font-serif);
-    background: var(--grey-pale);
-    border: 1px solid var(--grey-light);
-    border-left: 4px solid var(--purple);
-    padding: 1rem 1.25rem;
-    margin-bottom: 1.5rem;
-    font-size: 16px;
-    color: var(--black);
-    line-height: 1.6;
-  }
-
-  .callout strong { font-weight: 600; }
-
-  /* ─── FOOTER ──────────────────────────────────────── */
-  footer {
-    border-top: 1px solid var(--grey-light);
-    padding: 2rem;
-  }
-
-  .footer-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: flex;
-    align-items: flex-start;
-    gap: 2rem;
-  }
-
-  .footer-inner .nav-logo img { height: 24px; }
-
-  .footer-name {
-    font-size: 14px;
-    font-weight: 400;
-    margin-bottom: 2px;
-  }
-
-  /* ─── RESPONSIVE / MOTION ─────────────────────────── */
-  @media (max-width: 768px) {
-    nav { padding: .75rem 1rem; }
-    .nav-left { gap: 1rem; }
-    .nav-links { display: none; }
-    .brand-name { font-size: 15px; }
-    .apex-expansion { font-size: 14px; }
-    .hero { padding: 48px 1rem 40px; }
-    .layout { grid-template-columns: 1fr; padding: 0 1rem 4rem; }
-    .sidebar { display: none; }
-    .fingerprint-grid { grid-template-columns: 1fr; }
-    footer { padding: 1.5rem 1rem; }
-    .footer-inner { flex-wrap: wrap; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
-    *, *::before, *::after { transition: none !important; }
-  }
-</style>
-</head>
-<body>
-
-<!-- NAV -->
-<nav>
-  <div class="nav-left">
-    <!-- Official Accenture Greater Than symbol (subsequent pages). Replace the asset path with the official file. -->
-    <a class="nav-logo" href="../"><img src="../assets/accenture-greater-than.svg" alt="Accenture" width="26" height="28"></a>
-    <a class="nav-brand" href="#">
-      <span class="brand-name">Accenture Security APEX Labs</span>
-      <span class="apex-expansion"><b>A</b>dversary <b>P</b>ursuit, <b>E</b>ngagement, and E<b>x</b>ploitation</span>
-    </a>
-  </div>
-  <ul class="nav-links">
-    <li><a href="#sample">Sample</a></li>
-    <li><a href="#analysis">Analysis</a></li>
-    <li><a href="#mitigation">Mitigation</a></li>
-    <li><a href="#yara">YARA rule</a></li>
-  </ul>
-  <span class="tlp-label">TLP:CLEAR</span>
-</nav>
+---
+layout: default
+type: report
+title: "Settra Blinder — IOCs & detection"
+footer_date: "July 2026"
+---
 
 <!-- HERO -->
 <div class="hero">
@@ -639,8 +41,11 @@
     <div class="sidebar-section">
       <div class="sidebar-label">Sections</div>
       <ul class="sidebar-nav">
+        <li><a href="#overview">What's new</a></li>
+        <li><a href="#blind-spots">Turning endpoints into digital blind spots</a></li>
         <li><a href="#sample">Sample &amp; hashes</a></li>
         <li><a href="#analysis">Technical analysis</a></li>
+        <li><a href="#implications">What this means for your organization</a></li>
         <li><a href="#mitigation">Mitigation</a></li>
         <li><a href="#yara">YARA rule</a></li>
       </ul>
@@ -654,12 +59,48 @@
   </aside>
 
   <!-- CONTENT -->
-  <main class="content">
+  <main class="content" id="main">
+
+    <!-- OVERVIEW (source alert) -->
+    <section id="overview">
+      <div class="section-header">
+        <span class="section-number">01</span>
+        <h2>What's new</h2>
+      </div>
+      <h3>Settra Blinder signals a new generation of security evasion</h3>
+      <ul class="mitigation-list">
+        <li>Accenture Cyber Intelligence recently identified a new toolkit for blinding endpoint detection and response (EDR), which is designed to disable, evade, and bypass endpoint security products and Windows-native security controls. We are tracking this tool as Settra Blinder.</li>
+        <li>Settra Blinder is engineered to undermine the visibility defenders rely on to detect and respond to attacks. Its design philosophy emphasizes persistence through invisibility rather than speed or volume.</li>
+        <li>Accenture Cyber Intelligence has developed detection content and analytical techniques to help organizations identify this emerging threat and strengthen resilience against similar security-evasion tools.</li>
+      </ul>
+      <p style="margin-top:1.5rem">Accenture Cyber Intelligence obtained and reverse engineered both the ransomware payload and the defensive evasion tooling deployed by the threat group Settra. Though a relatively recent entrant to the ransomware ecosystem, Settra has already demonstrated sophistication comparable to more established adversaries. In this incident, it was not the ransomware, but the group’s sophisticated, dedicated EDR bypass framework that grabbed our attention.</p>
+      <p>Put simply, Settra Blinder is not just attempting to avoid detection. It is designed to systematically erode the visibility defenders depend upon, creating what amounts to a digital blind spot inside a compromised environment.</p>
+    </section>
+
+    <!-- BLIND SPOTS (source alert) -->
+    <section id="blind-spots">
+      <div class="section-header">
+        <span class="section-number">02</span>
+        <h2>Turning endpoints into digital blind spots</h2>
+      </div>
+      <p>Settra Blinder represents a significant evolution in security-evasion tooling. The framework leverages vulnerable but legitimate kernel drivers to gain deep access to Windows systems, allowing it to manipulate critical operating system structures and interfere with both native security features and endpoint detection technologies.</p>
+      <p>From this privileged position, the toolkit can disable security monitoring mechanisms, terminate security-related processes and services, bypass protected processes, and suppress security telemetry. It also employs parent process spoofing to disguise malicious activity as legitimate system behavior.</p>
+      <p>Perhaps most concerning is Settra Blinder's focus on two of Windows' most important visibility mechanisms: Event Tracing for Windows (ETW), the primary channel through which Windows reports system activity to security tools, and the Antimalware Scan Interface (AMSI), which is a built-in inspection layer that lets security software scan content before it’s executed. By disrupting these technologies, the malware can interfere with the telemetry and inspection capabilities many security tools rely upon to identify malicious activity.</p>
+      <p>The toolkit also incorporates extensive anti-analysis, anti-debugging, and anti-sandbox techniques designed to detect when researchers or automated security systems are attempting to inspect it.</p>
+      <p>The result is a compromised endpoint where visibility is degraded, security controls are weakened, and malicious activity becomes substantially more difficult to detect, investigate, and contain.</p>
+
+      <figure class="pull-quote">
+        <blockquote>
+          <p>Threat actors are increasingly investing in capabilities designed not only to gain access, but to neutralize the security technologies organizations rely upon to detect them. Settra Blinder demonstrates how modern attackers are targeting visibility, telemetry, and security controls themselves, making malicious activity significantly harder to detect and investigate.</p>
+        </blockquote>
+        <figcaption><strong>Ryan Whelan</strong>, Global Director, Accenture Cyber Intelligence</figcaption>
+      </figure>
+    </section>
 
     <!-- SAMPLE -->
     <section id="sample">
       <div class="section-header">
-        <span class="section-number">01</span>
+        <span class="section-number">03</span>
         <h2>Sample &amp; hashes</h2>
       </div>
       <p>Settra Blinder is a 64-bit Windows PE command-line tool designed to disable Endpoint Detection and Response protections via kernel-level attack techniques.</p>
@@ -685,7 +126,7 @@
     <!-- ANALYSIS -->
     <section id="analysis">
       <div class="section-header">
-        <span class="section-number">02</span>
+        <span class="section-number">04</span>
         <h2>Technical analysis</h2>
       </div>
       <p>Settra Blinder demonstrates sophisticated kernel-level attack capabilities across several technique categories:</p>
@@ -733,10 +174,27 @@
       </div>
     </section>
 
+    <!-- IMPLICATIONS (source alert) -->
+    <section id="implications">
+      <div class="section-header">
+        <span class="section-number">05</span>
+        <h2>What this means for your organization</h2>
+      </div>
+      <p>Settra Blinder highlights how adversaries are increasingly targeting the technologies that provide security visibility before conducting ransomware, extortion, and lateral movement operations. As such, it is becoming more important for defenders to assume adversaries will attempt to disable visibility before launching their primary objectives. As cybercriminal operations continue to professionalize, security teams need to be prepared to detect attacks, but also to detect attacks on the tools designed to detect them.</p>
+      <p>Accenture Cyber Intelligence suggests:</p>
+      <ul class="mitigation-list">
+        <li><span><strong>Keep your systems fully patched.</strong> Settra Blinder exploits known weaknesses in legitimate software drivers, so timely patching can reduce exposure to known vulnerable drivers.</span></li>
+        <li><span><strong>Enable Windows security features that control which software can run at the deepest levels of your system.</strong> Features like Secure Boot and appropriately configured driver controls may help restrict unauthorized or vulnerable drivers.</span></li>
+        <li><span><strong>Limit who can change core system functions.</strong> The more tightly you control access to sensitive system operations, the harder it could become for tools like Settra Blinder to take hold.</span></li>
+        <li><span><strong>Make sure your logging covers system-level activity, not just application events.</strong> Settra Blinder specifically targets the mechanisms that generate security alerts, so deeper logging could aid in spotting something interfering with your defenses.</span></li>
+        <li><span><strong>Use our detection logic to find Settra Blinder in your environment.</strong> Accenture Cyber Intelligence has published a Yara rule on our GitHub that security teams can deploy to help identify this threat: <a href="https://accenture.github.io/cyber-intelligence/settra-blinder/">https://accenture.github.io/cyber-intelligence/settra-blinder/</a></span></li>
+      </ul>
+    </section>
+
     <!-- MITIGATION -->
     <section id="mitigation">
       <div class="section-header">
-        <span class="section-number">03</span>
+        <span class="section-number">06</span>
         <h2>Mitigation</h2>
       </div>
       <p>APEX Labs recommends the following measures to mitigate the risk posed by Settra Blinder:</p>
@@ -752,7 +210,7 @@
     <!-- YARA -->
     <section id="yara">
       <div class="section-header">
-        <span class="section-number">04</span>
+        <span class="section-number">07</span>
         <h2>YARA rule</h2>
       </div>
       <p>The following YARA rule detects Settra Blinder based on CLI argument strings, vulnerable driver device paths, kernel callback routine names, and runtime log strings. Security teams are encouraged to deploy this rule across endpoint and file-scanning solutions.</p>
@@ -816,33 +274,3 @@
 
   </main>
 </div>
-
-<footer>
-  <div class="footer-inner">
-    <a class="nav-logo" href="../"><img src="../assets/accenture-greater-than.svg" alt="Accenture" width="22" height="24"></a>
-    <div>
-      <div class="footer-name">Accenture Security APEX Labs · Threat Intelligence · July 2026</div>
-      <span class="apex-expansion"><b>A</b>dversary <b>P</b>ursuit, <b>E</b>ngagement, and E<b>x</b>ploitation</span>
-    </div>
-    <span class="tlp-label">TLP:CLEAR</span>
-  </div>
-</footer>
-
-<script>
-  const sections = document.querySelectorAll('section[id]');
-  const links = document.querySelectorAll('.sidebar-nav a');
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        links.forEach(l => l.classList.remove('active'));
-        const active = document.querySelector(`.sidebar-nav a[href="#${e.target.id}"]`);
-        if (active) active.classList.add('active');
-      }
-    });
-  }, { rootMargin: '-20% 0px -70% 0px' });
-
-  sections.forEach(s => observer.observe(s));
-</script>
-</body>
-</html>

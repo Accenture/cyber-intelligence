@@ -31,7 +31,7 @@ The reports are published as web pages at **[accenture.github.io/cyber-intellige
 <table>
   <tr>
     <td align="center" width="20%"><img src="assets/icons/report.svg" width="48" alt=""><br><b>Threat analysis</b><br><sub>Technical findings on malware and attacker tooling</sub></td>
-    <td align="center" width="20%"><img src="assets/icons/ioc.svg" width="48" alt=""><br><b>Indicators</b><br><sub>Hashes of known malicious samples</sub></td>
+    <td align="center" width="20%"><img src="assets/icons/ioc.svg" width="48" alt=""><br><b>Indicators</b><br><sub>File hashes and IP addresses of known threat activity</sub></td>
     <td align="center" width="20%"><img src="assets/icons/detection.svg" width="48" alt=""><br><b>Detection rules</b><br><sub>YARA rules for files and memory on Windows and Linux</sub></td>
     <td align="center" width="20%"><img src="assets/icons/network.svg" width="48" alt=""><br><b>Network fingerprints</b><br><sub>JA4 and JA3 TLS fingerprints and protocol indicators</sub></td>
     <td align="center" width="20%"><img src="assets/icons/mitigation.svg" width="48" alt=""><br><b>Mitigation</b><br><sub>Practical guidance for detection and response</sub></td>
@@ -51,14 +51,15 @@ The reports are published as web pages at **[accenture.github.io/cyber-intellige
 
 | Report | Published | Platform |
 | --- | --- | --- |
+| [**AI agents weaponizing stolen source code**](https://accenture.github.io/cyber-intelligence/ai-agents-stolen-source-code/)<br>Active, AI-enabled campaign that steals private source code through compromised GitHub Personal Access Tokens and uses AI agents to find and chain novel vulnerabilities | September 2026 | Any (via GitHub access) |
 | [**Settra Blinder**](https://accenture.github.io/cyber-intelligence/settra-blinder/)<br>64-bit Windows EDR evasion toolkit that abuses vulnerable kernel drivers (BYOVD) to blind endpoint defences | July 2026 | Windows x64 |
-| [**RustyRocket**](https://accenture.github.io/cyber-intelligence/rustyrocket/)<br>Implant family covering Windows and Linux agents, proxies and the RocketLaunch service installer | March 2026 | Windows, Linux |
+| [**RustyRocket**](https://accenture.github.io/cyber-intelligence/rustyrocket/)<br>Implant family covering Windows and Linux agents, proxies and the RocketLaunch service installer | March 2026, updated July 2026 | Windows, Linux |
 
 ## Using this intelligence
 
 <img align="right" width="64" src="assets/icons/hunt.svg" alt="">
 
-**Indicators.** Add the sample hashes to EDR blocklists and SIEM watchlists, and search historical endpoint telemetry for earlier executions.
+**Indicators.** Add the sample hashes to EDR blocklists and SIEM watchlists, and search historical endpoint telemetry for earlier executions. Add IP addresses to firewall and proxy blocklists, and search network and authentication logs for past connections. IP addresses are published defanged (for example, `23.95.119[.]178`): replace `[.]` with `.` before loading them.
 
 **YARA rules.** Copy a rule from its report page, save it as a `.yar` file and run it with the [YARA](https://virustotal.github.io/yara/) command-line tool. You can also load it into any EDR, sandbox or file-scanning pipeline that accepts YARA rules.
 
@@ -96,7 +97,9 @@ Do not attach malware samples to issues, and do not post client, personal or oth
 
 ## Disclaimer
 
-This intelligence is provided as is, without warranty of any kind, to support network defence. Indicators age, and detections can produce false positives. Validate everything in your own environment before taking blocking or response action.
+Given the inherent nature of threat intelligence, the content contained in this alert is based on information gathered and understood at the time of its creation. It is subject to change. All information and content is provided on an ‘as-is’ basis without representation or warranty and the reader is responsible for determining whether or not to follow any of the suggestions or potential mitigations entirely at their own discretion. Accenture accepts no liability for any action or failure to act in response to the information contained or referenced in this alert.
+
+Copyright © 2026 Accenture. All rights reserved.
 
 ## About
 

@@ -1,0 +1,295 @@
+/* Shared by every page: brand fonts and tokens, reset, header, footer, TLP label, legal notice, skip link. */
+
+/*
+  Brand typefaces. Graphik (primary) loads from the web-licensed kit in assets/fonts.
+  Regular (400): body copy, captions, small print. Semibold (600): headlines, headings,
+  highlighted text. Medium (500): only for text under 12pt on a dark background.
+*/
+@font-face {
+  font-family: 'Graphik Web';
+  src: url('../fonts/Graphik/Graphik-Regular-Web.woff2') format('woff2'),
+       url('../fonts/Graphik/Graphik-Regular-Web.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Graphik Web';
+  src: url('../fonts/Graphik/Graphik-Medium-Web.woff2') format('woff2'),
+       url('../fonts/Graphik/Graphik-Medium-Web.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Graphik Web';
+  src: url('../fonts/Graphik/Graphik-Semibold-Web.woff2') format('woff2'),
+       url('../fonts/Graphik/Graphik-Semibold-Web.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/*
+  Accenture Security APEX Labs: light mode (brand guidance: light is the first choice for text-heavy pages).
+  Palette is limited to the official purple spectrum and neutrals.
+*/
+:root {
+  --white: #ffffff;
+  --black: #000000;
+  --purple-darkest: #460073;
+  --purple-dark: #7500c0;
+  --purple: #a100ff;
+  --purple-light: #c2a3ff;
+  --purple-lightest: #e6dcff;
+  --grey-mid: #818180;
+  --grey-light: #cfcfcf;
+  --grey-pale: #f1f1ef;
+
+  /* Graphik is the brand typeface; Arial only when Graphik is unavailable. Courier is the only approved monospace. */
+  /* 'Graphik Web' is the hosted kit; 'Graphik' picks up an installed copy if the kit cannot load. */
+  --font-sans: 'Graphik Web', 'Graphik', Arial, sans-serif;
+  /* GT Sectra Fine (secondary) is for call-outs and quotes. No web-licensed files are hosted, so it
+     is used where installed and otherwise falls back to Graphik. */
+  --font-serif: 'GT Sectra Fine', 'Graphik Web', 'Graphik', Arial, sans-serif;
+  --font-mono: 'Courier New', Courier, monospace;
+  --nav-h: 76px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--white);
+  color: var(--black);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  text-align: left;
+  -webkit-font-smoothing: antialiased;
+}
+
+a:focus-visible {
+  outline: 3px solid var(--purple-dark);
+  outline-offset: 3px;
+}
+
+/* ─── NAV ─────────────────────────────────────────── */
+nav {
+  position: sticky;
+  top: 0;
+  min-height: var(--nav-h);
+  background: var(--white);
+  border-bottom: 1px solid var(--grey-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: .75rem 2rem;
+  z-index: 100;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 2rem;            /* generous distance between logo and team name */
+  min-width: 0;
+}
+
+.nav-logo { display: block; flex-shrink: 0; }
+
+.nav-logo img { display: block; height: 28px; width: auto; }
+
+.nav-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: var(--black);
+  text-decoration: none;
+}
+
+.brand-name {
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.apex-expansion {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+/* APEX initials carry the core brand purple */
+.apex-expansion b { font-weight: 600; color: var(--purple); }
+
+/* Team names: Graphik Regular, title case, black or white only (brand guidance).
+   The compound selector keeps Regular even inside Semibold elements such as .meta-val, whatever the rule order. */
+.team-name,
+.meta-val.team-name { font-weight: 400; }
+
+.nav-links {
+  display: flex;
+  gap: 0;
+  list-style: none;
+  margin-left: auto;
+}
+
+.nav-links a {
+  display: block;
+  padding: .4rem .75rem;   /* matches the report pages */
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--black);
+  text-decoration: none;
+  box-shadow: inset 0 -2px 0 transparent;
+  transition: box-shadow .2s;
+}
+
+.nav-links a:hover { box-shadow: inset 0 -2px 0 var(--purple); }
+
+/*
+  TLP label, per FIRST TLP 2.0 (https://www.first.org/tlp/): shown in the header and footer
+  of every page, right-justified, at least 12pt (16px). TLP:CLEAR colour-coding is
+  #FFFFFF text on a #000000 background.
+*/
+.tlp-label {
+  flex-shrink: 0;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: .04em;
+  color: var(--white);
+  background: var(--black);
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+
+.footer-inner .tlp-label { margin-left: auto; }
+
+/* ─── HERO ────────────────────────────────────────── */
+.hero {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 80px 2rem 56px;
+}
+
+h1 {
+  font-size: clamp(2.4rem, 5.5vw, 3.75rem);
+  font-weight: 600;
+  letter-spacing: -.02em;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  color: var(--black);
+}
+
+.hero-lead {
+  font-size: 18px;
+  color: var(--black);
+  max-width: 640px;
+  margin-bottom: 2.5rem;
+}
+
+.hero-meta {
+  display: flex;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.meta-label {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--black);
+}
+
+.meta-val {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--black);
+}
+
+.hero-divider {
+  width: 96px;
+  height: 4px;
+  background: var(--purple);
+  margin: 3rem 0 0;
+}
+
+/* ─── FOOTER ──────────────────────────────────────── */
+footer {
+  border-top: 1px solid var(--grey-light);
+  padding: 2rem;
+}
+
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+.footer-inner .nav-logo img { height: 24px; }
+
+.footer-name {
+  font-size: 14px;
+  font-weight: 400;
+  margin-bottom: 2px;
+}
+
+/* ─── SKIP LINK ───────────────────────────────────── */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -100px;
+  z-index: 200;
+  padding: .5rem 1rem;
+  background: var(--white);
+  color: var(--black);
+  border: 2px solid var(--purple-dark);
+}
+
+.skip-link:focus { top: 1rem; }
+
+/* Keep in-page targets clear of the sticky nav */
+section[id] { scroll-margin-top: calc(var(--nav-h) + 1rem); }
+
+/* Legal disclaimer and copyright: wording supplied by Legal, do not edit */
+.footer-legal {
+  max-width: 1100px;
+  margin: 1.5rem auto 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--grey-light);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--black);
+}
+
+.footer-legal p { max-width: none; margin: 0 0 .5rem; }
+
+.footer-legal p:last-child { margin-bottom: 0; }
+
+@media (max-width: 768px) {
+  nav { padding: .75rem 1rem; }
+  .nav-left { gap: 1rem; }
+  .nav-links { display: none; }
+  .brand-name { font-size: 15px; }
+  .hero { padding: 48px 1rem 40px; }
+  footer { padding: 1.5rem 1rem; }
+  .footer-inner { flex-wrap: wrap; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition: none !important; }
+}

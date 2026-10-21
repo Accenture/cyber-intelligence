@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ page.title }} | Accenture Security APEX Labs</title>
+{% if page.description %}<meta name="description" content="{{ page.description }}">
+{% endif %}<link rel="canonical" href="{{ page.url | absolute_url }}">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{ page.title }} | Accenture Security APEX Labs">
+{% if page.description %}<meta property="og:description" content="{{ page.description }}">
+{% endif %}<meta property="og:url" content="{{ page.url | absolute_url }}">
+<link rel="icon" type="image/svg+xml" href="{{ '/assets/accenture-greater-than.svg' | relative_url }}">
+<link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
+<link rel="stylesheet" href="{{ '/assets/css/' | append: page.type | append: '.css' | relative_url }}">
+</head>
+<body>
+
+{% include header.html %}
+
+{{ content }}
+
+{% include footer.html %}
+{% if page.type == "report" %}
+{% include report-scripts.html %}
+{% endif %}
+</body>
+</html>

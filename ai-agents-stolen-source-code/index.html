@@ -1,0 +1,208 @@
+---
+layout: default
+type: report
+title: "AI agents weaponizing stolen source code to find zero-days"
+footer_date: "September 2026"
+---
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Threat intelligence alert</div>
+  <h1>AI agents weaponizing stolen<br>source code to find zero-days</h1>
+  <p class="hero-lead">
+    Accenture Cyber Intelligence (CI) has identified an active, AI-enabled hacking campaign using semi-autonomous AI agents to conduct reconnaissance, discover vulnerabilities, and gain initial access to organizations, primarily observed across the Asia-Pacific region.
+  </p>
+  <div class="hero-meta">
+    <div class="meta-item">
+      <span class="meta-label">Published</span>
+      <span class="meta-val"><time datetime="2026-09">September 2026</time></span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Author</span>
+      <span class="meta-val team-name">Accenture Cyber Intelligence</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Region</span>
+      <span class="meta-val">Asia-Pacific</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Indicators</span>
+      <span class="meta-val">39 IP addresses</span>
+    </div>
+  </div>
+  <div class="hero-divider"></div>
+</div>
+
+<!-- MAIN -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Sections</div>
+      <ul class="sidebar-nav">
+        <li><a href="#overview">What's new</a></li>
+        <li><a href="#workflow">Attack workflow</a></li>
+        <li><a href="#indicators">Indicators of compromise</a></li>
+        <li><a href="#recommendations">Recommendations</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content" id="main">
+
+    <!-- OVERVIEW -->
+    <section id="overview">
+      <div class="section-header">
+        <span class="section-number">01</span>
+        <h2>What's new</h2>
+      </div>
+      <ul class="mitigation-list">
+        <li>Accenture Cyber Intelligence (CI) has identified an active, AI-enabled hacking campaign using semi-autonomous AI agents to conduct reconnaissance, discover vulnerabilities, and gain initial access to organizations, primarily observed across the Asia-Pacific region.</li>
+        <li>The threat actor is stealing private source code via compromised GitHub Personal Access Tokens, then turning AI agents loose on that code to find and chain together novel vulnerabilities.</li>
+        <li>We are releasing indicators of compromise now so that security teams and incident responders can begin hunting for this activity immediately.</li>
+      </ul>
+      <p style="margin-top:1.5rem">Accenture Cyber Intelligence (CI) has identified threat actor infrastructure tied to a campaign that uses a network of AI agents to attack a number of organizations, mostly located in the Asia-Pacific region. The activity has been ongoing since at least September 2026, and possibly earlier. While the threat actor's specific identity remains unknown, CI observed linguistic and operational indicators consistent with a Chinese-speaking operator.</p>
+      <p>The novel aspect of this campaign is how the threat actor is using AI agents to do the typically manual work of reviewing stolen code for exploitable flaws that can then be used to facilitate initial access. And leveraging AI may allow the threat actor to do that work at scale, materially compressing the time between a source code breach and a working exploit chain.</p>
+    </section>
+
+    <!-- WORKFLOW -->
+    <section id="workflow">
+      <div class="section-header">
+        <span class="section-number">02</span>
+        <h2>From stolen repositories to working exploits</h2>
+      </div>
+      <p>The attacker's workflow likely centers on OpenCode, an open-source AI coding agent, which the threat actor has repurposed to orchestrate autonomous reconnaissance, enumeration, and exploit development, judging from observable evidence.</p>
+      <p>In most observed cases, the actor first obtains a victim's compromised GitHub Personal Access Token to pull down private source code repositories. From there, AI agents are directed to analyze that code, identify vulnerabilities, including previously unknown ones, and chain them together into functional exploit paths. Those chains have then been used to gain initial access to systems spanning both development and production environments.</p>
+
+      <figure class="pull-quote">
+        <blockquote>
+          <p>Attackers are shifting from using AI to write better phishing emails to using AI to do genuine vulnerability research against a victim's own codebase. That's a different threat model, and it demands a faster response than most incident response playbooks are built for.</p>
+        </blockquote>
+        <figcaption><strong>Ryan Whelan</strong>, Global Director, Accenture Cyber Intelligence</figcaption>
+      </figure>
+
+      <p>This campaign highlights a meaningful shift in tradecraft. Source code theft has traditionally been valuable for espionage, IP theft, or slow, manual vulnerability hunting. Here, it's being used as raw material for an automated pipeline that can move from stolen repository to working intrusion with limited human involvement at each step. That has direct implications for how quickly organizations need to respond once they learn their source code has been exposed. The window between "our code was stolen" and "our code was used against us" may now be measured in a fraction of the time defenders are used to.</p>
+    </section>
+
+    <!-- INDICATORS -->
+    <section id="indicators">
+      <div class="section-header">
+        <span class="section-number">03</span>
+        <h2>Indicators of compromise</h2>
+      </div>
+      <p>39 IP addresses: 4 command and control (C2) servers, 1 relay, 1 pivot or operational box and 33 AI agent workers. Indicators are defanged: replace <span class="inline-code">[.]</span> with <span class="inline-code">.</span> before loading them into security tools.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Indicator of compromise</th><th>Type</th><th>Context</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="hash">96.44.169[.]139</td><td class="val">IP Address</td><td class="val">Threat Actor Command and Control (C2)</td></tr>
+            <tr><td class="hash">23.95.119[.]178</td><td class="val">IP Address</td><td class="val">Threat Actor C2</td></tr>
+            <tr><td class="hash">107.173.229[.]93</td><td class="val">IP Address</td><td class="val">Threat Actor C2</td></tr>
+            <tr><td class="hash">192.227.235[.]130</td><td class="val">IP Address</td><td class="val">Threat Actor Relay</td></tr>
+            <tr><td class="hash">23.95.10[.]50</td><td class="val">IP Address</td><td class="val">Pivot Box or Operational Box</td></tr>
+            <tr><td class="hash">23.95.238[.]186</td><td class="val">IP Address</td><td class="val">Threat Actor C2</td></tr>
+            <tr><td class="hash">107.150.27[.]113</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">198.44.63[.]154</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">192.255.162[.]252</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">192.255.149[.]200</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">192.255.230[.]154</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">198.44.123[.]197</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">192.255.230[.]150</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">192.255.249[.]195</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">192.236.172[.]20</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">104.168.63[.]68</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">192.210.226[.]215</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">172.245.19[.]10</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">143.246.202[.]86</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">104.223.55[.]22</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">192.3.63[.]188</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">192.3.89[.]104</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">198.44.49[.]227</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">107.174.137[.]238</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">107.175.182[.]105</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">155.94.144[.]182</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">155.94.154[.]173</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">192.161.57[.]144</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">192.255.130[.]116</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">192.255.136[.]29</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">198.44.55[.]239</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">198.44.56[.]190</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">192.227.235[.]121</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">198.44.63[.]100</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">23.94.203[.]169</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">107.174.228[.]78</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">198.46.142[.]90</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">192.129.149[.]151</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+            <tr><td class="hash">45.61.182[.]49</td><td class="val">IP Address</td><td class="val">AI Agent Worker Associated</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <details class="plain-list">
+        <summary>Plain list for bulk import (defanged)</summary>
+        <pre><code>96.44.169[.]139
+23.95.119[.]178
+107.173.229[.]93
+192.227.235[.]130
+23.95.10[.]50
+23.95.238[.]186
+107.150.27[.]113
+198.44.63[.]154
+192.255.162[.]252
+192.255.149[.]200
+192.255.230[.]154
+198.44.123[.]197
+192.255.230[.]150
+192.255.249[.]195
+192.236.172[.]20
+104.168.63[.]68
+192.210.226[.]215
+172.245.19[.]10
+143.246.202[.]86
+104.223.55[.]22
+192.3.63[.]188
+192.3.89[.]104
+198.44.49[.]227
+107.174.137[.]238
+107.175.182[.]105
+155.94.144[.]182
+155.94.154[.]173
+192.161.57[.]144
+192.255.130[.]116
+192.255.136[.]29
+198.44.55[.]239
+198.44.56[.]190
+192.227.235[.]121
+198.44.63[.]100
+23.94.203[.]169
+107.174.228[.]78
+198.46.142[.]90
+192.129.149[.]151
+45.61.182[.]49</code></pre>
+      </details>
+    </section>
+
+    <!-- RECOMMENDATIONS -->
+    <section id="recommendations">
+      <div class="section-header">
+        <span class="section-number">04</span>
+        <h2>What this means for your organization</h2>
+      </div>
+      <p>Accenture Cyber Intelligence notes this campaign reinforces a trend we have been tracking closely, namely how attackers are moving past simple techniques, like writing phishing lures or automating low-skill tasks, to perform genuine vulnerability research against an organization's own code. Any organization whose source code could be exposed through a compromised developer credential should now consider whether that exposure is a precursor to a fast-moving, automated exploitation attempt.</p>
+      <p>Defenders also should consider the possibility that AI-assisted attackers may identify and weaponize vulnerabilities not previously detected through manual or automated review.</p>
+      <p>Accenture Cyber Intelligence suggests:</p>
+      <ul class="mitigation-list">
+        <li><span><strong>Hunting for the indicators in your network and security logs now.</strong> Early detection is critical to disrupting this AI-assisted intrusion activity before it reaches production systems.</span></li>
+        <li><span><strong>Rotating Personal Access Tokens and other sensitive credentials frequently.</strong> In the cases we observed, compromised GitHub PATs (including Classic tokens) are the recurring access vector in this campaign, so frequent rotation limits how long a stolen token remains useful.</span></li>
+        <li><span><strong>Monitoring for authentication from VPS and commercial VPN infrastructure.</strong> Watch for logins or token usage originating from Virtual Private Server IP ranges, commercial VPN providers, or other shared hosting infrastructure associated with this activity.</span></li>
+        <li><span><strong>Treating source code exposure as an active intrusion risk, not just a confidentiality issue.</strong> If you suspect a repository or developer credential has been compromised, assume vulnerability discovery and exploitation may already be underway.</span></li>
+      </ul>
+    </section>
+
+  </main>
+</div>

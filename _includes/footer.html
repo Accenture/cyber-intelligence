@@ -1,0 +1,20 @@
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+{% if page.type == "report" %}
+    <a class="nav-logo" href="{{ '/' | relative_url }}"><img src="{{ '/assets/accenture-greater-than.svg' | relative_url }}" alt="Accenture" width="22" height="24"></a>
+{% else %}
+    <a class="nav-logo" href="#"><img src="{{ '/assets/accenture-logo.svg' | relative_url }}" alt="Accenture" width="91" height="24"></a>
+{% endif %}
+    <div>
+      <div class="footer-name">Accenture Security APEX Labs · Threat Intelligence{% if page.footer_date %} · {{ page.footer_date }}{% endif %}</div>
+      <span class="apex-expansion"><b>A</b>dversary <b>P</b>ursuit, <b>E</b>ngagement, and E<b>x</b>ploitation</span>
+    </div>
+    <span class="tlp-label">TLP:CLEAR</span>
+  </div>
+  <!-- Disclaimer and copyright: wording supplied by Legal, do not edit -->
+  <div class="footer-legal">
+    <p>Given the inherent nature of threat intelligence, the content contained in this alert is based on information gathered and understood at the time of its creation. It is subject to change. All information and content is provided on an ‘as-is’ basis without representation or warranty and the reader is responsible for determining whether or not to follow any of the suggestions or potential mitigations entirely at their own discretion. Accenture accepts no liability for any action or failure to act in response to the information contained or referenced in this alert.</p>
+    <p>Copyright © 2026 Accenture. All rights reserved.</p>
+  </div>
+</footer>

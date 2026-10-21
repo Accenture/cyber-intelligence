@@ -1,0 +1,21 @@
+# Jekyll build output and caches (local previews only; GitHub Pages builds the site itself)
+_site/
+.jekyll-cache/
+.jekyll-metadata
+.sass-cache/
+.bundle/
+vendor/
+
+# Local Ruby lockfile (GitHub Pages pins its own versions)
+Gemfile.lock
+
+# Source reports and working files stay out of the public repo
+*.pdf
+*.docx
+*.pptx
+*.ai
+*.eps
+
+# macOS clutter
+.DS_Store
+._*

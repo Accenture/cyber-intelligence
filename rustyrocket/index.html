@@ -1,606 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RustyRocket — IOCs & detection | Accenture Security APEX Labs</title>
-<link rel="icon" type="image/svg+xml" href="../assets/accenture-greater-than.svg">
-<style>
-  /*
-    Brand typefaces. Graphik (primary) loads from the web-licensed kit in assets/fonts.
-    Regular (400): body copy, captions, small print. Semibold (600): headlines, headings,
-    highlighted text. Medium (500): only for text under 12pt on a dark background.
-  */
-  @font-face {
-    font-family: 'Graphik Web';
-    src: url('../assets/fonts/Graphik/Graphik-Regular-Web.woff2') format('woff2'),
-         url('../assets/fonts/Graphik/Graphik-Regular-Web.woff') format('woff');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-  }
-  @font-face {
-    font-family: 'Graphik Web';
-    src: url('../assets/fonts/Graphik/Graphik-Medium-Web.woff2') format('woff2'),
-         url('../assets/fonts/Graphik/Graphik-Medium-Web.woff') format('woff');
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-  }
-  @font-face {
-    font-family: 'Graphik Web';
-    src: url('../assets/fonts/Graphik/Graphik-Semibold-Web.woff2') format('woff2'),
-         url('../assets/fonts/Graphik/Graphik-Semibold-Web.woff') format('woff');
-    font-weight: 600;
-    font-style: normal;
-    font-display: swap;
-  }
-
-  /*
-    Accenture Security APEX Labs: light mode (brand guidance: light is the first choice for text-heavy pages).
-    Palette is limited to the official purple spectrum and neutrals.
-  */
-  :root {
-    --white: #ffffff;
-    --black: #000000;
-    --purple-darkest: #460073;
-    --purple-dark: #7500c0;
-    --purple: #a100ff;
-    --purple-light: #c2a3ff;
-    --purple-lightest: #e6dcff;
-    --grey-mid: #818180;
-    --grey-light: #cfcfcf;
-    --grey-pale: #f1f1ef;
-
-    /* Graphik is the brand typeface; Arial only when Graphik is unavailable. Courier is the only approved monospace. */
-    /* 'Graphik Web' is the hosted kit; 'Graphik' picks up an installed copy if the kit cannot load. */
-    --font-sans: 'Graphik Web', 'Graphik', Arial, sans-serif;
-    /* GT Sectra Fine (secondary) is for call-outs and quotes. No web-licensed files are hosted, so it
-       is used where installed and otherwise falls back to Graphik. */
-    --font-serif: 'GT Sectra Fine', 'Graphik Web', 'Graphik', Arial, sans-serif;
-    --font-mono: 'Courier New', Courier, monospace;
-    --nav-h: 76px;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--white);
-    color: var(--black);
-    font-family: var(--font-sans);
-    font-size: 16px;
-    line-height: 1.6;
-    text-align: left;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  a:focus-visible {
-    outline: 3px solid var(--purple-dark);
-    outline-offset: 3px;
-  }
-
-  /* ─── NAV ─────────────────────────────────────────── */
-  nav {
-    position: sticky;
-    top: 0;
-    min-height: var(--nav-h);
-    background: var(--white);
-    border-bottom: 1px solid var(--grey-light);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
-    padding: .75rem 2rem;
-    z-index: 100;
-  }
-
-  .nav-left {
-    display: flex;
-    align-items: center;
-    gap: 2rem;            /* generous distance between logo and team name */
-    min-width: 0;
-  }
-
-  .nav-logo { display: block; flex-shrink: 0; }
-  .nav-logo img { display: block; height: 28px; width: auto; }
-
-  .nav-brand {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    color: var(--black);
-    text-decoration: none;
-  }
-
-  .brand-name {
-    font-size: 17px;
-    font-weight: 400;
-    line-height: 1.25;
-  }
-
-  .apex-expansion {
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 1.35;
-  }
-
-  /* APEX initials carry the core brand purple */
-  .apex-expansion b { font-weight: 600; color: var(--purple); }
-
-  .nav-links {
-    display: flex;
-    gap: 0;
-    list-style: none;
-    margin-left: auto;
-  }
-
-  .nav-links a {
-    display: block;
-    padding: .4rem .75rem;   /* tightened to make room for the 16px TLP label */
-    white-space: nowrap;
-    font-size: 14px;
-    font-weight: 400;
-    color: var(--black);
-    text-decoration: none;
-    box-shadow: inset 0 -2px 0 transparent;
-    transition: box-shadow .2s;
-  }
-
-  .nav-links a:hover { box-shadow: inset 0 -2px 0 var(--purple); }
-
-  /*
-    TLP label, per FIRST TLP 2.0 (https://www.first.org/tlp/): shown in the header and footer
-    of every page, right-justified, at least 12pt (16px). TLP:CLEAR colour-coding is
-    #FFFFFF text on a #000000 background.
-  */
-  .tlp-label {
-    flex-shrink: 0;
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 1.25;
-    letter-spacing: .04em;
-    color: var(--white);
-    background: var(--black);
-    padding: 4px 10px;
-    white-space: nowrap;
-  }
-
-  .footer-inner .tlp-label { margin-left: auto; }
-
-  /* ─── HERO ────────────────────────────────────────── */
-  .hero {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 80px 2rem 56px;
-  }
-
-  .hero-eyebrow {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--purple-dark);
-    margin-bottom: 1.25rem;
-  }
-
-  h1 {
-    font-size: clamp(2.4rem, 5.5vw, 3.75rem);
-    font-weight: 600;
-    letter-spacing: -.02em;
-    line-height: 1.1;
-    margin-bottom: 1.5rem;
-    color: var(--black);
-  }
-
-  .hero-lead {
-    font-size: 18px;
-    color: var(--black);
-    max-width: 640px;
-    margin-bottom: 2.5rem;
-  }
-
-  .hero-meta {
-    display: flex;
-    gap: 2.5rem;
-    flex-wrap: wrap;
-  }
-
-  .meta-item {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .meta-label {
-    font-size: 14px;
-    font-weight: 400;
-    color: var(--black);
-  }
-
-  .meta-val {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--black);
-  }
-
-  /* Team names: Graphik Regular, title case, black or white only (brand guidance) */
-  .team-name { font-weight: 400; }
-
-  .hero-divider {
-    width: 96px;
-    height: 4px;
-    background: var(--purple);
-    margin: 3rem 0 0;
-  }
-
-  /* ─── MAIN LAYOUT ─────────────────────────────────── */
-  .layout {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 2rem 6rem;
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    gap: 3rem;
-    align-items: start;
-  }
-
-  /* ─── SIDEBAR ─────────────────────────────────────── */
-  .sidebar {
-    position: sticky;
-    top: calc(var(--nav-h) + 1.5rem);
-  }
-
-  .sidebar-section { margin-bottom: 2rem; }
-
-  .sidebar-label {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--black);
-    margin-bottom: .5rem;
-    padding-left: .75rem;
-  }
-
-  .sidebar-nav { list-style: none; }
-
-  .sidebar-nav li a {
-    display: block;
-    padding: .35rem .75rem;
-    font-size: 14px;
-    color: var(--black);
-    text-decoration: none;
-    border-left: 2px solid var(--grey-light);
-    overflow-wrap: anywhere;
-    transition: background .15s, border-color .15s;
-  }
-
-  .sidebar-nav li a:hover,
-  .sidebar-nav li a.active {
-    background: var(--grey-pale);
-    border-left-color: var(--purple);
-  }
-
-  /* ─── CONTENT ─────────────────────────────────────── */
-  .content section { margin-bottom: 4.5rem; }
-
-  .section-header {
-    display: flex;
-    align-items: baseline;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--black);
-  }
-
-  .section-number {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--purple-dark);
-    flex-shrink: 0;
-  }
-
-  h2 {
-    font-size: 2rem;
-    font-weight: 400;
-    line-height: 1.2;
-    letter-spacing: -.01em;
-    color: var(--black);
-  }
-
-  h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--black);
-    margin: 1.8rem 0 .7rem;
-  }
-
-  p {
-    color: var(--black);
-    margin-bottom: 1rem;
-    max-width: 72ch;
-  }
-
-  /* ─── TABLES ──────────────────────────────────────── */
-  .table-wrap {
-    overflow-x: auto;
-    border: 1px solid var(--grey-light);
-    margin-bottom: 1.5rem;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-  }
-
-  thead th {
-    padding: .75rem 1rem;
-    text-align: left;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--black);
-    white-space: nowrap;
-    background: var(--white);
-    border-bottom: 2px solid var(--black);
-  }
-
-  tbody tr {
-    border-bottom: 1px solid var(--grey-light);
-    transition: background .12s;
-  }
-
-  tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: var(--grey-pale); }
-
-  tbody td {
-    padding: .65rem 1rem;
-    vertical-align: middle;
-  }
-
-  td.hash {
-    font-family: var(--font-mono);
-    font-size: 14px;
-    color: var(--black);
-    word-break: break-all;
-  }
-
-  td.fname {
-    font-family: var(--font-mono);
-    font-size: 14px;
-    color: var(--black);
-    white-space: nowrap;
-  }
-
-  td.label {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--black);
-    white-space: nowrap;
-  }
-
-  td.val {
-    font-size: 14px;
-    color: var(--black);
-    overflow-wrap: anywhere;
-  }
-
-  /* One neutral tag style: color is not used to code or identify items */
-  .tag {
-    display: inline-block;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 2px 8px;
-    color: var(--black);
-    background: var(--grey-pale);
-    border: 1px solid var(--grey-light);
-    white-space: nowrap;
-  }
-
-  /* ─── MITIGATION LIST ─────────────────────────────── */
-  .mitigation-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: .75rem;
-  }
-
-  .mitigation-list li {
-    display: flex;
-    gap: 1rem;
-    padding: .9rem 1.1rem;
-    background: var(--white);
-    border: 1px solid var(--grey-light);
-    font-size: 16px;
-    color: var(--black);
-    line-height: 1.5;
-    transition: border-color .15s;
-  }
-
-  .mitigation-list li:hover { border-color: var(--purple); }
-
-  /* square marker (angular elements; the Greater Than symbol is never used as a bullet or arrow) */
-  .mitigation-list li::before {
-    content: '';
-    flex-shrink: 0;
-    width: 8px;
-    height: 8px;
-    margin-top: .55em;
-    background: var(--purple);
-  }
-
-  /* ─── CODE BLOCKS ─────────────────────────────────── */
-  .yara-block {
-    background: var(--grey-pale);
-    border: 1px solid var(--grey-light);
-    margin-bottom: 1.75rem;
-    overflow: hidden;
-  }
-
-  .yara-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
-    padding: .6rem 1rem;
-    background: var(--white);
-    border-bottom: 1px solid var(--grey-light);
-  }
-
-  .yara-name {
-    font-family: var(--font-mono);
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--purple-dark);
-  }
-
-  .yara-meta-tags {
-    display: flex;
-    gap: .5rem;
-    flex-wrap: wrap;
-  }
-
-  .yara-meta-tag {
-    font-size: 13px;
-    font-weight: 400;
-    color: var(--black);
-    background: var(--grey-pale);
-    border: 1px solid var(--grey-light);
-    padding: 1px 8px;
-  }
-
-  pre {
-    overflow-x: auto;
-    padding: 1.25rem;
-  }
-
-  code {
-    font-family: var(--font-mono);
-    font-size: 14px;
-    line-height: 1.7;
-    color: var(--black);
-    white-space: pre;
-  }
-
-  .inline-code {
-    font-family: var(--font-mono);
-    font-size: 14px;
-    color: var(--purple-darkest);
-    white-space: normal;
-  }
-
-  /* Syntax colors: purple spectrum and black only */
-  .kw  { color: var(--purple-dark); font-weight: 700; }    /* keywords */
-  .st  { color: var(--purple-darkest); }                   /* strings */
-  .cm  { color: var(--black); font-style: italic; }        /* comments */
-  .fn  { color: var(--purple-dark); font-weight: 700; }    /* rule names */
-  .hex { color: var(--purple-darkest); }                   /* hex bytes */
-  .nm  { color: var(--black); font-weight: 700; }          /* variable names */
-
-  /* ─── FINGERPRINTS ────────────────────────────────── */
-  .fingerprint-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-  }
-
-  .fp-card {
-    background: var(--grey-pale);
-    border: 1px solid var(--grey-light);
-    border-top: 4px solid var(--purple);
-    padding: 1.25rem;
-  }
-
-  .fp-label {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--black);
-    margin-bottom: .5rem;
-  }
-
-  .fp-value {
-    font-family: var(--font-mono);
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--purple-darkest);
-    word-break: break-all;
-  }
-
-  /* ─── CALLOUT ─────────────────────────────────────── */
-  .callout {
-    background: var(--grey-pale);
-    border: 1px solid var(--grey-light);
-    border-left: 4px solid var(--purple);
-    padding: 1rem 1.25rem;
-    margin-bottom: 1.5rem;
-    font-size: 16px;
-    color: var(--black);
-    line-height: 1.6;
-  }
-
-  .callout strong { font-weight: 600; }
-
-  /* ─── FOOTER ──────────────────────────────────────── */
-  footer {
-    border-top: 1px solid var(--grey-light);
-    padding: 2rem;
-  }
-
-  .footer-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: flex;
-    align-items: flex-start;
-    gap: 2rem;
-  }
-
-  .footer-inner .nav-logo img { height: 24px; }
-
-  .footer-name {
-    font-size: 14px;
-    font-weight: 400;
-    margin-bottom: 2px;
-  }
-
-  /* ─── RESPONSIVE / MOTION ─────────────────────────── */
-  @media (max-width: 768px) {
-    nav { padding: .75rem 1rem; }
-    .nav-left { gap: 1rem; }
-    .nav-links { display: none; }
-    .brand-name { font-size: 15px; }
-    .apex-expansion { font-size: 14px; }
-    .hero { padding: 48px 1rem 40px; }
-    .layout { grid-template-columns: 1fr; padding: 0 1rem 4rem; }
-    .sidebar { display: none; }
-    .fingerprint-grid { grid-template-columns: 1fr; }
-    footer { padding: 1.5rem 1rem; }
-    .footer-inner { flex-wrap: wrap; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
-    *, *::before, *::after { transition: none !important; }
-  }
-</style>
-</head>
-<body>
-
-<!-- NAV -->
-<nav>
-  <div class="nav-left">
-    <!-- Official Accenture Greater Than symbol (subsequent pages). Replace the asset path with the official file. -->
-    <a class="nav-logo" href="../"><img src="../assets/accenture-greater-than.svg" alt="Accenture" width="26" height="28"></a>
-    <a class="nav-brand" href="#">
-      <span class="brand-name">Accenture Security APEX Labs</span>
-      <span class="apex-expansion"><b>A</b>dversary <b>P</b>ursuit, <b>E</b>ngagement, and E<b>x</b>ploitation</span>
-    </a>
-  </div>
-  <ul class="nav-links">
-    <li><a href="#samples">Samples</a></li>
-    <li><a href="#mitigation">Mitigation</a></li>
-    <li><a href="#yara">YARA rules</a></li>
-    <li><a href="#fingerprints">Fingerprints</a></li>
-  </ul>
-  <span class="tlp-label">TLP:CLEAR</span>
-</nav>
+---
+layout: default
+type: report
+title: "RustyRocket — IOCs & detection"
+footer_date: "March 2026"
+---
 
 <!-- HERO -->
 <div class="hero">
@@ -613,6 +16,10 @@
     <div class="meta-item">
       <span class="meta-label">Published</span>
       <span class="meta-val">March 2026</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Updated</span>
+      <span class="meta-val"><time datetime="2026-07">July 2026</time></span>
     </div>
     <div class="meta-item">
       <span class="meta-label">Author</span>
@@ -638,10 +45,15 @@
     <div class="sidebar-section">
       <div class="sidebar-label">Sections</div>
       <ul class="sidebar-nav">
+        <li><a href="#update">July 2026 update</a></li>
+        <li><a href="#summary">Executive summary</a></li>
+        <li><a href="#highlights">Key highlights</a></li>
+        <li><a href="#background">Background</a></li>
         <li><a href="#samples">Sample hashes</a></li>
         <li><a href="#mitigation">Mitigation</a></li>
         <li><a href="#yara">YARA rules</a></li>
         <li><a href="#fingerprints">Network fingerprints</a></li>
+        <li><a href="#config">Example config</a></li>
       </ul>
     </div>
     <div class="sidebar-section">
@@ -651,19 +63,110 @@
         <li><a href="#yara-launcher">Windows_ServiceLauncher.yar</a></li>
         <li><a href="#yara-winproxy">Windows_Proxy.yar</a></li>
         <li><a href="#yara-linproxy">Linux_Proxy.yar</a></li>
+        <li><a href="#yara-original">RustyRocket (28 Jan 2026)</a></li>
       </ul>
     </div>
   </aside>
 
   <!-- CONTENT -->
-  <main class="content">
+  <main class="content" id="main">
+    <!-- JULY 2026 UPDATE (from the World Leaks alert) -->
+    <section id="update">
+      <div class="section-header">
+        <span class="section-number">01</span>
+        <h2>July 2026 update</h2>
+      </div>
+      <p class="update-title">World Leaks significantly expands RustyRocket into a platform for modern extortion operations</p>
+      <h3>What's new</h3>
+      <ul class="mitigation-list">
+        <li>Accenture Cyber Intelligence has identified a significant evolution in RustyRocket, a modular malware toolset linked to affiliates of the cyber extortion group World Leaks. It has matured from a targeted exfiltration utility into a scalable, enterprise-grade extortion platform.</li>
+        <li>The toolset now features layered command-and-control architecture, cross-platform capability, and industrialized deployment workflows that rival the sophistication of legitimate software operations.</li>
+        <li>In response, Accenture Cyber Intelligence is working to help clients identify RustyRocket's distinct network fingerprints across enterprise environments through new, innovative detection and hunt techniques.</li>
+      </ul>
+      <p style="margin-top:1.5rem">In February of this year, Accenture Cyber Intelligence <a href="#summary">released research on a novel ransomware toolset</a> from World Leaks called &ldquo;RustyRocket&rdquo; that quietly steals data to extort organizations. In the four months since that post, WorldLeaks has since skyrocketed their development of the tool.</p>
+      <p>What began as a narrowly-focused stealth exfiltration tool linked to WorldLeaks affiliates has been quietly and rapidly transformed into something far more concerning: a mature, modular, continuously-developed platform that is purpose-built for modern extortion operations. It now serves as a primary instrument for WorldLeaks to effectively attack and coerce organizations into paying a ransom. The implications for enterprise leaders are significant.</p>
+
+      <figure class="pull-quote">
+        <blockquote>
+          <p>RustyRocket is no longer simply a stealth tool. It is a mature, evolving platform enabling scalable data extortion operations. Its rapid progression reflects a broader, industry-wide shift in how threat actors are developing and deploying their attacks. The barrier to running an effective extortion campaign has dropped. The best time to pressure test your visibility is before an adversary does it for you.</p>
+        </blockquote>
+        <figcaption><strong>Ryan Whelan</strong>, Global Lead of Accenture Cyber Intelligence</figcaption>
+      </figure>
+      <h3>From toolset to platform</h3>
+      <p>The clearest signal of the toolset&rsquo;s development is the breadth of RustyRocket's current architecture. The malware now comprises an agent, proxy, and service launcher, creating a full ecosystem designed to establish and maintain access at scale. Think of it as a one-stop-shop for WorldLeaks to conduct their theft.</p>
+      <p>RustyRocket operates across Windows and Linux. In Windows environments, it can be deployed as a privileged, persistent service, enhancing both its resilience and operational capabilities. This means that RustyRocket can now move more easily across enterprise systems, run with greater authority, and stay hidden longer before defenders notice.</p>
+      <p>Perhaps most telling is the evidence of disciplined, ongoing development. Accenture Cyber Intelligence&rsquo;s analysis of samples compiled over the last 18 months shows continuous refinement, testing of features, and streamlining of command sets from six to four. That's not the behavior of a one-and-done toolset. That's a development roadmap. The adversaries behind RustyRocket are investing in it in the same way legitimate software organizations invest in their products.</p>
+      <h3>The command-and-control problem</h3>
+      <p>Where RustyRocket gets truly sophisticated is in how it communicates and hides in plain sight. Recently, the tool&rsquo;s stealth tactics have been carefully updated to disguise RustyRocket&rsquo;s activities as legitimate network traffic and pivot if security teams are on its trail. For example, the malware now combines outer TLS encryption, inner mutual TLS tunnels, and custom multiplexed protocols, all within a single connection, to wrap its communications in multiple layers of encryption. On top of that, it can dynamically switch communication methods and leverage dynamic domain discovery to fall back to alternate infrastructure when needed.</p>
+      <p>For defenders, this is the crux of the challenge. Encrypted traffic is difficult to inspect and address. Layered, dynamic, protocol-blending encrypted traffic is even more difficult. That&rsquo;s exactly what WorldLeaks wants. With all the new features WorldLeaks has added into the RustyRocket toolset, even well-instrumented environments may struggle to get a clear line of sight. However, Accenture is helping clients better detect and track this threat.</p>
+      <h3>Detection demands a different approach</h3>
+      <p>Here's the good news: RustyRocket does leave traces. Unique TLS fingerprints, abnormal server name indication values, and nested encryption patterns are all detectable, but only if you're looking for them holistically, using multiple weaker traces rather than waiting for a single definitive alert.</p>
+      <p>That's why Accenture is helping clients implement novel detection and hunt techniques to more rapidly detect, prevent, and contain the malware. It reflects a broader truth about modern threat detection: as malware grows more evasive, detection has to grow more sophisticated as well. Single-point indicators are no longer enough.</p>
+      <h3>What this means for your organization</h3>
+      <p>RustyRocket's evolution is a case study in how extortion-driven operations are professionalizing. Malware is no longer static, but maintained, iterated, and reused across campaigns by threat actors who think like product managers.</p>
+      <p>Defenders need to respond in kind. That means:</p>
+      <ul class="mitigation-list">
+        <li>Enhanced network visibility focused on anomalous encrypted traffic, particularly layered TLS patterns and connections to unknown or dynamically generated domains.</li>
+        <li>Behavioral detection using tools like JA3/JA4 fingerprinting alongside traditional signature-based approaches.</li>
+        <li>Continuous validation through adversary simulation and red teaming to ensure detection capabilities keep pace with evolving adversary tradecraft.</li>
+        <li>Threat hunting that treats weak correlated signals as meaningful, not noise.</li>
+      </ul>
+      <p style="margin-top:1.5rem">The organizations best positioned to defend against platforms like RustyRocket are those that have moved away from static, event-driven security operations toward continuous, intelligence-led monitoring. The threat environment has professionalized. Defensive strategies need to keep pace.</p>
+    </section>
+
+
+    <!-- EXECUTIVE SUMMARY -->
+    <section id="summary">
+      <div class="section-header">
+        <span class="section-number">02</span>
+        <h2>Executive summary</h2>
+      </div>
+      <p>The threat landscape has shifted. WorldLeaks, a ransomware group that emerged in early 2025 from the former Hunters International operation, represents a potentially dangerous evolution in cyber extortion tactics, having abandoned traditional ransomware encryption entirely. Instead of encrypting victim data and demanding payment for decryption keys, WorldLeaks affiliates simply steal sensitive corporate and personal data, then threaten to publish it unless their demands are met.</p>
+      <p>This approach is strategically significant. Traditional ransomware operations are increasingly thwarted by improved backup practices and decryption tools. WorldLeaks has sidestepped these defenses by recognizing that the threat of public data exposure can be equally, if not more, coercive than locked systems. There is generally no technical recovery path when the damage is reputational and regulatory rather than operational.</p>
+      <p>Central to WorldLeaks' operations is a sophisticated data exfiltration and proxy tool discovered by Accenture Cybersecurity during a 2025 engagement that we have given the name “RustyRocket.” Written in Rust and designed for both Windows and Linux environments, RustyRocket enables WorldLeaks affiliates to steal data through heavily obfuscated, multi-layered encrypted tunnels that can be exceptionally difficult to detect using traditional network monitoring.</p>
+      <p>RustyRocket's technical sophistication is notable: it uses TLS wrapped inside TLS, custom protocol framing, and runtime configuration guardrails that prevent analysis in automated security sandboxes. The malware can also chain through multiple infected hosts, allowing attackers to proxy stolen data through internal networks before exfiltration, effectively bypassing perimeter controls.</p>
+      <p>Organizations targeted by WorldLeaks face a stark reality: once data leaves the network, there is generally no technical remediation. Unlike ransomware encryption, which can sometimes be reversed, stolen data cannot be "un-stolen." Victims must weigh the costs of potential regulatory penalties, litigation exposure, customer notification requirements, and lasting reputational damage against extortion demands.</p>
+      <p>Leadership should ensure their organizations can detect anomalous outbound data transfers, implement network segmentation to limit lateral movement, and deploy the detection signatures provided in this report. The shift from encryption-based attacks to pure data theft demands a corresponding shift in defensive priorities: preventing exfiltration must be as critical as preventing encryption.</p>
+    </section>
+
+    <!-- KEY HIGHLIGHTS -->
+    <section id="highlights">
+      <div class="section-header">
+        <span class="section-number">03</span>
+        <h2>Key highlights</h2>
+      </div>
+      <ul class="mitigation-list">
+        <li>WorldLeaks affiliates have been observed using a new sophisticated malware family called RustyRocket for proxying traffic between hosts and exfiltrating data.</li>
+        <li>RustyRocket provides multi-layered encrypted command and control capabilities that are difficult to detect via traditional methods.</li>
+        <li>RustyRocket can serve as both a client and server using the same executable.</li>
+        <li>RustyRocket employs a novel execution guardrail of requiring the user to input a pre-encrypted configuration at runtime. This hinders malware analysis of its functionality as the configuration is not embedded in the malware itself.</li>
+        <li>RustyRocket contains an internal list of approximately 1000 names that can be randomly selected to be used as subdomains for Command &amp; Control (C2) network traffic.</li>
+      </ul>
+    </section>
+
+    <!-- BACKGROUND -->
+    <section id="background">
+      <div class="section-header">
+        <span class="section-number">04</span>
+        <h2>Background</h2>
+      </div>
+      <p>During an Accenture Cybersecurity engagement in 2025, consultants identified a suspicious file linked to hands-on-keyboard activity from a WorldLeaks ransomware affiliate. WorldLeaks first emerged in early 2025, appearing to rebranding from the former Hunters International Ransomware-as-a-Service (RaaS) group. We assess that the same operators are behind both groups, although WorldLeaks pivoted away from deploying ransomware and now focuses primarily on stealing and publicly exposing sensitive data for extortion. They target a range of industries, with a particular focus on North American organizations in the industrial, healthcare, and professional services sectors.</p>
+      <p>When WorldLeaks launched its RaaS operation in early 2025, it provided affiliates with a custom data exfiltration tool<sup><a href="#ref-1">1</a></sup> written in the Rust programming language, which Accenture Cybersecurity strongly believes is the RustyRocket malware family. Both WorldLeaks and Hunters International are known for leveraging Rust-based malware for their attacks. Security researchers have reported that Hunters International itself likely evolved from the earlier Hive ransomware group<sup><a href="#ref-2">2</a></sup>, which transitioned from a ransomware written in the GoLang programming language to one written in Rust in 2022<sup><a href="#ref-3">3</a></sup>. This lineage highlights how these interconnected ransomware groups have steadily adopted and improved advanced Rust-based malware tools over time.</p>
+      <p>WorldLeaks affiliates typically gain initial network access via social engineering, stolen credentials, or exploiting exposed infrastructure. Once inside a victim’s environment, they conduct extensive reconnaissance to locate valuable corporate or personal data for exfiltration. After the data is stolen, they threaten to publish it on their data leak site unless the victim pays their demands. The WorldLeaks data leak site (DLS) is very similar in design and functionality to the one used by Hunters International, featuring four main sections: the main leak portal, a negotiation site for victims, an “Insider” platform for journalists, and an affiliate panel.</p>
+      <ol class="references">
+        <li id="ref-1"><a href="https://www.group-ib.com/blog/hunters-international-ransomware-group">https://www.group-ib.com/blog/hunters-international-ransomware-group</a></li>
+        <li id="ref-2"><a href="https://www.acronis.com/en/tru/posts/hunters-international-new-ransomware-based-on-hive-source-code">https://www.acronis.com/en/tru/posts/hunters-international-new-ransomware-based-on-hive-source-code</a></li>
+        <li id="ref-3"><a href="https://www.microsoft.com/en-us/security/blog/2022/07/05/hive-ransomware-gets-upgrades-in-rust">https://www.microsoft.com/en-us/security/blog/2022/07/05/hive-ransomware-gets-upgrades-in-rust</a></li>
+      </ol>
+    </section>
 
     <!-- SAMPLES -->
     <section id="samples">
       <div class="section-header">
-        <span class="section-number">01</span>
+        <span class="section-number">05</span>
         <h2>Sample hashes</h2>
       </div>
+      <p>This analysis is primarily based on the analysis of a RustyRocket malware sample named “winhost.exe” that was written using the Rust programming language for the Windows operating system. Its sha256 file hash is <span class="inline-hash">36255601ca5d6882d34c0d53a5a816ef0b979828038f9caf5f1a2afdfcffc329</span> and to date it is our most representative sample of the RustyRocket malware family. Accenture Cybersecurity also found 14 additional Windows samples and two Linux samples of the RustyRocket malware family in VirusTotal with compile timestamps ranging from 2025-01-13 20:44:56 UTC to 2025-12-17 05:49:42 UTC. The hashes are listed below.</p>
       <p>The following samples include the RustyRocket agent for Windows and Linux, RustyRocket proxies, and the RocketLaunch service installer tool.</p>
       <div class="table-wrap">
         <table>
@@ -702,12 +205,35 @@
           </tbody>
         </table>
       </div>
+      <details class="plain-list">
+        <summary>Hashes as listed in the original report</summary>
+        <p class="list-label">Windows Samples:</p>
+        <pre><code>587d343b3d9e1201ba5a8fdd7a3a3f809052aa7dfba3f7c557189ef63a999f08
+961b6184447ab4cb76295ea2f324e227aff459d0e68849c46c49ecdf641e2551
+36255601ca5d6882d34c0d53a5a816ef0b979828038f9caf5f1a2afdfcffc329
+67b487ddd924e078144bb9e2c48fe8b7924221f1e55c3f2df67d65daa3415fd4
+6034d6aa9a13378be6cd611cb5495b50eb7dc8463ef435e3b6d8c68a57e9b8e1
+5b9017e700d3dd26e18043fb6e041241c704bcc08608a9f5898212dc7e722198
+0e63a49230d6ad3c05b57c9b35eb98b21f75cc15ff135008c1087c69478beea6
+e7ad1b1974e8f04949936545d1297c4e3b1334a9da0ae31ab1d508174197bbce
+98dc0cd6290566866f3b1682335c680b9bbdb1020fc52e47315fd33eb9fa221e
+8b37116210f70e7768c736d657fcc143a1f009c9a69194ccc338d6e8dedb3c07
+88553c3e3df81a66927480fd1029d577c7805c0dd20114807a6f41b50a230e96
+041dca4a1d8c80f05c399dd750acf026ed5f94f1da08dc4f0f0d0ba9884916ff
+63150c955be4158c9b9e111de114daa59a4ffd1eab92a469c1f09dce84a698c6
+a30609489c111decdd3f8693cff016d9a8f629a0d85fdac858add7698f9b2659
+c1b67a62239f328b98f9d2a168565754b6779918ddaab74bb58020b95f3ec7cc
+180a40b7758b9b053f7f3f41511275f94b01eee88dd9b93edf003a607ee655a0</code></pre>
+        <p class="list-label">Linux Samples:</p>
+        <pre><code>d92377d14dc2c3cd818fcf3a37343ec30a3495b9ba2eedaa2d41b698ee159b08
+c5ffa5ac08f0feba11d767d1b2d8b096b729e90cc2874e0c8f624a5a68466131</code></pre>
+      </details>
     </section>
 
     <!-- MITIGATION -->
     <section id="mitigation">
       <div class="section-header">
-        <span class="section-number">02</span>
+        <span class="section-number">06</span>
         <h2>Mitigation</h2>
       </div>
       <p>Effective RustyRocket detection and mitigation requires a combination of file, memory, and network detections. APEX Labs recommends the following measures:</p>
@@ -724,7 +250,7 @@
     <!-- YARA -->
     <section id="yara">
       <div class="section-header">
-        <span class="section-number">03</span>
+        <span class="section-number">07</span>
         <h2>YARA rules</h2>
       </div>
 
@@ -937,12 +463,70 @@
     and not <span class="nm">$filter</span>
 }</code></pre>
       </div>
+
+      <!-- RustyRocket (original report rule) -->
+      <div id="yara-original" class="yara-block">
+        <div class="yara-header">
+          <span class="yara-name">RustyRocket</span>
+          <div class="yara-meta-tags">
+            <span class="yara-meta-tag">Windows + Linux</span>
+            <span class="yara-meta-tag">28 Jan 2026</span>
+          </div>
+        </div>
+        <pre><code><span class="kw">rule</span> <span class="fn">RustyRocket</span>
+{
+    <span class="kw">meta:</span>
+        author = <span class="st">"Accenture Cybersecurity"</span>
+        description = <span class="st">"Detects Linux and Windows RustyRocket samples"</span>
+        date = <span class="st">"2026-01-28"</span>
+        hash = <span class="st">"587d343b3d9e1201ba5a8fdd7a3a3f809052aa7dfba3f7c557189ef63a999f08"</span>
+        hash = <span class="st">"961b6184447ab4cb76295ea2f324e227aff459d0e68849c46c49ecdf641e2551"</span>
+        hash = <span class="st">"36255601ca5d6882d34c0d53a5a816ef0b979828038f9caf5f1a2afdfcffc329"</span>
+        hash = <span class="st">"67b487ddd924e078144bb9e2c48fe8b7924221f1e55c3f2df67d65daa3415fd4"</span>
+        hash = <span class="st">"6034d6aa9a13378be6cd611cb5495b50eb7dc8463ef435e3b6d8c68a57e9b8e1"</span>
+        hash = <span class="st">"5b9017e700d3dd26e18043fb6e041241c704bcc08608a9f5898212dc7e722198"</span>
+        hash = <span class="st">"0e63a49230d6ad3c05b57c9b35eb98b21f75cc15ff135008c1087c69478beea6"</span>
+        hash = <span class="st">"e7ad1b1974e8f04949936545d1297c4e3b1334a9da0ae31ab1d508174197bbce"</span>
+        hash = <span class="st">"98dc0cd6290566866f3b1682335c680b9bbdb1020fc52e47315fd33eb9fa221e"</span>
+        hash = <span class="st">"8b37116210f70e7768c736d657fcc143a1f009c9a69194ccc338d6e8dedb3c07"</span>
+        hash = <span class="st">"88553c3e3df81a66927480fd1029d577c7805c0dd20114807a6f41b50a230e96"</span>
+        hash = <span class="st">"041dca4a1d8c80f05c399dd750acf026ed5f94f1da08dc4f0f0d0ba9884916ff"</span>
+        hash = <span class="st">"63150c955be4158c9b9e111de114daa59a4ffd1eab92a469c1f09dce84a698c6"</span>
+        hash = <span class="st">"a30609489c111decdd3f8693cff016d9a8f629a0d85fdac858add7698f9b2659"</span>
+        hash = <span class="st">"c1b67a62239f328b98f9d2a168565754b6779918ddaab74bb58020b95f3ec7cc"</span>
+        hash = <span class="st">"d92377d14dc2c3cd818fcf3a37343ec30a3495b9ba2eedaa2d41b698ee159b08"</span>
+        hash = <span class="st">"c5ffa5ac08f0feba11d767d1b2d8b096b729e90cc2874e0c8f624a5a68466131"</span>
+        hash = <span class="st">"180a40b7758b9b053f7f3f41511275f94b01eee88dd9b93edf003a607ee655a0"</span>
+
+    <span class="kw">strings:</span>
+        <span class="cm">// Config-related strings</span>
+        <span class="nm">$cfg1</span> = <span class="st">"cidrsaddrs"</span>
+        <span class="nm">$cfg2</span> = <span class="st">"domainssubdomainechstruct"</span>
+
+        <span class="cm">// Key extraction pattern</span>
+        <span class="nm">$key_stub</span> = {
+            48 8D 05 ?? ?? ?? 00
+            48 89 45 C0
+            48 8B 4D C0
+            C7 45 C0 ?? ?? ?? ??
+            8B 55 C0
+            E8 ?? ?? ?? ??
+            48 BE ?? ?? ?? ?? ?? ?? ?? ??
+            48 33 30
+            B9 08 00 00 00
+            E8
+        }
+
+    <span class="kw">condition:</span>
+        <span class="nm">$key_stub</span> or (<span class="nm">$cfg1</span> and <span class="nm">$cfg2</span>)
+}</code></pre>
+      </div>
     </section>
 
     <!-- FINGERPRINTS -->
     <section id="fingerprints">
       <div class="section-header">
-        <span class="section-number">04</span>
+        <span class="section-number">08</span>
         <h2>Network fingerprints</h2>
       </div>
       <p>Use the following TLS client fingerprints to detect potential RustyRocket C2 network traffic. Integrate into your NDR or SIEM alerting pipeline.</p>
@@ -958,36 +542,49 @@
       </div>
     </section>
 
+
+    <!-- EXAMPLE CONFIG -->
+    <section id="config">
+      <div class="section-header">
+        <span class="section-number">09</span>
+        <h2>Example config</h2>
+      </div>
+      <h3>Example decrypted config</h3>
+      <div class="blob"><pre><code>{
+    "gateways": [
+        {
+            "mode": "direct",
+            "addrs": [
+                "192.168.1.1",
+                "198.168.2.1"
+            ],
+            "cidrs": [
+                "192.168.1.0/24",
+                "192.168.2.0/24"
+            ],
+            "port": 443,
+            "ech": null,
+            "subdomain": "randomize",
+            "domains": [
+                "example.com",
+                "test.com"
+            ]
+        }
+    ],
+    "access_token": "abc123"
+}</code></pre></div>
+      <h3>Example AES256-CTR encrypted config</h3>
+      <ul class="config-params">
+        <li>Partial Key: <span class="inline-code">908e6696f4</span></li>
+        <li>Counter: <span class="inline-code">0f0e0d0c</span></li>
+        <li>Nonce: <span class="inline-code">0b0a09080706050403020100</span></li>
+      </ul>
+      <p class="list-label">Ciphertext:</p>
+      <div class="blob"><pre><code>908e6696f405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f0f0e0d0c0b0a09080706050403020100f278bc3f082fd853dc6f5a26b1af3a45b8e64fb4428c5239f7750998b6db516c2dcfa2be70963d845f84020c45a4f93f6ec962fa951d3c63bb78971c8786f519884b757eef74008845a2bc0f8223d8aef1e2400dd306dd370ec370f2e594ead32751bee5b35df5ddf1b1e153855d403977ad0980864c43e0da8cb1e56231eeffa400c2fa97f98deb91646b211c5ae101c10794bc50942f08a6da12447ee1d21a7c7a74c88ff4d653f1552a837fc8b254f5a859f1d43260a81f0a247d836f719b6af8b2779855bce7b79237e12118a1116047da568e92b0684333d3179b55eb47b5918eeb7e920956e357f57184af97ad404eeda2a2de97a58f2bf07da97444a2065aeab92c94707e0609164d0d4119fc81667b9336608c6f9c7b6159b4d1a8888ba9e870b24f7ee074be7c743ecbb664f1f81e248ac830cfe22fa32dddba23a8ce0ce589f8c66c235cf3ccb1192a15a9633f87029d0f8ed30af6f25a8f9e51ab2f91cc477209695db96f25cb8bc91879204676a7513dcf95a513fce6bfeef5cd725543f0d3efa976f73c5309341ca905616183af12d8cca9c9617e9b3ab5c6ebcb25ec5df941741754cae7cfa71b03a15e6d7c87bcd22744a9cecc6d0bc438c2cb6d29ec7535c66c0f20c99a23ecac0eddf40959e97bb1807c53c29f39692b602000ad9d42d640add7a2922a98aa41c5</code></pre></div>
+      <h3>Example AES256-CTR encrypted config encoded in Base64</h3>
+      <p>(What is pasted into the RustyRocket console at runtime)</p>
+      <div class="blob"><pre><code>kI5mlvQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8PDg0MCwoJCAcGBQQDAgEA8ni8Pwgv2FPcb1omsa86RbjmT7RCjFI593UJmLbbUWwtz6K+cJY9hF+EAgxFpPk/bsli+pUdPGO7eJcch4b1GYhLdX7vdACIRaK8D4Ij2K7x4kAN0wbdNw7DcPLllOrTJ1G+5bNd9d3xseFThV1AOXetCYCGTEPg2oyx5WIx7v+kAML6l/mN65FkayEcWuEBwQeUvFCULwim2hJEfuHSGnx6dMiP9NZT8VUqg3/IslT1qFnx1DJgqB8KJH2Db3Gbaviyd5hVvOe3kjfhIRihEWBH2laOkrBoQzPTF5tV60e1kY7rfpIJVuNX9XGEr5etQE7toqLel6WPK/B9qXREogZa6rkslHB+BgkWTQ1BGfyBZnuTNmCMb5x7YVm00aiIi6nocLJPfuB0vnx0Psu2ZPH4HiSKyDDP4i+jLd26I6jODOWJ+MZsI1zzzLEZKhWpYz+HAp0PjtMK9vJaj55Rqy+RzEdyCWlduW8ly4vJGHkgRnanUT3PlaUT/Oa/7vXNclVD8NPvqXb3PFMJNBypBWFhg68S2MypyWF+mzq1xuvLJexd+UF0F1TK58+nGwOhXm18h7zSJ0SpzsxtC8Q4wsttKex1NcZsDyDJmiPsrA7d9AlZ6XuxgHxTwp85aStgIACtnULWQK3XopIqmKpBxQ==</code></pre></div>
+    </section>
+
   </main>
 </div>
-
-<footer>
-  <div class="footer-inner">
-    <a class="nav-logo" href="../"><img src="../assets/accenture-greater-than.svg" alt="Accenture" width="22" height="24"></a>
-    <div>
-      <div class="footer-name">Accenture Security APEX Labs · Threat Intelligence · March 2026</div>
-      <span class="apex-expansion"><b>A</b>dversary <b>P</b>ursuit, <b>E</b>ngagement, and E<b>x</b>ploitation</span>
-    </div>
-    <span class="tlp-label">TLP:CLEAR</span>
-  </div>
-</footer>
-
-<script>
-  // Highlight active sidebar link on scroll
-  const sections = document.querySelectorAll('section[id]');
-  const links = document.querySelectorAll('.sidebar-nav a');
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        links.forEach(l => l.classList.remove('active'));
-        const active = document.querySelector(`.sidebar-nav a[href="#${e.target.id}"]`);
-        if (active) active.classList.add('active');
-      }
-    });
-  }, { rootMargin: '-20% 0px -70% 0px' });
-
-  sections.forEach(s => observer.observe(s));
-</script>
-</body>
-</html>

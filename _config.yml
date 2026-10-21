@@ -1,0 +1,16 @@
+# GitHub Pages (Jekyll) settings for https://accenture.github.io/cyber-intelligence/
+title: Accenture Security APEX Labs
+url: "https://accenture.github.io"
+baseurl: "/cyber-intelligence"
+
+# No theme: the site has its own layout and styles (stops GitHub Pages adding the default theme's style.css)
+theme: null
+
+# Keep repo-only files off the published site
+exclude:
+  - README.md
+  - CONTRIBUTING.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - "*.pdf"
