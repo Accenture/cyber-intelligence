@@ -3,265 +3,533 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Threat Intelligence | Accenture Apex Labs</title>
+<title>RustyRocket — IOCs & detection | Accenture Security APEX Labs</title>
 <style>
+  /*
+    Accenture Security APEX Labs: light mode (brand guidance: light is the first choice for text-heavy pages).
+    Palette is limited to the official purple spectrum and neutrals.
+  */
   :root {
-    --bg: #0a0c10;
-    --surface: #111318;
-    --surface2: #1a1d26;
-    --border: #262b38;
-    --accent: #e8473f;
-    --text: #e4e6ed;
-    --muted: #7a8099;
-    --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
-    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-    --nav-h: 60px;
+    --white: #ffffff;
+    --black: #000000;
+    --purple-darkest: #460073;
+    --purple-dark: #7500c0;
+    --purple: #a100ff;
+    --purple-light: #c2a3ff;
+    --purple-lightest: #e6dcff;
+    --grey-mid: #818180;
+    --grey-light: #cfcfcf;
+    --grey-pale: #f1f1ef;
+
+    /* Graphik is the brand typeface; Arial only when Graphik is unavailable. Courier is the only approved monospace. */
+    --font-sans: 'Graphik', Arial, sans-serif;
+    --font-mono: 'Courier New', Courier, monospace;
+    --nav-h: 76px;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
 
   body {
-    background: var(--bg);
-    color: var(--text);
+    background: var(--white);
+    color: var(--black);
     font-family: var(--font-sans);
-    font-size: 15px;
-    line-height: 1.65;
+    font-size: 16px;
+    line-height: 1.6;
+    text-align: left;
     -webkit-font-smoothing: antialiased;
+  }
+
+  a:focus-visible {
+    outline: 3px solid var(--purple-dark);
+    outline-offset: 3px;
   }
 
   /* ─── NAV ─────────────────────────────────────────── */
   nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    height: var(--nav-h);
-    background: rgba(10,12,16,0.92);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    min-height: var(--nav-h);
+    background: var(--white);
+    border-bottom: 1px solid var(--grey-light);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 2rem;
+    gap: 1.5rem;
+    padding: .75rem 2rem;
     z-index: 100;
   }
 
-  .nav-brand {
+  .nav-left {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: .04em;
-    text-transform: uppercase;
-    color: var(--text);
+    gap: 2rem;            /* generous distance between logo and team name */
+    min-width: 0;
+  }
+
+  .nav-logo { display: block; flex-shrink: 0; }
+  .nav-logo img { display: block; height: 28px; width: auto; }
+
+  .nav-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    color: var(--black);
     text-decoration: none;
   }
 
-  .nav-brand .dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 8px var(--accent);
-    animation: pulse 2.4s ease-in-out infinite;
+  .brand-name {
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.25;
   }
 
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.35; }
+  .apex-expansion {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.35;
   }
 
+  .apex-expansion b { font-weight: 700; }
+
+  .nav-links {
+    display: flex;
+    gap: 0;
+    list-style: none;
+    margin-left: auto;
+  }
+
+  .nav-links a {
+    display: block;
+    padding: .4rem 1rem;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--black);
+    text-decoration: none;
+    box-shadow: inset 0 -2px 0 transparent;
+    transition: box-shadow .2s;
+  }
+
+  .nav-links a:hover { box-shadow: inset 0 -2px 0 var(--purple); }
+
+  /* TLP:CLEAR is defined as white text on a black background */
   .nav-tag {
-    font-size: 11px;
-    font-family: var(--font-mono);
-    font-weight: 600;
-    letter-spacing: .06em;
-    color: var(--accent);
-    background: rgba(232,71,63,.12);
-    border: 1px solid rgba(232,71,63,.3);
-    border-radius: 4px;
-    padding: 3px 8px;
+    flex-shrink: 0;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    color: var(--white);
+    background: var(--black);
+    border: 1px solid var(--black);
+    padding: 3px 10px;
   }
 
   /* ─── HERO ────────────────────────────────────────── */
   .hero {
-    padding-top: calc(var(--nav-h) + 80px);
-    padding-bottom: 60px;
-    padding-left: 2rem;
-    padding-right: 2rem;
-    max-width: 900px;
+    max-width: 1100px;
     margin: 0 auto;
+    padding: 80px 2rem 56px;
   }
 
   .hero-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11.5px;
-    font-family: var(--font-mono);
+    font-size: 14px;
     font-weight: 600;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 1.5rem;
-  }
-
-  .hero-eyebrow::before {
-    content: '';
-    display: block;
-    width: 28px; height: 1px;
-    background: var(--accent);
+    color: var(--purple-dark);
+    margin-bottom: 1.25rem;
   }
 
   h1 {
-    font-size: clamp(2.2rem, 5vw, 3.2rem);
-    font-weight: 800;
+    font-size: clamp(2.4rem, 5.5vw, 3.75rem);
+    font-weight: 600;
     letter-spacing: -.02em;
     line-height: 1.1;
-    margin-bottom: 1.25rem;
-    color: #fff;
+    margin-bottom: 1.5rem;
+    color: var(--black);
   }
 
-  h1 span { color: var(--accent); }
-
   .hero-lead {
-    font-size: 17px;
-    color: var(--muted);
+    font-size: 18px;
+    color: var(--black);
     max-width: 640px;
-    margin-bottom: 0;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .meta-label {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--black);
+  }
+
+  .meta-val {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--black);
   }
 
   .hero-divider {
-    width: 100%;
-    height: 1px;
-    background: linear-gradient(90deg, var(--border), transparent);
+    width: 96px;
+    height: 4px;
+    background: var(--purple);
     margin: 3rem 0 0;
   }
 
-  /* ─── REPORTS GRID ────────────────────────────────── */
-  .reports-section {
-    max-width: 900px;
+  /* ─── MAIN LAYOUT ─────────────────────────────────── */
+  .layout {
+    max-width: 1100px;
     margin: 0 auto;
-    padding: 3rem 2rem 6rem;
-  }
-
-  .section-label {
-    font-size: 10px;
-    font-family: var(--font-mono);
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 1.5rem;
-    padding-left: .75rem;
-    border-left: 2px solid var(--border);
-  }
-
-  .reports-grid {
+    padding: 0 2rem 6rem;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-    gap: 1.25rem;
+    grid-template-columns: 220px 1fr;
+    gap: 3rem;
+    align-items: start;
   }
 
-  .report-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 1.75rem;
+  /* ─── SIDEBAR ─────────────────────────────────────── */
+  .sidebar {
+    position: sticky;
+    top: calc(var(--nav-h) + 1.5rem);
+  }
+
+  .sidebar-section { margin-bottom: 2rem; }
+
+  .sidebar-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: .5rem;
+    padding-left: .75rem;
+  }
+
+  .sidebar-nav { list-style: none; }
+
+  .sidebar-nav li a {
+    display: block;
+    padding: .35rem .75rem;
+    font-size: 14px;
+    color: var(--black);
     text-decoration: none;
+    border-left: 2px solid var(--grey-light);
+    overflow-wrap: anywhere;
+    transition: background .15s, border-color .15s;
+  }
+
+  .sidebar-nav li a:hover,
+  .sidebar-nav li a.active {
+    background: var(--grey-pale);
+    border-left-color: var(--purple);
+  }
+
+  /* ─── CONTENT ─────────────────────────────────────── */
+  .content section { margin-bottom: 4.5rem; }
+
+  .section-header {
     display: flex;
-    flex-direction: column;
+    align-items: baseline;
     gap: 1rem;
-    transition: border-color .2s, background .2s;
-    position: relative;
-    overflow: hidden;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--black);
   }
 
-  .report-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--accent);
-    opacity: 0;
-    transition: opacity .2s;
-  }
-
-  .report-card:hover {
-    border-color: rgba(232,71,63,.4);
-    background: var(--surface2);
-  }
-
-  .report-card:hover::before { opacity: 1; }
-
-  .card-eyebrow {
-    font-size: 10.5px;
-    font-family: var(--font-mono);
+  .section-number {
+    font-size: 16px;
     font-weight: 600;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: var(--accent);
+    color: var(--purple-dark);
+    flex-shrink: 0;
   }
 
-  .card-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #fff;
+  h2 {
+    font-size: 2rem;
+    font-weight: 400;
+    line-height: 1.2;
     letter-spacing: -.01em;
-    line-height: 1.25;
+    color: var(--black);
   }
 
-  .card-desc {
-    font-size: 13.5px;
-    color: var(--muted);
-    line-height: 1.6;
-    flex: 1;
-  }
-
-  .card-meta {
-    display: flex;
-    gap: .6rem;
-    flex-wrap: wrap;
-    margin-top: .25rem;
-  }
-
-  .card-tag {
-    font-size: 10.5px;
-    font-family: var(--font-mono);
+  h3 {
+    font-size: 1.25rem;
     font-weight: 600;
-    padding: 2px 7px;
-    border-radius: 3px;
+    color: var(--black);
+    margin: 1.8rem 0 .7rem;
+  }
+
+  p {
+    color: var(--black);
+    margin-bottom: 1rem;
+    max-width: 72ch;
+  }
+
+  /* ─── TABLES ──────────────────────────────────────── */
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--grey-light);
+    margin-bottom: 1.5rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  thead th {
+    padding: .75rem 1rem;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--black);
+    white-space: nowrap;
+    background: var(--white);
+    border-bottom: 2px solid var(--black);
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--grey-light);
+    transition: background .12s;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--grey-pale); }
+
+  tbody td {
+    padding: .65rem 1rem;
+    vertical-align: middle;
+  }
+
+  td.hash {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--black);
+    word-break: break-all;
+  }
+
+  td.fname {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--black);
     white-space: nowrap;
   }
 
-  .tag-windows { background: rgba(59,130,246,.12); color: #60a5fa; border: 1px solid rgba(59,130,246,.25); }
-  .tag-linux   { background: rgba(168,85,247,.12);  color: #c084fc; border: 1px solid rgba(168,85,247,.25); }
-  .tag-edr     { background: rgba(251,146,60,.12);  color: #fb923c; border: 1px solid rgba(251,146,60,.25); }
-  .tag-network { background: rgba(52,211,153,.12);  color: #34d399; border: 1px solid rgba(52,211,153,.25); }
-
-  .card-arrow {
-    font-size: 18px;
-    color: var(--accent);
-    margin-top: .25rem;
-    transition: transform .2s;
+  td.label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--black);
+    white-space: nowrap;
   }
 
-  .report-card:hover .card-arrow { transform: translateX(4px); }
+  td.val {
+    font-size: 14px;
+    color: var(--black);
+    overflow-wrap: anywhere;
+  }
+
+  /* One neutral tag style: color is not used to code or identify items */
+  .tag {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 2px 8px;
+    color: var(--black);
+    background: var(--grey-pale);
+    border: 1px solid var(--grey-light);
+    white-space: nowrap;
+  }
+
+  /* ─── MITIGATION LIST ─────────────────────────────── */
+  .mitigation-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+  }
+
+  .mitigation-list li {
+    display: flex;
+    gap: 1rem;
+    padding: .9rem 1.1rem;
+    background: var(--white);
+    border: 1px solid var(--grey-light);
+    font-size: 16px;
+    color: var(--black);
+    line-height: 1.5;
+    transition: border-color .15s;
+  }
+
+  .mitigation-list li:hover { border-color: var(--purple); }
+
+  /* square marker (angular elements; the Greater Than symbol is never used as a bullet or arrow) */
+  .mitigation-list li::before {
+    content: '';
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    margin-top: .55em;
+    background: var(--purple);
+  }
+
+  /* ─── CODE BLOCKS ─────────────────────────────────── */
+  .yara-block {
+    background: var(--grey-pale);
+    border: 1px solid var(--grey-light);
+    margin-bottom: 1.75rem;
+    overflow: hidden;
+  }
+
+  .yara-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: .6rem 1rem;
+    background: var(--white);
+    border-bottom: 1px solid var(--grey-light);
+  }
+
+  .yara-name {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--purple-dark);
+  }
+
+  .yara-meta-tags {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+  }
+
+  .yara-meta-tag {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--black);
+    background: var(--grey-pale);
+    border: 1px solid var(--grey-light);
+    padding: 1px 8px;
+  }
+
+  pre {
+    overflow-x: auto;
+    padding: 1.25rem;
+  }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--black);
+    white-space: pre;
+  }
+
+  .inline-code {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--purple-darkest);
+    white-space: normal;
+  }
+
+  /* Syntax colors: purple spectrum and black only */
+  .kw  { color: var(--purple-dark); font-weight: 700; }    /* keywords */
+  .st  { color: var(--purple-darkest); }                   /* strings */
+  .cm  { color: var(--black); font-style: italic; }        /* comments */
+  .fn  { color: var(--purple-dark); font-weight: 700; }    /* rule names */
+  .hex { color: var(--purple-darkest); }                   /* hex bytes */
+  .nm  { color: var(--black); font-weight: 700; }          /* variable names */
+
+  /* ─── FINGERPRINTS ────────────────────────────────── */
+  .fingerprint-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .fp-card {
+    background: var(--grey-pale);
+    border: 1px solid var(--grey-light);
+    border-top: 4px solid var(--purple);
+    padding: 1.25rem;
+  }
+
+  .fp-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: .5rem;
+  }
+
+  .fp-value {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--purple-darkest);
+    word-break: break-all;
+  }
+
+  /* ─── CALLOUT ─────────────────────────────────────── */
+  .callout {
+    background: var(--grey-pale);
+    border: 1px solid var(--grey-light);
+    border-left: 4px solid var(--purple);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    font-size: 16px;
+    color: var(--black);
+    line-height: 1.6;
+  }
+
+  .callout strong { font-weight: 600; }
 
   /* ─── FOOTER ──────────────────────────────────────── */
   footer {
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--grey-light);
     padding: 2rem;
-    text-align: center;
-    font-size: 12px;
-    color: var(--muted);
-    font-family: var(--font-mono);
   }
 
-  footer span { color: var(--accent); }
+  .footer-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 2rem;
+  }
 
-  /* ─── RESPONSIVE ──────────────────────────────────── */
+  .footer-inner .nav-logo img { height: 24px; }
+
+  .footer-name {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+
+  /* ─── RESPONSIVE / MOTION ─────────────────────────── */
   @media (max-width: 768px) {
-    .reports-grid { grid-template-columns: 1fr; }
-    h1 { font-size: 2rem; }
+    nav { padding: .75rem 1rem; }
+    .nav-left { gap: 1rem; }
+    .nav-links { display: none; }
+    .brand-name { font-size: 15px; }
+    .apex-expansion { font-size: 14px; }
+    .hero { padding: 48px 1rem 40px; }
+    .layout { grid-template-columns: 1fr; padding: 0 1rem 4rem; }
+    .sidebar { display: none; }
+    .fingerprint-grid { grid-template-columns: 1fr; }
+    footer { padding: 1.5rem 1rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { transition: none !important; }
   }
 </style>
 </head>
@@ -269,64 +537,408 @@
 
 <!-- NAV -->
 <nav>
-  <a class="nav-brand" href="#">
-    <span class="dot"></span>
-    Accenture Apex Labs · Threat Intelligence
-  </a>
+  <div class="nav-left">
+    <!-- Official Accenture Greater Than symbol (subsequent pages). Replace the asset path with the official file. -->
+    <a class="nav-logo" href="../"><img src="../assets/accenture-greater-than.svg" alt="Accenture" width="26" height="28"></a>
+    <a class="nav-brand" href="#">
+      <span class="brand-name">Accenture Security APEX Labs</span>
+      <span class="apex-expansion"><b>A</b>dversary <b>P</b>ursuit, <b>E</b>ngagement, and E<b>x</b>ploitation</span>
+    </a>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#samples">Samples</a></li>
+    <li><a href="#mitigation">Mitigation</a></li>
+    <li><a href="#yara">YARA rules</a></li>
+    <li><a href="#fingerprints">Fingerprints</a></li>
+  </ul>
   <span class="nav-tag">TLP:CLEAR</span>
 </nav>
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-eyebrow">Cyber Threat Intelligence</div>
-  <h1>Accenture <span>Apex Labs</span><br>IOCs &amp; Detection</h1>
+  <div class="hero-eyebrow">Malware intelligence report</div>
+  <h1>RustyRocket<br>IOCs &amp; detection</h1>
   <p class="hero-lead">
-    Indicators of compromise, detection rules, and network fingerprints for cyber threat activity discovered through Accenture Cyber Intelligence research. All content is TLP:CLEAR and free to use in your defensive stack.
+    Indicators of compromise, YARA detection rules, and network fingerprints for the RustyRocket implant family — covering Windows and Linux agents, proxies, and the RocketLaunch service installer.
   </p>
+  <div class="hero-meta">
+    <div class="meta-item">
+      <span class="meta-label">Published</span>
+      <span class="meta-val">March 2026</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Author</span>
+      <span class="meta-val">Accenture Security APEX Labs</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Rule version</span>
+      <span class="meta-val">1.2</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Samples</span>
+      <span class="meta-val">24</span>
+    </div>
+  </div>
   <div class="hero-divider"></div>
 </div>
 
-<!-- REPORTS -->
-<div class="reports-section">
-  <div class="section-label">Published Reports</div>
-  <div class="reports-grid">
+<!-- MAIN -->
+<div class="layout">
 
-    <!-- RustyRocket -->
-    <a class="report-card" href="rustyrocket/">
-      <div class="card-eyebrow">Malware Intelligence · March 2026</div>
-      <div class="card-title">RustyRocket — IOCs &amp; Detection</div>
-      <div class="card-desc">
-        Indicators of compromise, YARA detection rules, and network fingerprints for the RustyRocket implant family — covering Windows and Linux agents, proxies, and the RocketLaunch service installer. Includes 24 sample hashes and JA4/JA3 TLS fingerprints.
-      </div>
-      <div class="card-meta">
-        <span class="card-tag tag-windows">Windows</span>
-        <span class="card-tag tag-linux">Linux</span>
-        <span class="card-tag tag-network">Network Fingerprints</span>
-      </div>
-      <div class="card-arrow">→</div>
-    </a>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Sections</div>
+      <ul class="sidebar-nav">
+        <li><a href="#samples">Sample hashes</a></li>
+        <li><a href="#mitigation">Mitigation</a></li>
+        <li><a href="#yara">YARA rules</a></li>
+        <li><a href="#fingerprints">Network fingerprints</a></li>
+      </ul>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Rule files</div>
+      <ul class="sidebar-nav">
+        <li><a href="#yara-all">All_RustyRocket.yar</a></li>
+        <li><a href="#yara-launcher">Windows_ServiceLauncher.yar</a></li>
+        <li><a href="#yara-winproxy">Windows_Proxy.yar</a></li>
+        <li><a href="#yara-linproxy">Linux_Proxy.yar</a></li>
+      </ul>
+    </div>
+  </aside>
 
-    <!-- Settra Blinder -->
-    <a class="report-card" href="settra-blinder/">
-      <div class="card-eyebrow">Malware Intelligence · July 2026</div>
-      <div class="card-title">Settra Blinder — IOCs &amp; Detection</div>
-      <div class="card-desc">
-        Indicators of compromise, technical analysis, and YARA detection rule for Settra Blinder — a 64-bit Windows EDR evasion toolkit exploiting vulnerable kernel drivers via BYOVD techniques to blind endpoint defences.
-      </div>
-      <div class="card-meta">
-        <span class="card-tag tag-windows">Windows x64</span>
-        <span class="card-tag tag-edr">EDR Evasion</span>
-      </div>
-      <div class="card-arrow">→</div>
-    </a>
+  <!-- CONTENT -->
+  <main class="content">
 
-  </div>
+    <!-- SAMPLES -->
+    <section id="samples">
+      <div class="section-header">
+        <span class="section-number">01</span>
+        <h2>Sample hashes</h2>
+      </div>
+      <p>The following samples include the RustyRocket agent for Windows and Linux, RustyRocket proxies, and the RocketLaunch service installer tool.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>SHA-256</th>
+              <th>Filename</th>
+              <th>YARA rule</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="hash">587d343b3d9e1201ba5a8fdd7a3a3f809052aa7dfba3f7c557189ef63a999f08</td><td class="fname">Agent.exe</td><td><span class="tag tag-all">All_RustyRocket</span></td></tr>
+            <tr><td class="hash">961b6184447ab4cb76295ea2f324e227aff459d0e68849c46c49ecdf641e2551</td><td class="fname">Ag.exe</td><td><span class="tag tag-all">All_RustyRocket</span></td></tr>
+            <tr><td class="hash">36255601ca5d6882d34c0d53a5a816ef0b979828038f9caf5f1a2afdfcffc329</td><td class="fname">Winhost.exe</td><td><span class="tag tag-all">All_RustyRocket</span></td></tr>
+            <tr><td class="hash">67b487ddd924e078144bb9e2c48fe8b7924221f1e55c3f2df67d65daa3415fd4</td><td class="fname">ag2.exe</td><td><span class="tag tag-all">All_RustyRocket</span></td></tr>
+            <tr><td class="hash">6034d6aa9a13378be6cd611cb5495b50eb7dc8463ef435e3b6d8c68a57e9b8e1</td><td class="fname">agent.exe</td><td><span class="tag tag-all">All_RustyRocket</span></td></tr>
+            <tr><td class="hash">5b9017e700d3dd26e18043fb6e041241c704bcc08608a9f5898212dc7e722198</td><td class="fname">OracleAgent.exe</td><td><span class="tag tag-all">All_RustyRocket</span></td></tr>
+            <tr><td class="hash">0e63a49230d6ad3c05b57c9b35eb98b21f75cc15ff135008c1087c69478beea6</td><td class="fname">svctest.exe</td><td><span class="tag tag-all">All_RustyRocket</span></td></tr>
+            <tr><td class="hash">e7ad1b1974e8f04949936545d1297c4e3b1334a9da0ae31ab1d508174197bbce</td><td class="fname">agent.exe</td><td><span class="tag tag-all">All_RustyRocket</span></td></tr>
+            <tr><td class="hash">98dc0cd6290566866f3b1682335c680b9bbdb1020fc52e47315fd33eb9fa221e</td><td class="fname">agent.exe</td><td><span class="tag tag-all">All_RustyRocket</span></td></tr>
+            <tr><td class="hash">8b37116210f70e7768c736d657fcc143a1f009c9a69194ccc338d6e8dedb3c07</td><td class="fname">9dzzrg.exe</td><td><span class="tag tag-all">All_RustyRocket</span></td></tr>
+            <tr><td class="hash">88553c3e3df81a66927480fd1029d577c7805c0dd20114807a6f41b50a230e96</td><td class="fname">oed0tcd1.exe</td><td><span class="tag tag-all">All_RustyRocket</span></td></tr>
+            <tr><td class="hash">041dca4a1d8c80f05c399dd750acf026ed5f94f1da08dc4f0f0d0ba9884916ff</td><td class="fname">l73hbvk.exe</td><td><span class="tag tag-all">All_RustyRocket</span></td></tr>
+            <tr><td class="hash">63150c955be4158c9b9e111de114daa59a4ffd1eab92a469c1f09dce84a698c6</td><td class="fname">jssx8wfs2.exe</td><td><span class="tag tag-all">All_RustyRocket</span></td></tr>
+            <tr><td class="hash">180a40b7758b9b053f7f3f41511275f94b01eee88dd9b93edf003a607ee655a0</td><td class="fname">6u6ljir.exe</td><td><span class="tag tag-all">All_RustyRocket</span></td></tr>
+            <tr><td class="hash">a30609489c111decdd3f8693cff016d9a8f629a0d85fdac858add7698f9b2659</td><td class="fname">xd7734d.exe</td><td><span class="tag tag-all">All_RustyRocket</span></td></tr>
+            <tr><td class="hash">c5ffa5ac08f0feba11d767d1b2d8b096b729e90cc2874e0c8f624a5a68466131</td><td class="fname">agent</td><td><span class="tag tag-all">All_RustyRocket</span></td></tr>
+            <tr><td class="hash">d92377d14dc2c3cd818fcf3a37343ec30a3495b9ba2eedaa2d41b698ee159b08</td><td class="fname">proxy</td><td><span class="tag tag-proxy">Linux_RustyRocket_Proxy</span></td></tr>
+            <tr><td class="hash">c1b67a62239f328b98f9d2a168565754b6779918ddaab74bb58020b95f3ec7cc</td><td class="fname">output.txt</td><td><span class="tag tag-na">N/A (memory dump)</span></td></tr>
+            <tr><td class="hash">6acd457f18bc2f1e190e5a7a7189aec61ed93927ea174ac7e00aeba6b521d8a9</td><td class="fname">proxy.exe</td><td><span class="tag tag-proxy">Windows_RustyRocket_Proxy</span></td></tr>
+            <tr><td class="hash">2011d47bcd639ccc3b2a887aa3bba95ed5288f09b7e0f0bce2358938968d3478</td><td class="fname">ku8w13gi.exe</td><td><span class="tag tag-proxy">Windows_RustyRocket_Proxy</span></td></tr>
+            <tr><td class="hash">886d107074f61d203ad15719de37cd2582da4cf47998b456a1ced71e9f1ae98a</td><td class="fname">proxy.exe</td><td><span class="tag tag-proxy">Windows_RustyRocket_Proxy</span></td></tr>
+            <tr><td class="hash">c2bc8ad1fa0dedb763e85a52c390462dfbccf6594b88664e33c672a9fb8b7a16</td><td class="fname">svcrun.exe</td><td><span class="tag tag-launch">Windows_RustyRocket_ServiceLauncher</span></td></tr>
+            <tr><td class="hash">bca8b0f74af2ad6e0afdc561073edc69f721ea5812da559242651754cbbc6d93</td><td class="fname">svcrun.exe</td><td><span class="tag tag-launch">Windows_RustyRocket_ServiceLauncher</span></td></tr>
+            <tr><td class="hash">743f9dbb32f86322c5f55f1e9051c5cd88092f10adcdac45aa648ac06e229b8a</td><td class="fname">agent.exe_DC</td><td><span class="tag tag-all">All_RustyRocket</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- MITIGATION -->
+    <section id="mitigation">
+      <div class="section-header">
+        <span class="section-number">02</span>
+        <h2>Mitigation</h2>
+      </div>
+      <p>Effective RustyRocket detection and mitigation requires a combination of file, memory, and network detections. APEX Labs recommends the following measures:</p>
+      <ul class="mitigation-list">
+        <li>Scan for Windows and Linux RustyRocket samples within your network using the YARA rules provided in this report.</li>
+        <li>Monitor for unexpected TLS network connections between hosts that do not regularly communicate.</li>
+        <li>Alert on TLS network traffic containing invalid SNI values such as <code class="inline-code">"server"</code>, <code class="inline-code">"router"</code>, or <code class="inline-code">"proxy"</code>.</li>
+        <li>Leverage the JA4 and JA3 fingerprints in the Network Fingerprints section below to alert on potential RustyRocket network traffic.</li>
+        <li>Monitor for increases in TLS network traffic to unknown domain names, especially those utilizing subdomains like RustyRocket's randomized subdomain list.</li>
+        <li>If capable, strip TLS from captured network traffic and look for unexpected WebSocket connections or TLS traffic nested within the outer TLS layer.</li>
+      </ul>
+    </section>
+
+    <!-- YARA -->
+    <section id="yara">
+      <div class="section-header">
+        <span class="section-number">03</span>
+        <h2>YARA rules</h2>
+      </div>
+
+      <!-- All_RustyRocket -->
+      <div id="yara-all" class="yara-block">
+        <div class="yara-header">
+          <span class="yara-name">All_RustyRocket.yar</span>
+          <div class="yara-meta-tags">
+            <span class="yara-meta-tag">Windows + Linux</span>
+            <span class="yara-meta-tag">v1.2 · 10 Mar 2026</span>
+          </div>
+        </div>
+        <pre><code><span class="kw">rule</span> <span class="fn">All_RustyRocket</span>
+{
+  <span class="kw">meta:</span>
+    author      = <span class="st">"Accenture ATHENA (RL)"</span>
+    description = <span class="st">"Detects Linux and Windows RustyRocket samples"</span>
+    date        = <span class="st">"10 March 2026"</span>
+    ver         = <span class="st">"1.2"</span>
+
+  <span class="kw">strings:</span>
+    <span class="cm">// Config-related strings</span>
+    <span class="nm">$cfg1</span> = <span class="st">"cidrsaddrs"</span>
+    <span class="nm">$cfg2</span> = <span class="st">"domainssubdomainechstruct"</span>
+
+    <span class="cm">// Key extraction pattern</span>
+    <span class="nm">$key_stub</span> = {
+        <span class="hex">48 8D 05 ?? ?? ?? 00</span>
+        <span class="hex">48 89 45 C0</span>
+        <span class="hex">48 8B 4D C0</span>
+        <span class="hex">C7 45 C0 ?? ?? ?? ??</span>
+        <span class="hex">8B 55 C0</span>
+        <span class="hex">E8 ?? ?? ?? ??</span>
+        <span class="hex">48 BE ?? ?? ?? ?? ?? ?? ?? ??</span>
+        <span class="hex">48 33 30</span>
+        <span class="hex">B9 08 00 00 00</span>
+        <span class="hex">E8</span>
+    }
+
+    <span class="nm">$opaque_predicates</span> = {
+        <span class="hex">8B 05 ?? ?? ?? ??</span>             <span class="cm">// mov eax,[rip+data]</span>
+        <span class="hex">( 33 | 2B | 03 | 23 ) 05 ?? ?? ?? ??</span>  <span class="cm">// xor/sub/add/and eax,[rip+data]</span>
+        <span class="hex">( 69 C0 ?? ?? ?? ?? | ( 35 | 2D | 05 | 25 | 0D ) ?? ?? ?? ??)</span>
+        <span class="hex">( 69 C0 ?? ?? ?? ?? | ( 35 | 2D | 05 | 25 | 0D ) ?? ?? ?? ??)</span>
+        <span class="hex">( 69 C0 ?? ?? ?? ?? | ( 35 | 2D | 05 | 25 | 0D ) ?? ?? ?? ??)</span>
+        <span class="hex">3D ?? ?? ?? ??</span>                <span class="cm">// cmp eax,imm</span>
+        <span class="hex">0F 8? ?? ?? ?? ??</span>             <span class="cm">// conditional jump</span>
+    }
+
+    <span class="nm">$canary</span> = <span class="st">"This is a YARA rule"</span>
+
+  <span class="kw">condition:</span>
+    <span class="cm">// Windows PE</span>
+    uint16(0) == <span class="hex">0x5A4D</span> and (<span class="nm">$key_stub</span> or (<span class="nm">$cfg1</span> and <span class="nm">$cfg2</span>) and <span class="nm">$opaque_predicates</span>)
+    or
+    <span class="cm">// Linux ELF</span>
+    uint32(0) == <span class="hex">0x464C457F</span> and (<span class="nm">$key_stub</span> or (<span class="nm">$cfg1</span> and <span class="nm">$cfg2</span>) and <span class="nm">$opaque_predicates</span>)
+    or
+    (<span class="nm">$key_stub</span> or (<span class="nm">$cfg1</span> and <span class="nm">$cfg2</span>) and <span class="nm">$opaque_predicates</span>) and not <span class="nm">$canary</span>
+}</code></pre>
+      </div>
+
+      <!-- RocketLaunch -->
+      <div id="yara-launcher" class="yara-block">
+        <div class="yara-header">
+          <span class="yara-name">Windows_RustyRocket_Service_Launcher.yar</span>
+          <div class="yara-meta-tags">
+            <span class="yara-meta-tag">Windows</span>
+            <span class="yara-meta-tag">9 Mar 2026</span>
+          </div>
+        </div>
+        <pre><code><span class="kw">rule</span> <span class="fn">Windows_RocketLaunch</span>
+{
+  <span class="kw">meta:</span>
+    Author = <span class="st">"Accenture ATHENA (JK / CW)"</span>
+    Date   = <span class="st">"9 March 2026"</span>
+    Desc   = <span class="st">"Detects tool used to launch RustyRocket as a service and then exit"</span>
+    Hash1  = <span class="st">"c2bc8ad1fa0dedb763e85a52c390462dfbccf6594b88664e33c672a9fb8b7a16"</span>
+    Hash2  = <span class="st">"bca8b0f74af2ad6e0afdc561073edc69f721ea5812da559242651754cbbc6d93"</span>
+
+  <span class="kw">strings:</span>
+    <span class="nm">$opcodes</span> = {
+        <span class="hex">02004c8d45f831d2e8ce050200</span>
+        [-]<span class="hex">02004c8d0d</span>
+        [-]<span class="hex">02004c8d45b8ba????????e8fc010200</span>
+        [-]<span class="hex">3b020031c0</span>
+        [-]<span class="hex">4d85ff7528</span>
+        [-]<span class="hex">458d51d04183fa0a0f8242ffffff</span>
+        [-]<span class="hex">4183fe22752a</span>
+        [-]<span class="hex">ff4628ba????????4889f1e843e8ffff84c075bb</span>
+        [-]<span class="hex">4883c4585b5d5f5e415c415d415e415fc3</span>
+    }
+
+    <span class="nm">$StartSvc</span>   = <span class="st">"StartServiceCtrlDispatcherW"</span>
+    <span class="nm">$NotFound1</span>  = <span class="st">"RegisterServiceCtrlHandler"</span>
+    <span class="nm">$NotFound2</span>  = <span class="st">"SetServiceStatus"</span>
+    <span class="nm">$NotFound3</span>  = <span class="st">"ServiceCtrlHandler"</span>
+    <span class="nm">$NotFound4</span>  = <span class="st">"ReportServiceStatus"</span>
+    <span class="nm">$Rust</span>       = <span class="st">"rust_panic"</span>
+
+  <span class="kw">condition:</span>
+    uint16(0) == <span class="hex">0x5A4D</span>
+    and (<span class="nm">$opcodes</span>)
+    and ((<span class="nm">$StartSvc</span> and <span class="nm">$Rust</span>) and none of (<span class="nm">$NotFound*</span>))
+}</code></pre>
+      </div>
+
+      <!-- Windows Proxy -->
+      <div id="yara-winproxy" class="yara-block">
+        <div class="yara-header">
+          <span class="yara-name">Windows_RustyRocket_Proxy.yar</span>
+          <div class="yara-meta-tags">
+            <span class="yara-meta-tag">Windows x64</span>
+            <span class="yara-meta-tag">13 Mar 2026</span>
+          </div>
+        </div>
+        <pre><code><span class="kw">rule</span> <span class="fn">Windows_RustyRocket_Proxy</span>
+{
+  <span class="kw">meta:</span>
+    description = <span class="st">"Detects Windows versions of Rusty Rocket proxy"</span>
+    author      = <span class="st">"Accenture Security ATHENA (jk, cw)"</span>
+    date        = <span class="st">"2026-03-13"</span>
+    hash        = <span class="st">"886D107074F61D203AD15719DE37CD2582DA4CF47998B456A1CED71E9F1AE98A"</span>
+    hash        = <span class="st">"6acd457f18bc2f1e190e5a7a7189aec61ed93927ea174ac7e00aeba6b521d8a9"</span>
+
+  <span class="kw">strings:</span>
+    <span class="nm">$div_pred</span> = {
+        <span class="hex">8B 05 ?? ?? ?? ??</span>   <span class="cm">// mov eax, dword [rip+pool_A]</span>
+        <span class="hex">31 D2</span>               <span class="cm">// xor edx, edx</span>
+        <span class="hex">F7 35 ?? ?? ?? ??</span>   <span class="cm">// div dword [rip+pool_B]</span>
+    }
+
+    <span class="nm">$paired_read</span> = {
+        <span class="hex">8B 05 ?? ?? ?? ??</span>                     <span class="cm">// mov eax, [rip+pool_A]</span>
+        <span class="hex">( 33 | 2B | 03 | 23 | 0B ) 05 ?? ?? ?? ??</span>  <span class="cm">// xor/sub/add/and/or eax, [rip+pool_B]</span>
+    }
+
+    <span class="nm">$proxy_handshake_eof</span>    = <span class="st">"tls handshake eof"</span> ascii
+    <span class="nm">$proxy_unexpected_poll</span>  = <span class="st">"unexpected polling after handshake"</span> ascii
+    <span class="nm">$proxy_join_cancel</span>      = <span class="st">"JoinError::Cancelled("</span> ascii
+    <span class="nm">$proxy_task_cancel</span>      = <span class="st">"task was cancelled"</span> ascii
+    <span class="nm">$c2_axum</span>                = <span class="st">"_axum_fallback"</span> ascii
+    <span class="nm">$c2_config_struct</span>       = <span class="st">"access_tokengatewaysstruct Config"</span> ascii
+    <span class="nm">$c2_invalid_route</span>       = <span class="st">"Invalid route "</span> ascii
+
+  <span class="kw">condition:</span>
+    uint16(0) == <span class="hex">0x5A4D</span>
+    and uint32(uint32(<span class="hex">0x3C</span>)) == <span class="hex">0x00004550</span>
+    and uint16(uint32(<span class="hex">0x3C</span>) + 4) == <span class="hex">0x8664</span>
+    and #<span class="nm">div_pred</span> > 30
+    and #<span class="nm">paired_read</span> > 100
+    and <span class="nm">$proxy_handshake_eof</span>
+    and <span class="nm">$proxy_unexpected_poll</span>
+    and <span class="nm">$proxy_join_cancel</span>
+    and <span class="nm">$proxy_task_cancel</span>
+    and not <span class="nm">$c2_axum</span>
+    and not <span class="nm">$c2_config_struct</span>
+    and not <span class="nm">$c2_invalid_route</span>
+}</code></pre>
+      </div>
+
+      <!-- Linux Proxy -->
+      <div id="yara-linproxy" class="yara-block">
+        <div class="yara-header">
+          <span class="yara-name">Linux_RustyRocket_Proxy.yar</span>
+          <div class="yara-meta-tags">
+            <span class="yara-meta-tag">Linux x86_64</span>
+            <span class="yara-meta-tag">11 Mar 2026</span>
+          </div>
+        </div>
+        <pre><code><span class="kw">import</span> <span class="st">"elf"</span>
+
+<span class="kw">rule</span> <span class="fn">Linux_RustyRocket_Proxy</span>
+{
+  <span class="kw">meta:</span>
+    Author  = <span class="st">"Accenture Security ATHENA (cw)"</span>
+    Date    = <span class="st">"11 March 2026"</span>
+    Desc    = <span class="st">"Detects Linux variant of Rusty Rocket Proxy"</span>
+    Version = <span class="st">"1.0"</span>
+    Hash    = <span class="st">"d92377d14dc2c3cd818fcf3a37343ec30a3495b9ba2eedaa2d41b698ee159b08"</span>
+
+  <span class="kw">strings:</span>
+    <span class="nm">$obfstr_version</span> = { <span class="hex">76 65 72 73</span> }
+    <span class="nm">$obfstr_about</span>   = { <span class="hex">61 62 6F 75</span> }
+    <span class="nm">$obfstr_usage</span>   = { <span class="hex">75 73 61 67</span> }
+
+    <span class="nm">$rustls_1</span> = <span class="st">"BadDer"</span> ascii
+    <span class="nm">$rustls_2</span> = <span class="st">"CertExpired"</span> ascii
+    <span class="nm">$rustls_3</span> = <span class="st">"UnknownIssuer"</span> ascii
+    <span class="nm">$rustls_4</span> = <span class="st">"InvalidCertValidity"</span> ascii
+
+    <span class="nm">$tls_1</span>  = <span class="st">"TLS13_AES_128_GCM_SHA256"</span> ascii
+    <span class="nm">$tls_2</span>  = <span class="st">"TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"</span> ascii
+
+    <span class="nm">$proxy_1</span>    = <span class="st">"could not resolve to any address"</span> ascii
+    <span class="nm">$proxy_2</span>    = <span class="st">"ConnectionRefused"</span> ascii
+    <span class="nm">$proxy_443</span>  = <span class="st">"0.0.0.0:443PROXY"</span>
+    <span class="nm">$proxy_ADDRS</span>= <span class="st">"GproxyaddrsADDRS"</span>
+
+    <span class="nm">$filter</span> = <span class="st">"cidrsaddrsdomainssubdomainechstruct"</span>
+
+  <span class="kw">condition:</span>
+    uint32(0) == <span class="hex">0x464C457F</span>
+    and elf.machine == elf.<span class="nm">EM_X86_64</span>
+    and filesize > 2MB
+    and 2 of (<span class="nm">$obfstr_*</span>)
+    and 3 of (<span class="nm">$rustls_*</span>)
+    and all of (<span class="nm">$tls_*</span>)
+    and all of (<span class="nm">$proxy_*</span>)
+    and not <span class="nm">$filter</span>
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- FINGERPRINTS -->
+    <section id="fingerprints">
+      <div class="section-header">
+        <span class="section-number">04</span>
+        <h2>Network fingerprints</h2>
+      </div>
+      <p>Use the following TLS client fingerprints to detect potential RustyRocket C2 network traffic. Integrate into your NDR or SIEM alerting pipeline.</p>
+      <div class="fingerprint-grid">
+        <div class="fp-card">
+          <div class="fp-label">JA4 fingerprint</div>
+          <div class="fp-value">t13d041000_16476d049b0b_f568d6c2d1f6</div>
+        </div>
+        <div class="fp-card">
+          <div class="fp-label">JA3 fingerprint</div>
+          <div class="fp-value">eb1d94daa7e0344597e756a1fb6e7054</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
 </div>
 
-<!-- FOOTER -->
 <footer>
-  <span>Accenture Apex Labs</span> · Threat Intelligence · TLP:CLEAR
+  <div class="footer-inner">
+    <a class="nav-logo" href="../"><img src="../assets/accenture-greater-than.svg" alt="Accenture" width="22" height="24"></a>
+    <div>
+      <div class="footer-name">Accenture Security APEX Labs · Threat Intelligence · TLP:CLEAR · March 2026</div>
+      <span class="apex-expansion"><b>A</b>dversary <b>P</b>ursuit, <b>E</b>ngagement, and E<b>x</b>ploitation</span>
+    </div>
+  </div>
 </footer>
 
+<script>
+  // Highlight active sidebar link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('.sidebar-nav a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.sidebar-nav a[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
 </body>
 </html>
