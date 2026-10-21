@@ -3,163 +3,160 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Settra Blinder — IOCs & Detection | Accenture Apex Labs</title>
+<title>Settra Blinder — IOCs & detection | Accenture Security APEX Labs</title>
 <style>
+  /*
+    Accenture Security APEX Labs: light mode (brand guidance: light is the first choice for text-heavy pages).
+    Palette is limited to the official purple spectrum and neutrals.
+  */
   :root {
-    --bg: #0a0c10;
-    --surface: #111318;
-    --surface2: #1a1d26;
-    --border: #262b38;
-    --accent: #e8473f;
-    --accent2: #ff6b35;
-    --text: #e4e6ed;
-    --muted: #7a8099;
-    --code-bg: #0d1117;
-    --code-border: #1e2534;
-    --green: #3fb950;
-    --yellow: #d29922;
-    --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
-    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-    --nav-h: 60px;
+    --white: #ffffff;
+    --black: #000000;
+    --purple-darkest: #460073;
+    --purple-dark: #7500c0;
+    --purple: #a100ff;
+    --purple-light: #c2a3ff;
+    --purple-lightest: #e6dcff;
+    --grey-mid: #818180;
+    --grey-light: #cfcfcf;
+    --grey-pale: #f1f1ef;
+
+    /* Graphik is the brand typeface; Arial only when Graphik is unavailable. Courier is the only approved monospace. */
+    --font-sans: 'Graphik', Arial, sans-serif;
+    --font-mono: 'Courier New', Courier, monospace;
+    --nav-h: 76px;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   html { scroll-behavior: smooth; }
 
   body {
-    background: var(--bg);
-    color: var(--text);
+    background: var(--white);
+    color: var(--black);
     font-family: var(--font-sans);
-    font-size: 15px;
-    line-height: 1.65;
+    font-size: 16px;
+    line-height: 1.6;
+    text-align: left;
     -webkit-font-smoothing: antialiased;
+  }
+
+  a:focus-visible {
+    outline: 3px solid var(--purple-dark);
+    outline-offset: 3px;
   }
 
   /* ─── NAV ─────────────────────────────────────────── */
   nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    height: var(--nav-h);
-    background: rgba(10,12,16,0.92);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    min-height: var(--nav-h);
+    background: var(--white);
+    border-bottom: 1px solid var(--grey-light);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 2rem;
+    gap: 1.5rem;
+    padding: .75rem 2rem;
     z-index: 100;
   }
 
-  .nav-brand {
+  .nav-left {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: .04em;
-    text-transform: uppercase;
-    color: var(--text);
+    gap: 2rem;            /* generous distance between logo and team name */
+    min-width: 0;
+  }
+
+  .nav-logo { display: block; flex-shrink: 0; }
+  .nav-logo img { display: block; height: 28px; width: auto; }
+
+  .nav-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    color: var(--black);
     text-decoration: none;
   }
 
-  .nav-brand .dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 8px var(--accent);
-    animation: pulse 2.4s ease-in-out infinite;
+  .brand-name {
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.25;
   }
 
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.35; }
+  .apex-expansion {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.35;
   }
+
+  .apex-expansion b { font-weight: 700; }
 
   .nav-links {
     display: flex;
     gap: 0;
     list-style: none;
+    margin-left: auto;
   }
 
   .nav-links a {
     display: block;
     padding: .4rem 1rem;
-    font-size: 12.5px;
+    font-size: 14px;
     font-weight: 500;
-    letter-spacing: .03em;
-    text-transform: uppercase;
-    color: var(--muted);
+    color: var(--black);
     text-decoration: none;
-    border-radius: 4px;
-    transition: color .2s;
+    box-shadow: inset 0 -2px 0 transparent;
+    transition: box-shadow .2s;
   }
 
-  .nav-links a:hover { color: var(--text); }
+  .nav-links a:hover { box-shadow: inset 0 -2px 0 var(--purple); }
 
+  /* TLP:CLEAR is defined as white text on a black background */
   .nav-tag {
-    font-size: 11px;
-    font-family: var(--font-mono);
-    font-weight: 600;
-    letter-spacing: .06em;
-    color: var(--accent);
-    background: rgba(232,71,63,.12);
-    border: 1px solid rgba(232,71,63,.3);
-    border-radius: 4px;
-    padding: 3px 8px;
+    flex-shrink: 0;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    color: var(--white);
+    background: var(--black);
+    border: 1px solid var(--black);
+    padding: 3px 10px;
   }
 
   /* ─── HERO ────────────────────────────────────────── */
   .hero {
-    padding-top: calc(var(--nav-h) + 80px);
-    padding-bottom: 80px;
-    padding-left: 2rem;
-    padding-right: 2rem;
-    max-width: 900px;
+    max-width: 1100px;
     margin: 0 auto;
+    padding: 80px 2rem 56px;
   }
 
   .hero-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11.5px;
-    font-family: var(--font-mono);
+    font-size: 14px;
     font-weight: 600;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 1.5rem;
-  }
-
-  .hero-eyebrow::before {
-    content: '';
-    display: block;
-    width: 28px; height: 1px;
-    background: var(--accent);
+    color: var(--purple-dark);
+    margin-bottom: 1.25rem;
   }
 
   h1 {
-    font-size: clamp(2.2rem, 5vw, 3.6rem);
-    font-weight: 800;
+    font-size: clamp(2.4rem, 5.5vw, 3.75rem);
+    font-weight: 600;
     letter-spacing: -.02em;
     line-height: 1.1;
-    margin-bottom: 1.25rem;
-    color: #fff;
+    margin-bottom: 1.5rem;
+    color: var(--black);
   }
 
-  h1 span { color: var(--accent); }
-
   .hero-lead {
-    font-size: 17px;
-    color: var(--muted);
-    max-width: 680px;
+    font-size: 18px;
+    color: var(--black);
+    max-width: 640px;
     margin-bottom: 2.5rem;
   }
 
   .hero-meta {
     display: flex;
-    gap: 2rem;
+    gap: 2.5rem;
     flex-wrap: wrap;
   }
 
@@ -170,23 +167,21 @@
   }
 
   .meta-label {
-    font-size: 10.5px;
-    font-family: var(--font-mono);
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: var(--muted);
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--black);
   }
 
   .meta-val {
-    font-size: 13.5px;
+    font-size: 16px;
     font-weight: 600;
-    color: var(--text);
+    color: var(--black);
   }
 
   .hero-divider {
-    width: 100%;
-    height: 1px;
-    background: linear-gradient(90deg, var(--border), transparent);
+    width: 96px;
+    height: 4px;
+    background: var(--purple);
     margin: 3rem 0 0;
   }
 
@@ -210,32 +205,30 @@
   .sidebar-section { margin-bottom: 2rem; }
 
   .sidebar-label {
-    font-size: 10px;
-    font-family: var(--font-mono);
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: .6rem;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: .5rem;
     padding-left: .75rem;
-    border-left: 2px solid var(--border);
   }
 
   .sidebar-nav { list-style: none; }
 
   .sidebar-nav li a {
     display: block;
-    padding: .3rem .75rem;
-    font-size: 13px;
-    color: var(--muted);
+    padding: .35rem .75rem;
+    font-size: 14px;
+    color: var(--black);
     text-decoration: none;
-    border-left: 2px solid var(--border);
-    transition: color .15s, border-color .15s;
+    border-left: 2px solid var(--grey-light);
+    overflow-wrap: anywhere;
+    transition: background .15s, border-color .15s;
   }
 
   .sidebar-nav li a:hover,
   .sidebar-nav li a.active {
-    color: var(--text);
-    border-left-color: var(--accent);
+    background: var(--grey-pale);
+    border-left-color: var(--purple);
   }
 
   /* ─── CONTENT ─────────────────────────────────────── */
@@ -243,118 +236,116 @@
 
   .section-header {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: 1rem;
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--black);
   }
 
   .section-number {
-    font-size: 11px;
-    font-family: var(--font-mono);
-    font-weight: 700;
-    color: var(--accent);
-    background: rgba(232,71,63,.1);
-    border: 1px solid rgba(232,71,63,.2);
-    border-radius: 4px;
-    padding: 2px 7px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--purple-dark);
     flex-shrink: 0;
   }
 
   h2 {
-    font-size: 1.35rem;
-    font-weight: 700;
-    color: #fff;
+    font-size: 2rem;
+    font-weight: 400;
+    line-height: 1.2;
     letter-spacing: -.01em;
+    color: var(--black);
   }
 
   h3 {
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--text);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--black);
     margin: 1.8rem 0 .7rem;
-    letter-spacing: .005em;
   }
 
-  p { color: var(--muted); margin-bottom: 1rem; }
+  p {
+    color: var(--black);
+    margin-bottom: 1rem;
+    max-width: 72ch;
+  }
 
-  /* ─── SAMPLE TABLE ────────────────────────────────── */
+  /* ─── TABLES ──────────────────────────────────────── */
   .table-wrap {
     overflow-x: auto;
-    border: 1px solid var(--border);
-    border-radius: 8px;
+    border: 1px solid var(--grey-light);
     margin-bottom: 1.5rem;
   }
 
   table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 12.5px;
+    font-size: 14px;
   }
 
-  thead tr { background: var(--surface2); }
-
   thead th {
-    padding: .65rem 1rem;
+    padding: .75rem 1rem;
     text-align: left;
-    font-size: 10.5px;
-    font-family: var(--font-mono);
-    font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: var(--muted);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--black);
     white-space: nowrap;
-    border-bottom: 1px solid var(--border);
+    background: var(--white);
+    border-bottom: 2px solid var(--black);
   }
 
   tbody tr {
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--grey-light);
     transition: background .12s;
   }
 
   tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: var(--surface); }
+  tbody tr:hover { background: var(--grey-pale); }
 
   tbody td {
-    padding: .6rem 1rem;
+    padding: .65rem 1rem;
     vertical-align: middle;
   }
 
   td.hash {
     font-family: var(--font-mono);
-    font-size: 11.5px;
-    color: #a8b5d4;
+    font-size: 14px;
+    color: var(--black);
     word-break: break-all;
+  }
+
+  td.fname {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--black);
+    white-space: nowrap;
   }
 
   td.label {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--muted);
-    white-space: nowrap;
+    font-size: 14px;
     font-weight: 600;
+    color: var(--black);
+    white-space: nowrap;
   }
 
   td.val {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--text);
-    word-break: break-all;
+    font-size: 14px;
+    color: var(--black);
+    overflow-wrap: anywhere;
   }
 
+  /* One neutral tag style: color is not used to code or identify items */
   .tag {
     display: inline-block;
-    font-size: 10.5px;
-    font-family: var(--font-mono);
+    font-size: 13px;
     font-weight: 600;
-    padding: 2px 7px;
-    border-radius: 3px;
+    padding: 2px 8px;
+    color: var(--black);
+    background: var(--grey-pale);
+    border: 1px solid var(--grey-light);
     white-space: nowrap;
   }
-
-  .tag-all    { background: rgba(59,130,246,.12); color: #60a5fa; border: 1px solid rgba(59,130,246,.25); }
-  .tag-na     { background: rgba(100,116,139,.12); color: #94a3b8; border: 1px solid rgba(100,116,139,.25); }
 
   /* ─── MITIGATION LIST ─────────────────────────────── */
   .mitigation-list {
@@ -368,31 +359,30 @@
     display: flex;
     gap: 1rem;
     padding: .9rem 1.1rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 13.5px;
-    color: var(--muted);
+    background: var(--white);
+    border: 1px solid var(--grey-light);
+    font-size: 16px;
+    color: var(--black);
     line-height: 1.5;
     transition: border-color .15s;
   }
 
-  .mitigation-list li:hover { border-color: rgba(232,71,63,.35); }
+  .mitigation-list li:hover { border-color: var(--purple); }
 
+  /* square marker (angular elements; the Greater Than symbol is never used as a bullet or arrow) */
   .mitigation-list li::before {
-    content: '›';
-    color: var(--accent);
-    font-size: 1rem;
-    font-weight: 700;
+    content: '';
     flex-shrink: 0;
-    margin-top: 1px;
+    width: 8px;
+    height: 8px;
+    margin-top: .55em;
+    background: var(--purple);
   }
 
   /* ─── CODE BLOCKS ─────────────────────────────────── */
   .yara-block {
-    background: var(--code-bg);
-    border: 1px solid var(--code-border);
-    border-radius: 8px;
+    background: var(--grey-pale);
+    border: 1px solid var(--grey-light);
     margin-bottom: 1.75rem;
     overflow: hidden;
   }
@@ -401,84 +391,145 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: .55rem 1rem;
-    background: #0a0f1a;
-    border-bottom: 1px solid var(--code-border);
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: .6rem 1rem;
+    background: var(--white);
+    border-bottom: 1px solid var(--grey-light);
   }
 
   .yara-name {
     font-family: var(--font-mono);
-    font-size: 11.5px;
+    font-size: 14px;
     font-weight: 700;
-    color: var(--green);
-    letter-spacing: .04em;
+    color: var(--purple-dark);
   }
 
-  .yara-meta-tags { display: flex; gap: .5rem; }
+  .yara-meta-tags {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+  }
 
   .yara-meta-tag {
-    font-size: 10px;
-    font-family: var(--font-mono);
-    color: var(--muted);
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 1px 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--black);
+    background: var(--grey-pale);
+    border: 1px solid var(--grey-light);
+    padding: 1px 8px;
   }
 
   pre {
     overflow-x: auto;
-    padding: 1.25rem 1.25rem;
+    padding: 1.25rem;
   }
 
   code {
     font-family: var(--font-mono);
-    font-size: 12px;
-    line-height: 1.75;
-    color: #cdd9f5;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--black);
     white-space: pre;
   }
 
-  .kw  { color: #ff7b72; }
-  .st  { color: #a5d6ff; }
-  .cm  { color: #5a6a8a; font-style: italic; }
-  .fn  { color: #d2a8ff; }
-  .hex { color: #79c0ff; }
-  .nm  { color: #ffa657; }
+  .inline-code {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--purple-darkest);
+    white-space: normal;
+  }
+
+  /* Syntax colors: purple spectrum and black only */
+  .kw  { color: var(--purple-dark); font-weight: 700; }    /* keywords */
+  .st  { color: var(--purple-darkest); }                   /* strings */
+  .cm  { color: var(--black); font-style: italic; }        /* comments */
+  .fn  { color: var(--purple-dark); font-weight: 700; }    /* rule names */
+  .hex { color: var(--purple-darkest); }                   /* hex bytes */
+  .nm  { color: var(--black); font-weight: 700; }          /* variable names */
+
+  /* ─── FINGERPRINTS ────────────────────────────────── */
+  .fingerprint-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .fp-card {
+    background: var(--grey-pale);
+    border: 1px solid var(--grey-light);
+    border-top: 4px solid var(--purple);
+    padding: 1.25rem;
+  }
+
+  .fp-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: .5rem;
+  }
+
+  .fp-value {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--purple-darkest);
+    word-break: break-all;
+  }
 
   /* ─── CALLOUT ─────────────────────────────────────── */
   .callout {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
-    border-radius: 0 6px 6px 0;
-    padding: .9rem 1.1rem;
+    background: var(--grey-pale);
+    border: 1px solid var(--grey-light);
+    border-left: 4px solid var(--purple);
+    padding: 1rem 1.25rem;
     margin-bottom: 1.5rem;
-    font-size: 13.5px;
-    color: var(--muted);
+    font-size: 16px;
+    color: var(--black);
     line-height: 1.6;
   }
 
-  .callout strong { color: var(--text); }
+  .callout strong { font-weight: 600; }
 
   /* ─── FOOTER ──────────────────────────────────────── */
   footer {
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--grey-light);
     padding: 2rem;
-    text-align: center;
-    font-size: 12px;
-    color: var(--muted);
-    font-family: var(--font-mono);
   }
 
-  footer span { color: var(--accent); }
+  .footer-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 2rem;
+  }
 
-  /* ─── RESPONSIVE ──────────────────────────────────── */
+  .footer-inner .nav-logo img { height: 24px; }
+
+  .footer-name {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+
+  /* ─── RESPONSIVE / MOTION ─────────────────────────── */
   @media (max-width: 768px) {
-    .layout { grid-template-columns: 1fr; }
-    .sidebar { display: none; }
+    nav { padding: .75rem 1rem; }
+    .nav-left { gap: 1rem; }
     .nav-links { display: none; }
-    h1 { font-size: 2rem; }
+    .brand-name { font-size: 15px; }
+    .apex-expansion { font-size: 14px; }
+    .hero { padding: 48px 1rem 40px; }
+    .layout { grid-template-columns: 1fr; padding: 0 1rem 4rem; }
+    .sidebar { display: none; }
+    .fingerprint-grid { grid-template-columns: 1fr; }
+    footer { padding: 1.5rem 1rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { transition: none !important; }
   }
 </style>
 </head>
@@ -486,23 +537,27 @@
 
 <!-- NAV -->
 <nav>
-  <a class="nav-brand" href="#">
-    <span class="dot"></span>
-    Accenture Apex Labs · Threat Intelligence
-  </a>
+  <div class="nav-left">
+    <!-- Official Accenture Greater Than symbol (subsequent pages). Replace the asset path with the official file. -->
+    <a class="nav-logo" href="../"><img src="../assets/accenture-greater-than.svg" alt="Accenture" width="26" height="28"></a>
+    <a class="nav-brand" href="#">
+      <span class="brand-name">Accenture Security APEX Labs</span>
+      <span class="apex-expansion"><b>A</b>dversary <b>P</b>ursuit, <b>E</b>ngagement, and E<b>x</b>ploitation</span>
+    </a>
+  </div>
   <ul class="nav-links">
     <li><a href="#sample">Sample</a></li>
     <li><a href="#analysis">Analysis</a></li>
     <li><a href="#mitigation">Mitigation</a></li>
-    <li><a href="#yara">YARA Rule</a></li>
+    <li><a href="#yara">YARA rule</a></li>
   </ul>
   <span class="nav-tag">TLP:CLEAR</span>
 </nav>
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-eyebrow">Malware Intelligence Report</div>
-  <h1><span>Settra Blinder</span><br>IOCs &amp; Detection</h1>
+  <div class="hero-eyebrow">Malware intelligence report</div>
+  <h1>Settra Blinder<br>IOCs &amp; detection</h1>
   <p class="hero-lead">
     Indicators of compromise, technical analysis, YARA detection rule, and mitigation guidance for Settra Blinder — a 64-bit Windows EDR evasion toolkit exploiting vulnerable kernel drivers to blind endpoint defences.
   </p>
@@ -513,7 +568,7 @@
     </div>
     <div class="meta-item">
       <span class="meta-label">Author</span>
-      <span class="meta-val">Accenture Apex Labs</span>
+      <span class="meta-val">Accenture Security APEX Labs</span>
     </div>
     <div class="meta-item">
       <span class="meta-label">Platform</span>
@@ -535,14 +590,14 @@
     <div class="sidebar-section">
       <div class="sidebar-label">Sections</div>
       <ul class="sidebar-nav">
-        <li><a href="#sample">Sample &amp; Hashes</a></li>
-        <li><a href="#analysis">Technical Analysis</a></li>
+        <li><a href="#sample">Sample &amp; hashes</a></li>
+        <li><a href="#analysis">Technical analysis</a></li>
         <li><a href="#mitigation">Mitigation</a></li>
-        <li><a href="#yara">YARA Rule</a></li>
+        <li><a href="#yara">YARA rule</a></li>
       </ul>
     </div>
     <div class="sidebar-section">
-      <div class="sidebar-label">Rule Files</div>
+      <div class="sidebar-label">Rule files</div>
       <ul class="sidebar-nav">
         <li><a href="#yara-settra">settra_blinder.yar</a></li>
       </ul>
@@ -556,7 +611,7 @@
     <section id="sample">
       <div class="section-header">
         <span class="section-number">01</span>
-        <h2>Sample &amp; Hashes</h2>
+        <h2>Sample &amp; hashes</h2>
       </div>
       <p>Settra Blinder is a 64-bit Windows PE command-line tool designed to disable Endpoint Detection and Response protections via kernel-level attack techniques.</p>
 
@@ -572,7 +627,7 @@
             <tr><td class="label">MD5</td><td class="hash">d5e6b89d4ae598ad889a46d352ce722f</td></tr>
             <tr><td class="label">SHA1</td><td class="hash">bdc63e59aa9e9317ba4f40222748be1729a810b2</td></tr>
             <tr><td class="label">SHA256</td><td class="hash">32d6657506d861c206a5c47c62bba4c82231d4a12f12d258908a46f7e5f637bc</td></tr>
-            <tr><td class="label">YARA Rule</td><td><span class="tag tag-all">settra_blinder</span></td></tr>
+            <tr><td class="label">YARA rule</td><td><span class="tag tag-all">settra_blinder</span></td></tr>
           </tbody>
         </table>
       </div>
@@ -582,12 +637,12 @@
     <section id="analysis">
       <div class="section-header">
         <span class="section-number">02</span>
-        <h2>Technical Analysis</h2>
+        <h2>Technical analysis</h2>
       </div>
       <p>Settra Blinder demonstrates sophisticated kernel-level attack capabilities across several technique categories:</p>
 
       <div class="callout">
-        <strong>BYOVD — Bring Your Own Vulnerable Driver:</strong> Exploits legitimately signed but vulnerable drivers to gain kernel read/write primitives. Known targeted drivers include RTCore64.sys (<span style="color:#a5d6ff;font-family:var(--font-mono);font-size:12px">CVE-2019-18093</span>) and AsrDrv101.sys (<span style="color:#a5d6ff;font-family:var(--font-mono);font-size:12px">CVE-2020-12446</span>).
+        <strong>BYOVD — Bring Your Own Vulnerable Driver:</strong> Exploits legitimately signed but vulnerable drivers to gain kernel read/write primitives. Known targeted drivers include RTCore64.sys (<span class="inline-code">CVE-2019-18093</span>) and AsrDrv101.sys (<span class="inline-code">CVE-2020-12446</span>).
       </div>
 
       <div class="table-wrap">
@@ -635,7 +690,7 @@
         <span class="section-number">03</span>
         <h2>Mitigation</h2>
       </div>
-      <p>Accenture Cyber Intelligence recommends the following measures to mitigate the risk posed by Settra Blinder:</p>
+      <p>APEX Labs recommends the following measures to mitigate the risk posed by Settra Blinder:</p>
       <ul class="mitigation-list">
         <li>Implement and maintain updated kernel patches to prevent exploitation of known vulnerable drivers.</li>
         <li>Deploy Driver Signature Enforcement (DSE) and Secure Boot to prevent unsigned or vulnerable driver loading.</li>
@@ -649,7 +704,7 @@
     <section id="yara">
       <div class="section-header">
         <span class="section-number">04</span>
-        <h2>YARA Rule</h2>
+        <h2>YARA rule</h2>
       </div>
       <p>The following YARA rule detects Settra Blinder based on CLI argument strings, vulnerable driver device paths, kernel callback routine names, and runtime log strings. Security teams are encouraged to deploy this rule across endpoint and file-scanning solutions.</p>
 
@@ -714,7 +769,13 @@
 </div>
 
 <footer>
-  <span>Accenture Apex Labs</span> · Threat Intelligence · TLP:CLEAR · July 2026
+  <div class="footer-inner">
+    <a class="nav-logo" href="../"><img src="../assets/accenture-greater-than.svg" alt="Accenture" width="22" height="24"></a>
+    <div>
+      <div class="footer-name">Accenture Security APEX Labs · Threat Intelligence · TLP:CLEAR · July 2026</div>
+      <span class="apex-expansion"><b>A</b>dversary <b>P</b>ursuit, <b>E</b>ngagement, and E<b>x</b>ploitation</span>
+    </div>
+  </div>
 </footer>
 
 <script>
