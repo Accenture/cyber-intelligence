@@ -1,0 +1,177 @@
+---
+layout: default
+type: report
+title: "Trusted infrastructure, untrusted payloads"
+footer_date: "September 2026"
+---
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Threat intelligence alert</div>
+  <h1>Trusted infrastructure,<br>untrusted payloads</h1>
+  <p class="hero-lead">
+    Since early 2026, Accenture APEX Labs has been closely analyzing abuse across content delivery networks (CDNs), package mirrors, and edge-computing platforms, uncovering how threat actors are leveraging trusted infrastructure to host malware, phishing pages, and command-and-control (C2) operations.
+  </p>
+  <div class="hero-meta">
+    <div class="meta-item">
+      <span class="meta-label">Published</span>
+      <span class="meta-val"><time datetime="2026-09">September 2026</time></span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Author</span>
+      <span class="meta-val team-name">Accenture APEX Labs</span>
+    </div>
+  </div>
+  <div class="hero-divider"></div>
+</div>
+
+<!-- MAIN -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Sections</div>
+      <ul class="sidebar-nav">
+        <li><a href="#overview">What's new</a></li>
+        <li><a href="#trusted-services">Trusted services vs. defenders</a></li>
+        <li><a href="#measuring">Measuring abuse</a></li>
+        <li><a href="#supply-chain">Software supply chain</a></li>
+        <li><a href="#multistage">Multistage malware</a></li>
+        <li><a href="#edge">Edge computing</a></li>
+        <li><a href="#case-study">Case study: UNC5342</a></li>
+        <li><a href="#recommendations">Recommendations</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content" id="main">
+
+    <section id="overview">
+      <div class="section-header">
+        <span class="section-number">01</span>
+        <h2>What's new</h2>
+      </div>
+      <ul class="mitigation-list">
+        <li>Since early 2026, Accenture APEX Labs has been closely analyzing abuse across content delivery networks (CDNs), package mirrors, and edge-computing platforms, uncovering how threat actors are leveraging trusted infrastructure to host malware, phishing pages, and command-and-control (C2) operations.</li>
+        <li>We identified more than 14,000 malware files and nearly 12,000 flagged URLs on high-confidence attacker-controlled CDN namespaces. Approximately 84% of those flagged URLs were associated with phishing, fraud, or scams.</li>
+        <li>To address the growing threat, APEX Labs is evaluating a content-aware detection approach designed to assess live content, behavior, manifests, install scripts, and dependency relationships in real time, moving beyond traditional indicator- and reputation-based detection models to address the detection gap.</li>
+      </ul>
+
+      <figure class="pull-quote">
+        <blockquote>
+          <p>The same characteristics that make modern delivery platforms valuable to legitimate users also make them attractive to threat actors. <strong>Trust is inherited and can then be weaponized</strong>.</p>
+        </blockquote>
+        <figcaption><strong>Ryan Whelan</strong>, Global Director, Accenture Cyber Intelligence, APEX Labs</figcaption>
+      </figure>
+    </section>
+
+    <section id="trusted-services">
+      <div class="section-header">
+        <span class="section-number">02</span>
+        <h2>Turning the internet's most trusted services against defenders</h2>
+      </div>
+      <p>Attackers are increasingly hiding behind the infrastructure the internet already trusts. The same properties that make a Content Delivery Network (CDN) good—the reputable domains, the valid Transport Layer Security (TLS), the near-perfect availability—can defeat the reputation and network filtering that defenders rely on. Trust is inherited, then can be weaponized, without registering anything on which a defender can pivot.</p>
+
+      <p class="exhibit-title">Trusted infrastructure can undermine traditional controls</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>The property attackers exploit</th><th>The control it undermines</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="label">Reputable domains</td><td class="val">Blocklists and domain-reputation scoring</td></tr>
+            <tr><td class="label">TLS by default</td><td class="val">Perimeter payload / beacon inspection</td></tr>
+            <tr><td class="label">Ephemerality</td><td class="val">Indicator-based detection and takedown timelines</td></tr>
+            <tr><td class="label">Browser JavaScript</td><td class="val">File-centric AV built for portable executables</td></tr>
+            <tr><td class="label">Dynamic edge logic</td><td class="val">Any single point-in-time URL check</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout">The common thread: static, indicator-driven detection is structurally disadvantaged. What's needed is a fast, content-aware judgment at the moment a URL matters.</div>
+
+      <p>At APEX Labs, we have observed how this abuse of trust is driving a growing detection gap. Adversaries are hiding behind the internet's most trusted services, bypassing defenses designed to identify threats from untrusted sources. They are abusing trusted platforms, CDNs, and edge services instead of building their own infrastructure. Malware, phishing, and command-and-control traffic now blend into legitimate business activity. Once malicious content is delivered through a trusted domain, many security controls assume it is safe.</p>
+      <p>The fundamental challenge is that traditional defenses are constrained by trust. Organizations cannot simply block or aggressively inspect the platforms, services, and CDNs that underpin their own operations. The very characteristics that make these services indispensable and trustworthy also make malicious activity difficult to distinguish from normal traffic. As a result, malicious payloads can move through infrastructure that organizations are reluctant, and often unable, to block. This creates a visibility gap where attackers can hide in plain sight, leveraging trusted infrastructure in ways that many conventional controls were never designed to detect.</p>
+      <p>We are aiming to address that gap by exploring whether real-time, content-aware analysis can identify abuse of trusted infrastructure that conventional indicator-based defenses often miss. The research focuses on determining if security decisions can be made at request time by evaluating content, behavior, and dependency relationships rather than relying solely on known indicators.</p>
+      <p>During the first half of this year, we analyzed abuse across three major CDN providers and identified significant malicious activity within high-confidence namespaces. The findings included more than 14,000 malicious files, approximately 84% of flagged URLs associated with phishing or fraud, and a consistently increasing volume of abuse.</p>
+      <p>Using the package-mirror approach, we also uncovered several active campaigns, including multi-stage in-memory malware loaders, command-and-control communications concealed within public Google Calendar events, and a malicious npm package that delivered its payload through a hidden dependency chain. These results confirm that CDN and package ecosystem abuse is both real and measurable, and that mirror-based monitoring can expose active malicious campaigns.</p>
+    </section>
+
+    <section id="measuring">
+      <div class="section-header">
+        <span class="section-number">03</span>
+        <h2>Measuring abuse across trusted infrastructure</h2>
+      </div>
+      <p>To better understand the scale of this trend, APEX Labs analyzed abuse across three distinct delivery models: attacker-controlled CDN namespaces, backbone CDN infrastructure, and software package mirrors. Each of these environments presented different signal qualities and carried different significance. For example, a malicious file discovered on an attacker-controlled namespace carried a different level of confidence than a flagged URL observed on a public package mirror.</p>
+      <p>Nevertheless, our findings revealed meaningful levels of malicious activity across all three ecosystems.</p>
+      <p>On the highest-confidence surface, researchers identified 14,009 malware files and 11,745 flagged URLs associated with attacker-controlled CDN namespaces. Analysis showed that approximately 84% of flagged URLs were related to phishing, fraud, or scams rather than malware delivery, underscoring how heavily adversaries have continued to invest in social engineering operations.</p>
+      <p>The malicious tools we uncovered consisted primarily of commodity malware, like AsyncRAT, XRed, njRAT, DCRat, QuasarRAT, Meterpreter, DONUT, and Cobalt Strike. Not the most advanced, nation-state tools, but still highly effective remote access trojans (RAT) and offensive C2 frameworks. It all suggests that trusted infrastructure is increasingly enabling large volumes of everyday cybercrime activity to operate with enterprise-grade resilience and availability.</p>
+      <p>In our research, we also noted that malware hosting activity on high-confidence namespaces more than doubled between January and June 2026, increasing from roughly 1,500 observed malware files in January to more than 3,200 by June. Phishing activity followed a similarly upward trajectory across the same period. While six months is not sufficient to establish a long-term trend, the direction is difficult to ignore. Attackers appear to be moving toward these platforms, not away from them.</p>
+    </section>
+
+    <section id="supply-chain">
+      <div class="section-header">
+        <span class="section-number">04</span>
+        <h2>When trust compounds across the software supply chain</h2>
+      </div>
+      <p>Some of our most interesting findings emerged from the software package ecosystem. Software supply chains operate on inherited trust. Developers trust package repositories. Build pipelines trust developers. Production environments trust approved builds. Every layer relies on the integrity of the one before it. That means a single malicious package can potentially affect thousands of downstream systems.</p>
+      <p>APEX Labs identified multiple malicious npm packages that were distributed through trusted package mirrors and repositories. These included downloaders for modular backdoors, credential stealers, cryptocurrency theft utilities, and packages that installed SSH backdoors to maintain persistent access. Several leveraged post-installation scripts to execute automatically during installation, requiring no additional user interaction. Others concealed malicious functionality within dependency chains specifically designed to evade scrutiny.</p>
+      <p>One notable example involved a package masquerading as a legitimate software library clone. The package itself appeared benign, but a hidden dependency silently downloaded and executed malicious code. The visible package served purely as a delivery mechanism while the actual malicious functionality remained one layer removed. This structure enabled the malware to survive scrutiny that focused only on the package initially installed by the victim.</p>
+      <p>Researchers also discovered multiple packages designed to target cryptocurrency developers and DevOps environments. Some exfiltrated wallet credentials, configuration files, environment variables, shell histories, and cloud-related secrets. Others installed unauthorized SSH keys to maintain long-term access to compromised systems. Several campaigns maintained distribution through both npm and CDN mirrors simultaneously, allowing malware delivery to continue even if one distribution route was removed.</p>
+      <p>Importantly, our research underscored that package mirrors serve not only as an attack surface, but also as a defensive opportunity. Because they centralize software distribution through predictable and observable infrastructure, package mirrors provide defenders with a valuable vantage point into supply chain threats that might otherwise remain hidden across thousands of private development environments.</p>
+    </section>
+
+    <section id="multistage">
+      <div class="section-header">
+        <span class="section-number">05</span>
+        <h2>Multistage malware hidden in plain sight</h2>
+      </div>
+      <p>APEX Labs uncovered several campaigns illustrating how effectively trusted infrastructure can conceal sophisticated malware operations.</p>
+      <p>One representative infection chain involved four stages. An obfuscated PowerShell downloader first retrieved an in-memory loader, which then decrypted additional payloads using an XOR key disguised as an antivirus scan result. Subsequent stages performed direct-syscall shellcode injection before deploying a final-stage information stealer targeting credentials and cryptocurrency wallets. No meaningful artifacts were written to disk.</p>
+      <p>Another campaign employed a particularly creative command-and-control mechanism. Rather than embedding infrastructure details directly within malware, operators stored base64-encoded C2 configuration data inside the description field of a public Google Calendar event. The malware retrieved the calendar entry, extracted the configuration, and then contacted attacker infrastructure. This approach allowed operators to rotate infrastructure simply by editing a calendar event while generating traffic that appeared entirely legitimate to most organizations.</p>
+      <p>These examples demonstrate how attackers are increasingly exploiting trusted services to both host payloads and to conceal relationships, dependencies, and operational infrastructure that traditional detection methods may overlook.</p>
+    </section>
+
+    <section id="edge">
+      <div class="section-header">
+        <span class="section-number">06</span>
+        <h2>Edge computing changes the rules</h2>
+      </div>
+      <p>The rise of edge computing is introducing further layers of complexity because modern edge platforms provide far more than content delivery. Services now allow users to run serverless code, establish encrypted tunnels, host web applications, relay API traffic, and store content across globally distributed infrastructure. Threat actors have quickly adapted these capabilities for malicious purposes.</p>
+      <p>In our research, we observed edge services supporting phishing operations, ransomware infrastructure, malware staging, API relays, and command-and-control communications. A single operator could potentially host phishing content, deliver payloads, relay communications, and maintain C2 infrastructure entirely within one provider's environment. In many cases, they could do so without registering a domain or managing traditional hosting infrastructure.</p>
+      <p>This has important implications for defenders. Edge services frequently eliminate the signals on which traditional investigative techniques often rely, infrastructure indicators like domain registration, hosting providers, age, ownership, or reputation. Infrastructure can be created and discarded rapidly, and content can change dynamically depending on who requests it. A URL that appears benign to an automated scanner may deliver malicious content to a victim moments later.</p>
+    </section>
+
+    <section id="case-study">
+      <div class="section-header">
+        <span class="section-number">07</span>
+        <h2>Case study: UNC5342 and the OtterCookie / OtterCandy campaign</h2>
+      </div>
+      <p>In March 2026, APEX Labs identified four malicious npm packages distributed through both npmjs.com and the jsdelivr.com CDN, functioning as first-stage downloaders for two related malware families: OtterCookie and OtterCandy.</p>
+      <p>The packages odds-analyzer, tailwindcss-devtools, tw-modern-ui, and svg-safety-tool were published in multiple versions on the same day from dedicated npmjs.com accounts with no prior publishing history, a pattern suggesting purpose-built distribution infrastructure rather than compromised legitimate accounts. Their names mimicked recognizable developer tooling, and their dual availability across the official registry and jsdelivr.com provided both reach and delivery redundancy. Three packages retrieved OtterCandy payloads from bet.slotgambit[.]com, a gambling site abused for its high availability and traffic volume, which was a shift from the legitimate JSON hosting services UNC5342 had previously favored, which may suggest deliberate infrastructure diversification following prior detections. The fourth package fetched OtterCookie from jsonkeeper[.]com. In both cases, HTTP requests included a custom bearrtoken: logo authentication header used to gate payload delivery, though analysis of the OtterCandy-serving packages found this check was implemented but not enforced server-side. Payloads were embedded within JSON objects, parsed by the npm package at runtime, and executed entirely in memory.</p>
+      <p>OtterCookie is a cross-platform, modular JavaScript backdoor that leverages the Node.js runtime to operate consistently across Windows, macOS, and Linux. Its loader is heavily obfuscated using encoded strings with a custom encoding scheme, control flow flattening, and junk code insertion. Once executed, it decrypts an embedded configuration, constructing up to two C2 IP addresses from concatenated parameter pairs, and deploys four functional modules directly in memory without writing them to disk. The first module establishes a WebSocket connection via socket.io-client to the C2 at 216[.]126[.]237[.]71:4801, beaconing system information including hostname, OS, platform, and virtualization status, and accepting arbitrary remote commands. The second is a browser credential stealer targeting Chrome, Edge, Brave, Opera, and LT Browser—the inclusion of LT Browser, a responsive web testing tool, appearing to reinforce that developers are the intended victims—as well as macOS Keychain data and more than two dozen cryptocurrency wallet extensions including MetaMask, Phantom, and Trust Wallet. The third module performs file system enumeration across all drives on Windows and from the root directory on Linux and macOS, exfiltrating files matching a targeted extension list, including .env, .pem, .json, .js, .ts, .pdf, and others, while respecting an extensive exclusion list to avoid noisy or protected paths. The fourth module runs an infinite loop to capture clipboard contents, executing OS-specific commands to retrieve clipboard data and exfiltrating it to the same endpoint used for activity logging, consolidating telemetry and stolen data on a single channel.</p>
+      <p>OtterCandy shares significant structural and functional overlap with OtterCookie, including the same bogus control flow obfuscation and in-memory JSON payload delivery, but adds RC4-encrypted, Base64-encoded strings for additional obfuscation and extends the capability set with RAT-like command handling over a persistent WebSocket to bet.slotgambit[.]com. Beyond browser credential and wallet extension theft, OtterCandy also enumerates and exfiltrates local cryptocurrency wallet application data from Exodus, Electrum, Guarda, and Atomic, and actively searches for cloud credential directories associated with Google Cloud, AWS, and Azure. C2 commands can trigger targeted file searches by pattern, directory listings, individual file reads, and full re-exfiltration of system data, giving the operator flexible post-compromise control without deploying additional tooling.</p>
+      <p>The campaign appears to illustrate how UNC5342 has systematically operationalized supply chain trust. Packages arrived through repositories developers already relied on, payloads were staged on infrastructure reputation-based controls were unlikely to flag, and in-memory execution minimized the on-disk artifacts available to endpoint detection. Each new package extends that reach across potentially thousands of downstream environments at minimal additional cost to the attacker, a scalability that conventional indicator-based defenses are structurally ill-suited to address.</p>
+    </section>
+
+    <section id="recommendations">
+      <div class="section-header">
+        <span class="section-number">08</span>
+        <h2>What this means for your organization</h2>
+      </div>
+      <p>Abuse of trusted infrastructure is a rational response to strong perimeters, and it is likely to keep growing while the economics favor it. Yet, the answer is emphatically not to start distrusting the infrastructure the internet runs on. Rather, defenders should recognize that trusted infrastructure is no longer a reliable indicator of benign intent.</p>
+      <p>Ultimately, our research suggests that static indicators are becoming structurally disadvantaged in environments built on trust, encryption, and ephemerality. The future of detection may depend less on where content originates and more on understanding what that content is doing at the exact moment it matters. As attackers continue to adapt, defenders will need to evolve from reputation-based trust models toward real-time, content-aware security decisions that can keep pace with the modern internet.</p>
+      <p>Defenders also need to collaborate with providers. The same concentration that makes this easy to abuse makes it powerful to defend: faster abuse signaling, tighter controls on disposable accounts, and quicker takedowns all have outsized effects. Better detection and closer collaboration will be what keeps shared infrastructure both useful and safe.</p>
+      <p>Knowing where traffic comes from used to be enough. It isn't anymore.</p>
+      <p>APEX Labs suggests defenders:</p>
+      <ul class="mitigation-list">
+        <li><span><strong>Moving beyond reputation-based detection.</strong> Trusted services can host malicious activity just as effectively as attacker-owned infrastructure.</span></li>
+        <li><span><strong>Increasing software supply chain visibility.</strong> Package manifests, install scripts, hidden dependencies, and transitive relationships deserve the same attention as executables and malware samples.</span></li>
+        <li><span><strong>Adopting more content-aware detection approaches.</strong> Evaluating behavior, content, dependency relationships, and execution context may provide greater fidelity than infrastructure reputation alone.</span></li>
+        <li><span><strong>Collaborating closely with infrastructure providers.</strong> Faster abuse reporting, stronger safeguards around disposable accounts, and accelerated takedowns can have ecosystem-wide impact.</span></li>
+      </ul>
+    </section>
+
+  </main>
+</div>
