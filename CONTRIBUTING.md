@@ -1,6 +1,6 @@
 # Contributing
 
-This guide is for Accenture Security APEX Labs analysts who publish reports to this repository. The [README](README.md) is client-facing, so keep internal process here.
+This guide is for Accenture APEX Labs analysts who publish reports to this repository. The [README](README.md) is client-facing, so keep internal process here.
 
 ## Repository layout
 
@@ -15,7 +15,7 @@ This guide is for Accenture Security APEX Labs analysts who publish reports to t
 │   └── report-scripts.html     # Sidebar highlighting on report pages
 ├── assets/
 │   ├── css/
-│   │   ├── site.css                      # Shared by every page: fonts, colours, header, footer
+│   │   ├── site.css                      # Shared by every page: fonts, colors, header, footer
 │   │   ├── report.css                    # Report pages: hero, sidebar, tables, YARA blocks, quotes
 │   │   └── landing.css                   # Landing page: report cards and information sections
 │   ├── fonts/Graphik/                    # Graphik web fonts (Regular, Medium, Semibold)
@@ -49,7 +49,7 @@ Each page holds only its own content, under a short front matter block. The shar
 ---
 layout: default
 type: report                      # "report" for a report page, "landing" for the landing page
-title: "Threat name — IOCs & detection"   # browser title; " | Accenture Security APEX Labs" is added for you
+title: "Threat name — IOCs & detection"   # browser title; " | Accenture APEX Labs" is added for you
 footer_date: "Month YYYY"         # shown in the footer after "Threat Intelligence"
 ---
 ```
@@ -69,7 +69,7 @@ Jekyll treats `{{` and `{%` in a page as template code. If a report ever needs t
      <p class="hero-lead">One-sentence summary from the source report.</p>
      <div class="hero-meta">
        <div class="meta-item"><span class="meta-label">Published</span><span class="meta-val">Month YYYY</span></div>
-       <div class="meta-item"><span class="meta-label">Author</span><span class="meta-val team-name">Accenture Cyber Intelligence</span></div>
+       <div class="meta-item"><span class="meta-label">Author</span><span class="meta-val team-name">Accenture APEX Labs</span></div>
      </div>
      <div class="hero-divider"></div>
    </div>
@@ -124,7 +124,7 @@ Open http://127.0.0.1:4000/cyber-intelligence/. The preview rebuilds when you sa
 
 ## Brand rules
 
-- Write organisational and team names (for example, Accenture Security APEX Labs) in Graphik Regular, title case, in black or white depending on the background. Don't colour or embolden them; add the `team-name` class where a name sits inside bold text, such as the hero's Author field.
+- Write organizational and team names (for example, Accenture APEX Labs) in Graphik Regular, title case, in black or white depending on the background. Don't color or embolden them; add the `team-name` class where a name sits inside bold text, such as the hero's Author field.
 - Keep team names a generous distance from the Accenture logo or Greater Than symbol so they never read as a combined logo. The header and footer use a `2rem` gap.
 - Every page carries Legal's disclaimer and copyright line, which comes from `_includes/footer.html`. The README carries them under Disclaimer. Use Legal's wording exactly; don't edit it or add a second disclaimer in the page body.
 - Report pages use the same header links as the landing page (Reports, How to use, Sharing, About), which come from `_includes/header.html`. List each report's own sections in its sidebar, not the header.

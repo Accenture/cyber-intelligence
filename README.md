@@ -21,7 +21,7 @@
 
 ---
 
-This repository hosts the threat intelligence reports that Accenture Security APEX Labs publishes from Accenture Cyber Intelligence (CI) research into active threats. Each report gives defenders what they need to detect and respond to the threat: indicators of compromise (IOCs), detection rules, network fingerprints and mitigation guidance.
+This repository hosts the threat intelligence reports that Accenture APEX Labs publishes from Accenture Cyber Intelligence (CI) research into active threats. Each report gives defenders what they need to detect and respond to the threat: indicators of compromise (IOCs), detection rules, network fingerprints and mitigation guidance.
 
 The reports are published as web pages at **[accenture.github.io/cyber-intelligence](https://accenture.github.io/cyber-intelligence/)**. All content is **TLP:CLEAR** and free to use in your defensive stack.
 
@@ -52,7 +52,7 @@ The reports are published as web pages at **[accenture.github.io/cyber-intellige
 | Report | Published | Platform |
 | --- | --- | --- |
 | [**AI agents weaponizing stolen source code**](https://accenture.github.io/cyber-intelligence/ai-agents-stolen-source-code/)<br>Active, AI-enabled campaign that steals private source code through compromised GitHub Personal Access Tokens and uses AI agents to find and chain novel vulnerabilities | September 2026 | Any (via GitHub access) |
-| [**Settra Blinder**](https://accenture.github.io/cyber-intelligence/settra-blinder/)<br>64-bit Windows EDR evasion toolkit that abuses vulnerable kernel drivers (BYOVD) to blind endpoint defences | July 2026 | Windows x64 |
+| [**Settra Blinder**](https://accenture.github.io/cyber-intelligence/settra-blinder/)<br>64-bit Windows EDR evasion toolkit that abuses vulnerable kernel drivers (BYOVD) to blind endpoint defenses | July 2026 | Windows x64 |
 | [**RustyRocket**](https://accenture.github.io/cyber-intelligence/rustyrocket/)<br>Implant family covering Windows and Linux agents, proxies and the RocketLaunch service installer | March 2026, updated July 2026 | Windows, Linux |
 
 ## Using this intelligence
@@ -75,7 +75,7 @@ Some rules import YARA modules such as `pe` or `elf`, which are included in stan
 
 **Network fingerprints.** Alert on the JA4 and JA3 fingerprints in your NDR or SIEM pipeline, and prefer JA4 where your tooling supports it. Other software built on the same TLS library can share a fingerprint, so check destination, SNI and host context before blocking.
 
-**Mitigation guidance.** Each report ends with recommendations specific to the threat. Use them to prioritise hardening and monitoring work.
+**Mitigation guidance.** Each report ends with recommendations specific to the threat. Use them to prioritize hardening and monitoring work.
 
 **Test before you block.** Run new rules in alert-only mode first to measure false positives in your environment.
 
@@ -85,7 +85,7 @@ Some rules import YARA modules such as `pe` or `elf`, which are included in stan
 
 All content in this repository is marked **TLP:CLEAR** under [FIRST TLP 2.0](https://www.first.org/tlp/). Recipients may share it without restriction, subject to standard copyright rules.
 
-You are welcome to load the indicators and rules into your own tools and to redistribute them. Please credit Accenture Security APEX Labs. Keep the rule metadata (author, date, version) intact so others can trace updates.
+You are welcome to load the indicators and rules into your own tools and to redistribute them. Please credit Accenture APEX Labs. Keep the rule metadata (author, date, version) intact so others can trace updates.
 
 ## Feedback
 
@@ -105,8 +105,8 @@ Copyright © 2026 Accenture. All rights reserved.
 
 <img align="right" width="64" src="assets/icons/about.svg" alt="">
 
-Accenture Security APEX Labs (Adversary Pursuit, Engagement, and Exploitation) publishes the reports in this repository. They share indicators, detection rules and mitigation guidance from Accenture Cyber Intelligence research with the wider defender community.
+Accenture APEX Labs (Adversary Pursuit, Engagement, and Exploitation) publishes the reports in this repository. They share indicators, detection rules and mitigation guidance from Accenture Cyber Intelligence research with the wider defender community.
 
-Accenture Cyber Intelligence (CI) provides advanced threat intelligence, adversary research and detection capabilities to help organisations stay ahead of emerging threats.
+Accenture Cyber Intelligence (CI) provides advanced threat intelligence, adversary research and detection capabilities to help organizations stay ahead of emerging threats.
 
 For more about Accenture's security services, visit [Accenture Cybersecurity](https://www.accenture.com/us-en/services/cybersecurity).
