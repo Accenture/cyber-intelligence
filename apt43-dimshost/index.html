@@ -1,0 +1,386 @@
+---
+layout: default
+type: report
+title: "Disposable domains, durable code"
+footer_date: "November 2026"
+---
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Threat intelligence alert</div>
+  <h1>Disposable domains,<br>durable code</h1>
+  <p class="hero-lead">
+    Since October 2026, Accenture APEX Labs has observed an APT43-linked cluster running two toolsets from overlapping infrastructure: a script-based chain that starts with a Dropbox-delivered ZIP file and a Korean-language lure, and two fake security-software installers that deploy a custom HTTPS backdoor, DimsHost.
+  </p>
+  <div class="hero-meta">
+    <div class="meta-item">
+      <span class="meta-label">Published</span>
+      <span class="meta-val"><time datetime="2026-11">November 2026</time></span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Author</span>
+      <span class="meta-val team-name">Accenture APEX Labs</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Region</span>
+      <span class="meta-val">Asia-Pacific</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Indicators</span>
+      <span class="meta-val">74 indicators</span>
+    </div>
+  </div>
+  <div class="hero-divider"></div>
+</div>
+
+<!-- MAIN -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Sections</div>
+      <ul class="sidebar-nav">
+        <li><a href="#overview">What's new</a></li>
+        <li><a href="#toolsets">Two toolsets, one set of infrastructure</a></li>
+        <li><a href="#chain">Script chain built to hide</a></li>
+        <li><a href="#backdoor">Fake installers and backdoor</a></li>
+        <li><a href="#attribution">Evidence linking to APT43</a></li>
+        <li><a href="#indicators">Indicators of compromise</a></li>
+        <li><a href="#recommendations">Recommendations</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content" id="main">
+
+    <!-- OVERVIEW -->
+    <section id="overview">
+      <div class="section-header">
+        <span class="section-number">01</span>
+        <h2>What's new</h2>
+      </div>
+      <ul class="mitigation-list">
+        <li>Since October 2026, Accenture APEX Labs has observed an APT43-linked cluster running two toolsets from overlapping infrastructure: a script-based chain that starts with a Dropbox-delivered ZIP file and a Korean-language lure, and two fake security-software installers that deploy a custom HTTPS backdoor, DimsHost.</li>
+        <li>APEX Labs assesses that the same operator runs both toolsets based on 1 shared command-and-control (C2) server. We also found strong code overlaps with previously documented APT43 activity, as well as tactics, techniques, and procedures (TTPs) and infrastructure we assess are consistent with APT43.</li>
+        <li>Domain blocklists age quickly against this operator, who registered roughly 1 new .site domain every 1 to 3 days. The shortcut-file build machine, however, appears in samples from November 2023, and the VBScript stager matches a June 2024 sample except for its C2 address, suggesting the tooling is a more durable focus for detection.</li>
+        <li>The threat actor hides the payloads from most automated sandboxes and scanners via a server-side filter that sends a harmless decoy to requests from Google-owned IP address ranges.</li>
+        <li>The threat actor is likely targeting South Korean organizations, because the lure and earlier lure names are in Korean and Kaspersky earlier reported the related Kimsuky group targeting South Korean media and a think tank in 2022.</li>
+        <li>APEX Labs is releasing indicators of compromise related to this activity on this page, in the <a href="#indicators">Indicators of compromise</a> section.</li>
+      </ul>
+    </section>
+
+    <!-- TOOLSETS -->
+    <section id="toolsets">
+      <div class="section-header">
+        <span class="section-number">02</span>
+        <h2>Two toolsets, one set of infrastructure</h2>
+      </div>
+      <h3>Domains rotate while the tooling stays</h3>
+      <p>APEX Labs’ research revealed that the threat actor behind this campaign changed infrastructure often, but its code rarely. We noted the first toolset in at least 3 waves since 7 October 2026, each on new throwaway .site domains. The operator registered roughly 1 new .site domain every 1–3 days, and the chain's servers all ran the same Windows web server build (XAMPP). We assess that this consistency will give defenders a fixed point on which to hunt when domains change. As of 6 November 2026, internet-scan searches found 3 servers serving the stage-2 script, with the newest sitting with a different hosting provider than the earlier servers. We have provided more technical details in the sections below.</p>
+
+      <figure class="pull-quote">
+        <blockquote>
+          <p>The attack chain is intended to look clean to automated tools, sending harmless decoys to automated sandboxes. So with this threat, a clean scan does not mean the coast is clear.</p>
+        </blockquote>
+        <figcaption><strong>Ryan Whelan</strong>, Global Director, Accenture Cyber Intelligence, APEX Labs</figcaption>
+      </figure>
+
+      <p>APEX Labs determined that the code behind the script-based chain is also older than its infrastructure. Our analysts pivoted on metadata in the first-stage shortcut file and found four earlier shortcut files built on the same machine, dated between 17 November 2023 and 22 October 2024. Each used mshta.exe, a built-in Windows tool that runs HTML Application (HTA) files, to fetch a remote HTA. These earlier campaigns ran the same chain under a different web directory name each time, with a June 2024 VBScript stager matching the 2026 stager, with the exception of its C2 address. Additionally, a November 2023 Word document with a macro showed the same attack flow pattern as these earlier campaigns, just in another delivery format. Finally, a beacon address pattern that the stage-3 loader used also appears on free-hosting websites in 2021 and 2022.</p>
+
+      <p class="exhibit-title">Exhibit 1: Servers and domains assessed to be malicious (as of 6 November 2026)</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Indicator</th><th>Type</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="hash">27[.]102[.]139[.]18</td><td class="val">IP address</td><td class="val">Newest server; serving the stage-2 script on 6 November</td></tr>
+            <tr><td class="hash">141[.]164[.]51[.]169</td><td class="val">IP address</td><td class="val">Serving the stage-2 script on 6 November</td></tr>
+            <tr><td class="hash">141[.]164[.]55[.]234</td><td class="val">IP address</td><td class="val">Serving the stage-2 script on 6 November; earlier domains suspended</td></tr>
+            <tr><td class="hash">myfirstcom[.]site</td><td class="val">Domain</td><td class="val">Receives stage-3 requests over plain HTTP; no certificate</td></tr>
+            <tr><td class="hash">hugedrivercom[.]site</td><td class="val">Domain</td><td class="val">Registered 5 November 2026</td></tr>
+            <tr><td class="hash">lovelyourland[.]site</td><td class="val">Domain</td><td class="val">Registered 3 November 2026</td></tr>
+            <tr><td class="hash">ourfiendlycom[.]site</td><td class="val">Domain</td><td class="val">Registered 2 November 2026</td></tr>
+            <tr><td class="hash">rihyusimcloseme[.]site</td><td class="val">Domain</td><td class="val">Registered 1 November 2026</td></tr>
+            <tr><td class="hash">warmenvironmetwarmhealth[.]site</td><td class="val">Domain</td><td class="val">Registered 22 October 2026</td></tr>
+            <tr><td class="hash">207[.]246[.]108[.]214</td><td class="val">IP address</td><td class="val">Historical: backdoor C2 and stage-2 host, 7–15 October; retro-hunt only</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- CHAIN -->
+    <section id="chain">
+      <div class="section-header">
+        <span class="section-number">03</span>
+        <h2>A shortcut file starts a chain built to hide from scanners</h2>
+      </div>
+      <p>APEX Labs’ analysis of the infection chain showed that it begins with a Dropbox-delivered Korean-language Windows shortcut (LNK) file to kick off a series of HTAs that use living-off-the-land binaries (LOLbins)—legitimate Windows tools that attackers misuse—to deploy a VBScript implant that polls command-and-control (C2) for commands. The first toolset ran from web directories named /meacron/ on the actor's .site domains, with the stages, in order:</p>
+      <ul class="mitigation-list">
+        <li><span><strong>Delivery.</strong> A Dropbox-hosted ZIP file contains an LNK file disguised as a PDF titled “Notice” in Korean (<span lang="ko">안내문</span>). Windows File Explorer hides the .lnk extension by default, so the file looks like a document.</span></li>
+        <li><span><strong>First and second stages.</strong> The shortcut runs mshta.exe against a remote server. The HTA it returns copies mshta.exe to a temporary folder under a new name and uses the copy to fetch the next stage. A rule that matches only the original file name can miss that second request.</span></li>
+        <li><span><strong>Gated third stage.</strong> The server checks each requester. Requests from Google-owned IP ranges, which cover most automated sandboxes and scanners, receive a harmless decoy. Other requesters receive the real loader. APEX Labs confirmed 1 of these server-side checks.</span></li>
+        <li><span><strong>Host profiling.</strong> The loader downloads and opens a decoy PDF, then sends the names of running processes, recently opened files, the username, operating system details, the Microsoft Office version, desktop contents, and pinned taskbar shortcuts to the C2 server. The loader’s process check returns every process instead of looking for specific security products, which suggests the server decides whether security software is present.</span></li>
+        <li><span><strong>Persistence.</strong> The loader installs a VBScript implant. It copies and renames two built-in Windows tools, wscript.exe and schtasks.exe, and creates a scheduled task that runs the implant every 10 minutes.</span></li>
+        <li><span><strong>Final stage.</strong> The VBScript polls its C2 server using a misspelled browser name, “Chnome,” in its User-Agent header. If the server answers, the script decodes the reply and runs it without sending any output back. APEX Labs did not observe C2 responses during analysis, so the operator’s next action is unknown.</span></li>
+      </ul>
+
+      <figure class="exhibit">
+        <img src="infection-chain.jpg" width="1233" height="822" loading="lazy" alt="Diagram of two chains that share one command-and-control server. The meacron LNK/HTA chain runs from a Dropbox ZIP through an LNK lure, an HTA stage, a gated HTA stage that sends a decoy to Google and scanner IP addresses, a loader, and a VBScript implant that talks to .site domains. The linked MSI toolset runs from the SecureNexa.msi and Banksecurity.msi installers through the wmnet.exe installer and a service that relaunches the DimsHost.exe HTTPS backdoor every 1,200 seconds. Both chains connect to one shared C2 server, active 7 to 15 October 2026.">
+        <figcaption>Exhibit 2: Infection chain overview, meacron LNK/HTA chain and linked MSI toolset</figcaption>
+      </figure>
+    </section>
+
+    <!-- BACKDOOR -->
+    <section id="backdoor">
+      <div class="section-header">
+        <span class="section-number">04</span>
+        <h2>Fake security installers deliver a custom HTTPS backdoor</h2>
+      </div>
+      <p>While analyzing the first toolset's infrastructure, APEX Labs found two MSI installers (Windows Installer packages) that imitated security software and contacted the same C2 server, 207[.]246[.]108[.]214, between 7 and 15 October 2026. Specifically, APEX Labs noted SecureNexa.msi (“Google Installer”) and Banksecurity.msi (“Bank Installer”) beaconing to the C2 server (207[.]246[.]108[.]214) during the same week (7–15 October 2026) that it was serving /meacron/good/id.txt, though we did not observe the original delivery method for these MSI installers. As of 5 November 2026, antivirus detections of the installers remained low, between 1 and 3 of 63 engines on a multi-engine scanning service. The embedded payloads were identical, and the two installers differed only in product name and build time.</p>
+      <p>At install, the package ran a helper program under the SYSTEM account, the highest privilege level on a Windows host. The helper copied the backdoor and a service program into the Windows folder and started an auto-start service named PrintNotifyflowUserSvc (display name “PrinterWorkflow”), which imitated the Windows print-notification service. The service relaunched the backdoor on an operator-controlled timer, so the backdoor returned after a reboot or after someone stopped its process.</p>
+      <p>DimsHost is the small custom backdoor associated with this campaign. It talks to its C2 server over HTTPS and can upload files, download files, create archives, run shell commands, and launch programs in the logged-on user's session. Code in the installer and the backdoor suggested further components that APEX Labs has not observed, because the installer tries to move a file the package does not ship and the backdoor carries an unreferenced keylogger string table.</p>
+
+      <p class="exhibit-title">Exhibit 3: MSI-delivered toolset components</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Artifact</th><th>Role</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="fname">DimsHost.exe</td><td class="val">Custom HTTPS backdoor</td></tr>
+            <tr><td class="fname">OneAppWinService.exe</td><td class="val">Service that relaunches DimsHost.exe</td></tr>
+            <tr><td class="fname">wmnet.exe</td><td class="val">Installer; run by MSI as SYSTEM</td></tr>
+            <tr><td class="fname">winmgr.ini</td><td class="val">Config file containing the C2 address 207[.]246[.]108[.]214</td></tr>
+            <tr><td class="fname">user_data.db</td><td class="val">Defines the interval for OneAppWinService.exe to execute DimsHost.exe every 1,200 seconds (150 seconds if the file is missing or unreachable).</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ATTRIBUTION -->
+    <section id="attribution">
+      <div class="section-header">
+        <span class="section-number">05</span>
+        <h2>Evidence links the activity to APT43 and connects the two toolsets</h2>
+      </div>
+      <p>APEX Labs assesses that the threat activity we observed overlaps with the North Korean-linked threat actor APT43 (a.k.a. Emerald Sleet, Velvet Chollima). APEX Labs has high confidence in this assessment because the first toolset shared specific code with infection chains that threat research firm Kaspersky has documented for Kimsuky,<sup><a href="#ref-1">1</a></sup> a group whose activity mostly overlaps with the cluster Mandiant tracks as APT43.<sup><a href="#ref-2">2</a></sup> The same toolkit also traces back through 2023 and 2024 campaigns that public sources already track as Kimsuky.<sup><a href="#ref-3">3</a>,&#8202;<a href="#ref-4">4</a></sup> The open-source Maltrail project also lists the 2023–2024 servers, their domains, and the /tlee43/ web path under Kimsuky.<sup><a href="#ref-5">5</a></sup> Finally, the Korean-language lure is consistent with the targeting Kaspersky reported for Kimsuky, which included South Korean media and a think tank in early 2022.</p>
+      <ul class="mitigation-list">
+        <li><span><strong>Fingerprinting code.</strong> The stage-3 loader built its beacon address and sent host data in the same format, with the same variable names, as VBScript that Kaspersky documented. Kaspersky called the address pattern “the Kimsuky group’s usual URL format for fingerprinting.”<sup><a href="#ref-6">6</a></sup></span></li>
+        <li><span><strong>Misspelled User-Agent.</strong> The VBScript sent the same “Chnome” User-Agent that Kaspersky documented alongside a C2 script that served its payload only to requests that carried it.<sup><a href="#ref-7">7</a></sup></span></li>
+        <li><span><strong>Persistence pattern.</strong> An HTA loader installed a scheduled task that ran a VBScript disguised with an .ini file extension. Kaspersky documented a OneDrive-themed task built this way in 2022, and the 2023–2024 campaigns from the same shortcut-file build machine used a similar OneDrive-themed task name.</span></li>
+        <li><span><strong>Delivery pattern.</strong> The chain also overlaps with APT43 tradecraft, in which Korean-language lures deliver shortcut files and VBScript-based loaders, and C2 servers use .txt and .php file names to mask VBScript delivery.</span></li>
+      </ul>
+      <p>APEX Labs assesses that the same operator runs both toolsets, based on infrastructure and timing. The backdoor's configuration file hard-coded 207[.]246[.]108[.]214 as its C2 server; that server also served the first toolset's stage-2 script during the same period, and the operator rotated servers every few days. The toolsets shared no code, strings, URL layout, or encryption.</p>
+      <ol class="references">
+        <li id="ref-1"><a href="https://securelist.com/kimsukys-golddragon-cluster-and-its-c2-operations/107258/">https://securelist.com/kimsukys-golddragon-cluster-and-its-c2-operations/107258/</a></li>
+        <li id="ref-2"><a href="https://services.google.com/fh/files/misc/apt43-report-en.pdf">https://services.google.com/fh/files/misc/apt43-report-en.pdf</a></li>
+        <li id="ref-3"><a href="https://github.com/stamparm/trails/blob/main/malware/apt_kimsuky.txt">https://github.com/stamparm/trails/blob/main/malware/apt_kimsuky.txt</a></li>
+        <li id="ref-4"><a href="https://asec.ahnlab.com/en/55944/">https://asec.ahnlab.com/en/55944/</a></li>
+        <li id="ref-5"><a href="https://github.com/stamparm/trails/blob/main/malware/apt_kimsuky.txt">https://github.com/stamparm/trails/blob/main/malware/apt_kimsuky.txt</a></li>
+        <li id="ref-6"><a href="https://securelist.com/kimsukys-golddragon-cluster-and-its-c2-operations/107258/">https://securelist.com/kimsukys-golddragon-cluster-and-its-c2-operations/107258/</a></li>
+        <li id="ref-7"><a href="https://securelist.com/kimsukys-golddragon-cluster-and-its-c2-operations/107258/">https://securelist.com/kimsukys-golddragon-cluster-and-its-c2-operations/107258/</a></li>
+      </ol>
+    </section>
+
+    <!-- INDICATORS -->
+    <section id="indicators">
+      <div class="section-header">
+        <span class="section-number">06</span>
+        <h2>Indicators of compromise</h2>
+      </div>
+      <p>74 indicators: 5 IP addresses, 16 domains, 25 URLs and 28 file hashes. Indicators are defanged: replace <span class="inline-code">[.]</span> with <span class="inline-code">.</span> and <span class="inline-code">hxxp</span> with <span class="inline-code">http</span> before loading them into security tools. URLs that contain <span class="inline-code">&lt;id&gt;</span>, <span class="inline-code">&lt;name&gt;</span> or <span class="inline-code">&lt;path&gt;</span> show a variable part of the address.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Indicator of compromise</th><th>Type</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="hash">141[.]164[.]55[.]234</td><td class="val">IP address</td></tr>
+            <tr><td class="hash">141[.]164[.]51[.]169</td><td class="val">IP address</td></tr>
+            <tr><td class="hash">141[.]164[.]52[.]40</td><td class="val">IP address</td></tr>
+            <tr><td class="hash">207[.]246[.]108[.]214</td><td class="val">IP address</td></tr>
+            <tr><td class="hash">27[.]102[.]139[.]18</td><td class="val">IP address</td></tr>
+            <tr><td class="hash">clearglassenvironment[.]site</td><td class="val">Domain</td></tr>
+            <tr><td class="hash">visitourhome[.]site</td><td class="val">Domain</td></tr>
+            <tr><td class="hash">browsersecbrowsersec[.]site</td><td class="val">Domain</td></tr>
+            <tr><td class="hash">welcomeoursite[.]site</td><td class="val">Domain</td></tr>
+            <tr><td class="hash">coolautumnniceday[.]site</td><td class="val">Domain</td></tr>
+            <tr><td class="hash">friendlycomcleaver[.]site</td><td class="val">Domain</td></tr>
+            <tr><td class="hash">defendcore[.]site</td><td class="val">Domain</td></tr>
+            <tr><td class="hash">visitourcom[.]site</td><td class="val">Domain</td></tr>
+            <tr><td class="hash">onthewayfamily[.]site</td><td class="val">Domain</td></tr>
+            <tr><td class="hash">warmenvironmetwarmhealth[.]site</td><td class="val">Domain</td></tr>
+            <tr><td class="hash">rihyusimcloseme[.]site</td><td class="val">Domain</td></tr>
+            <tr><td class="hash">ourfiendlycom[.]site</td><td class="val">Domain</td></tr>
+            <tr><td class="hash">lovelyourland[.]site</td><td class="val">Domain</td></tr>
+            <tr><td class="hash">myfirstcom[.]site</td><td class="val">Domain</td></tr>
+            <tr><td class="hash">hugedrivercom[.]site</td><td class="val">Domain</td></tr>
+            <tr><td class="hash">olkifmj[.]online</td><td class="val">Domain</td></tr>
+            <tr><td class="hash">hxxps://www[.]dropbox[.]com/scl/fi/czxo60yjq10qpijjl6hsk/[.]zip?rlkey=xt83dju6xg8pt0v7n6wtj845z</td><td class="val">URL</td></tr>
+            <tr><td class="hash">hxxps://clearglassenvironment[.]site/meacron/good/id[.]txt</td><td class="val">URL</td></tr>
+            <tr><td class="hash">hxxps://coolautumnniceday[.]site/meacron/good/id[.]txt</td><td class="val">URL</td></tr>
+            <tr><td class="hash">hxxps://visitourhome[.]site/meacron/good/common[.]php</td><td class="val">URL</td></tr>
+            <tr><td class="hash">hxxps://coolautumnniceday[.]site/meacron/good/common[.]php</td><td class="val">URL</td></tr>
+            <tr><td class="hash">hxxps://browsersecbrowsersec[.]site/meacron/good/redirect[.]php?m=docommon</td><td class="val">URL</td></tr>
+            <tr><td class="hash">hxxps://browsersecbrowsersec[.]site/meacron/good/redirect[.]php?m=common</td><td class="val">URL</td></tr>
+            <tr><td class="hash">hxxps://welcomeoursite[.]site/meacron/good/redirect[.]php?m=common</td><td class="val">URL</td></tr>
+            <tr><td class="hash">hxxps://visitourhome[.]site/meacron/bad/shake[.]php</td><td class="val">URL</td></tr>
+            <tr><td class="hash">hxxps://coolautumnniceday[.]site/meacron/bad/shake[.]php</td><td class="val">URL</td></tr>
+            <tr><td class="hash">hxxps://browsersecbrowsersec[.]site/meacron/bad/welcome[.]php</td><td class="val">URL</td></tr>
+            <tr><td class="hash">hxxps://browsersecbrowsersec[.]site/meacron/bad/info[.]php</td><td class="val">URL</td></tr>
+            <tr><td class="hash">hxxps://friendlycomcleaver[.]site/</td><td class="val">URL</td></tr>
+            <tr><td class="hash">hxxps://defendcore[.]site/meacron/good/common[.]php</td><td class="val">URL</td></tr>
+            <tr><td class="hash">hxxp://207[.]246[.]108[.]214/meacron/good/id[.]txt</td><td class="val">URL</td></tr>
+            <tr><td class="hash">hxxp://207[.]246[.]108[.]214/meacron/good/common[.]php</td><td class="val">URL</td></tr>
+            <tr><td class="hash">hxxps://207[.]246[.]108[.]214/index[.]php?name=&lt;id&gt;&amp;mode=f</td><td class="val">URL</td></tr>
+            <tr><td class="hash">hxxps://207[.]246[.]108[.]214/index[.]php?name=&lt;id&gt;&amp;mode=up</td><td class="val">URL</td></tr>
+            <tr><td class="hash">hxxps://207[.]246[.]108[.]214/index[.]php?mode=dw&amp;fp=&lt;name&gt;</td><td class="val">URL</td></tr>
+            <tr><td class="hash">hxxp://myfirstcom[.]site/meacron/good/redirect[.]php?m=docommon</td><td class="val">URL</td></tr>
+            <tr><td class="hash">hxxp://myfirstcom[.]site/meacron/good/redirect[.]php?m=common</td><td class="val">URL</td></tr>
+            <tr><td class="hash">hxxp://myfirstcom[.]site/meacron/bad/info[.]php?ki87ujhy=&lt;path&gt;&amp;rdxvdw=&lt;path&gt;</td><td class="val">URL</td></tr>
+            <tr><td class="hash">hxxp://myfirstcom[.]site/meacron/bad/welcome[.]php</td><td class="val">URL</td></tr>
+            <tr><td class="hash">hxxp://myfirstcom[.]site/meacron/bad/shake[.]php</td><td class="val">URL</td></tr>
+            <tr><td class="hash">hxxp://olkifmj[.]online/shiba/jegil/springroad19[.]php</td><td class="val">URL</td></tr>
+            <tr><td class="hash">c71aa25c1f0b3a5ab3a3cf10650afaf071cd9bba2b2ecec10ba68faf0fef5541</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">9d99a61fab56d3ba42ef55a3019fc9fbb9b4c6154ed080ef6fbb2af638def259</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">00f12eb08e08d5285e6dc07e03584d129f183c283914f61938cb9ffee141b6c4</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">0df60bedd0833d062ff4d46244ff1880a046a0badc91e971dfdb2ca461bd829d</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">32ad814ae159e798a3111a21ec2c242c808fdc6d838894619e11c2a720b19541</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">facd9b2277669342f8e12aab3836ac35e2934dbbd819f7923d56e4f68e84413b</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">024ed115348f10ea39e90cc762c26383ac069d78cbc7f12214419fc822d49b89</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">e52a16941be9c790bdbf6315b1f05d179cebf4cf0b95761e3f918a13b1b5fd03</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">c4b7a27b3ca81198e280463038f8ee789703c6e957093d4c64df397bd3dfaa02</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">fe7798dfc67538da80cdba4211048508bd2d84d0696af44ee0b44e7a0c8a970e</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">bf2a6fe72c9584b2eaf1cf95b61ecd11c5511644d339d6c2a8fdcd23c3e5dfc4</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">321c4a47ea1d02857145cc0ac62242bb27e66b89f88e9dfb5695cd014a0e8620</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">452995c4e4c1e8fe06d439e0be0ac9acf77ac156d2910808ca01a9e0130517ba</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">ad5afaa2c9edeca605e07c7267772e3957ca39907be3b81b4fe473bf4d4b8173</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">52daa4c57ebb7f4a63c7fd356206f4d0dd7c136fe8292581a72f8a85f67fdd2a</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">85454d21919e7fd886e172b4ae636fa59e8c4297f3f8fdfab5b9367f0973eac9</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">50e604f8776e2d08b7e95320df012a91d600cf60c63b8b0e8bf055521b6cedfa</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">9bf179c901320a91656941f62af7f113b182646a31dd765d4c59e850ff979ca4</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">2f0f9359b5d2b53e9d0230c087de805c40c798703446c628b8bf34a5dbe867d7</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">d3d51fa3d2d128e95833832ff3ffa2d3b19267b0ea1fe260986cb157ead5a8a6</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">aaaac78ee6fd59f527e8f360ad93a0d028cb1e11159f90092c60b8c86a341289</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">788809bfe3b849beb7949233f6e36f2db06cb21f2d7324360b2d3728cd7c6a42</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">c698e9e7eaf585b7cdeef34f2c4d3f22998014a48a10c639c137b2abc738fe5a</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">f675f5cafb52f23503b74fa336d1ae281c76fd8f6ce494102799ebe92f27db98</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">26a87654ffc0e669646517dd5f2ea41ec92ab34cb29c5e57f3ba1d53318642e2</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">e78e7fc96c8d2c67a9534b0460c14a5b6fdc96a228c1878ec90b15a5124fe764</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">d24dd00770ddd5fc69e615069279719b67efb3e0ab5879913762f50441f2ea6d</td><td class="val">File hash (SHA-256)</td></tr>
+            <tr><td class="hash">39ebf758e9da2f38d4eecc37685efddf0331d30abc3686dd05b5009dc966677e</td><td class="val">File hash (SHA-256)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <details class="plain-list">
+        <summary>Plain lists for bulk import (defanged)</summary>
+        <p class="list-label">IP addresses:</p>
+        <pre><code>141[.]164[.]55[.]234
+141[.]164[.]51[.]169
+141[.]164[.]52[.]40
+207[.]246[.]108[.]214
+27[.]102[.]139[.]18</code></pre>
+        <p class="list-label">Domains:</p>
+        <pre><code>clearglassenvironment[.]site
+visitourhome[.]site
+browsersecbrowsersec[.]site
+welcomeoursite[.]site
+coolautumnniceday[.]site
+friendlycomcleaver[.]site
+defendcore[.]site
+visitourcom[.]site
+onthewayfamily[.]site
+warmenvironmetwarmhealth[.]site
+rihyusimcloseme[.]site
+ourfiendlycom[.]site
+lovelyourland[.]site
+myfirstcom[.]site
+hugedrivercom[.]site
+olkifmj[.]online</code></pre>
+        <p class="list-label">URLs:</p>
+        <pre><code>hxxps://www[.]dropbox[.]com/scl/fi/czxo60yjq10qpijjl6hsk/[.]zip?rlkey=xt83dju6xg8pt0v7n6wtj845z
+hxxps://clearglassenvironment[.]site/meacron/good/id[.]txt
+hxxps://coolautumnniceday[.]site/meacron/good/id[.]txt
+hxxps://visitourhome[.]site/meacron/good/common[.]php
+hxxps://coolautumnniceday[.]site/meacron/good/common[.]php
+hxxps://browsersecbrowsersec[.]site/meacron/good/redirect[.]php?m=docommon
+hxxps://browsersecbrowsersec[.]site/meacron/good/redirect[.]php?m=common
+hxxps://welcomeoursite[.]site/meacron/good/redirect[.]php?m=common
+hxxps://visitourhome[.]site/meacron/bad/shake[.]php
+hxxps://coolautumnniceday[.]site/meacron/bad/shake[.]php
+hxxps://browsersecbrowsersec[.]site/meacron/bad/welcome[.]php
+hxxps://browsersecbrowsersec[.]site/meacron/bad/info[.]php
+hxxps://friendlycomcleaver[.]site/
+hxxps://defendcore[.]site/meacron/good/common[.]php
+hxxp://207[.]246[.]108[.]214/meacron/good/id[.]txt
+hxxp://207[.]246[.]108[.]214/meacron/good/common[.]php
+hxxps://207[.]246[.]108[.]214/index[.]php?name=&lt;id&gt;&amp;mode=f
+hxxps://207[.]246[.]108[.]214/index[.]php?name=&lt;id&gt;&amp;mode=up
+hxxps://207[.]246[.]108[.]214/index[.]php?mode=dw&amp;fp=&lt;name&gt;
+hxxp://myfirstcom[.]site/meacron/good/redirect[.]php?m=docommon
+hxxp://myfirstcom[.]site/meacron/good/redirect[.]php?m=common
+hxxp://myfirstcom[.]site/meacron/bad/info[.]php?ki87ujhy=&lt;path&gt;&amp;rdxvdw=&lt;path&gt;
+hxxp://myfirstcom[.]site/meacron/bad/welcome[.]php
+hxxp://myfirstcom[.]site/meacron/bad/shake[.]php
+hxxp://olkifmj[.]online/shiba/jegil/springroad19[.]php</code></pre>
+        <p class="list-label">File hashes (SHA-256):</p>
+        <pre><code>c71aa25c1f0b3a5ab3a3cf10650afaf071cd9bba2b2ecec10ba68faf0fef5541
+9d99a61fab56d3ba42ef55a3019fc9fbb9b4c6154ed080ef6fbb2af638def259
+00f12eb08e08d5285e6dc07e03584d129f183c283914f61938cb9ffee141b6c4
+0df60bedd0833d062ff4d46244ff1880a046a0badc91e971dfdb2ca461bd829d
+32ad814ae159e798a3111a21ec2c242c808fdc6d838894619e11c2a720b19541
+facd9b2277669342f8e12aab3836ac35e2934dbbd819f7923d56e4f68e84413b
+024ed115348f10ea39e90cc762c26383ac069d78cbc7f12214419fc822d49b89
+e52a16941be9c790bdbf6315b1f05d179cebf4cf0b95761e3f918a13b1b5fd03
+c4b7a27b3ca81198e280463038f8ee789703c6e957093d4c64df397bd3dfaa02
+fe7798dfc67538da80cdba4211048508bd2d84d0696af44ee0b44e7a0c8a970e
+bf2a6fe72c9584b2eaf1cf95b61ecd11c5511644d339d6c2a8fdcd23c3e5dfc4
+321c4a47ea1d02857145cc0ac62242bb27e66b89f88e9dfb5695cd014a0e8620
+452995c4e4c1e8fe06d439e0be0ac9acf77ac156d2910808ca01a9e0130517ba
+ad5afaa2c9edeca605e07c7267772e3957ca39907be3b81b4fe473bf4d4b8173
+52daa4c57ebb7f4a63c7fd356206f4d0dd7c136fe8292581a72f8a85f67fdd2a
+85454d21919e7fd886e172b4ae636fa59e8c4297f3f8fdfab5b9367f0973eac9
+50e604f8776e2d08b7e95320df012a91d600cf60c63b8b0e8bf055521b6cedfa
+9bf179c901320a91656941f62af7f113b182646a31dd765d4c59e850ff979ca4
+2f0f9359b5d2b53e9d0230c087de805c40c798703446c628b8bf34a5dbe867d7
+d3d51fa3d2d128e95833832ff3ffa2d3b19267b0ea1fe260986cb157ead5a8a6
+aaaac78ee6fd59f527e8f360ad93a0d028cb1e11159f90092c60b8c86a341289
+788809bfe3b849beb7949233f6e36f2db06cb21f2d7324360b2d3728cd7c6a42
+c698e9e7eaf585b7cdeef34f2c4d3f22998014a48a10c639c137b2abc738fe5a
+f675f5cafb52f23503b74fa336d1ae281c76fd8f6ce494102799ebe92f27db98
+26a87654ffc0e669646517dd5f2ea41ec92ab34cb29c5e57f3ba1d53318642e2
+e78e7fc96c8d2c67a9534b0460c14a5b6fdc96a228c1878ec90b15a5124fe764
+d24dd00770ddd5fc69e615069279719b67efb3e0ab5879913762f50441f2ea6d
+39ebf758e9da2f38d4eecc37685efddf0331d30abc3686dd05b5009dc966677e</code></pre>
+      </details>
+    </section>
+
+    <!-- RECOMMENDATIONS -->
+    <section id="recommendations">
+      <div class="section-header">
+        <span class="section-number">07</span>
+        <h2>What this means for your organization</h2>
+      </div>
+      <p>APEX Labs judges that blocking domains alone will not stop this threat actor, because it replaces them every 1–3 days and filters its servers so that most automated scanners see only a decoy. More behavioral indicators are likely to give defenders more to work with, including shortcut files that launch built-in Windows tools against remote servers, renamed copies of those tools, scheduled tasks that run script files, and a service that imitates a Windows component. But gaps remain, as APEX Labs did not observe how the fake installers reached victims or what the VBScript implant received from its C2 server.</p>
+      <p>Organizations based in South Korea are likely to be most at risk from this threat campaign. Although APEX Labs did not identify any specific victims, the Korean-language lure APEX Labs did identify, the earlier Korean lure names, and Kaspersky’s previous reporting that the associated Kimsuky group targeted South Korean media and a think tank in 2022 all suggest that the threat actor is likely targeting entities in South Korea. Government organizations, think tanks, and academic entities are likely to be most at risk based on our understanding of APT43’s historical targeting.</p>
+      <p>APEX Labs suggests defenders:</p>
+      <ul class="mitigation-list">
+        <li><span><strong>Hunt for the misspelled User-Agent.</strong> Search proxy and web gateway logs for the “Chnome” User-Agent and for requests to a /meacron/ web path, because both appear in the first toolset.</span></li>
+        <li><span><strong>Review scheduled tasks that run script files.</strong> Look for tasks with random-looking names whose actions run VBScript from files that do not end in .vbs, because the first toolset hides its implant in an .ini file and runs it every 10 minutes.</span></li>
+        <li><span><strong>Detect renamed copies of built-in Windows tools.</strong> Compare each process’s original file name with its name on disk to find copies of mshta, PowerShell, schtasks, and wscript that run from temporary or application-data folders under new names, because the chain runs renamed copies of these tools.</span></li>
+        <li><span><strong>Restrict mshta.exe.</strong> Block or alert on mshta.exe launched by File Explorer with a remote web address and restrict the tool through Windows Defender Application Control (WDAC) or AppLocker where business requirements allow, because the chain starts when a shortcut file runs mshta.exe against a remote server.</span></li>
+        <li><span><strong>Control MSI installs.</strong> Block user-initiated installs from untrusted sources and require signed packages, because the second toolset arrives as fake security-software installers.</span></li>
+        <li><span><strong>Watch for services that imitate Windows components.</strong> Alert on creation of a service named PrintNotifyflowUserSvc (display name “PrinterWorkflow”), because the backdoor installer creates it to imitate the Windows print-notification service.</span></li>
+        <li><span><strong>Block current infrastructure and retro-hunt older indicators.</strong> Block the addresses and domains in Exhibit 1, including domains not yet seen in samples, and search historical logs for 207[.]246[.]108[.]214 and the older 2023–2024 infrastructure that Maltrail listed under Kimsuky.</span></li>
+        <li><span><strong>Remove the service before the files.</strong> If DimsHost is present, stop and delete the PrintNotifyflowUserSvc service before deleting files, because the service otherwise relaunches the backdoor.</span></li>
+        <li><span><strong>Use APEX Labs’ indicators.</strong> APEX Labs has published the full indicator list in the <a href="#indicators">Indicators of compromise</a> section of this page.</span></li>
+      </ul>
+    </section>
+
+  </main>
+</div>
