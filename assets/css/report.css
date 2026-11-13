@@ -421,3 +421,22 @@ code {
   .sidebar { display: none; }
   .fingerprint-grid { grid-template-columns: 1fr; }
 }
+
+/* ─── EXHIBITS ────────────────────────────────────── */
+.exhibit-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 1.5rem 0 .5rem;
+  max-width: none;
+}
+
+.exhibit { margin: 1.5rem 0 2rem; }
+
+.exhibit img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--grey-light);
+}
+
+.exhibit figcaption { margin-top: .5rem; font-size: 14px; font-weight: 600; }
