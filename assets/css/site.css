@@ -33,7 +33,7 @@
 }
 
 /*
-  Accenture Security APEX Labs: light mode (brand guidance: light is the first choice for text-heavy pages).
+  Accenture APEX Labs: light mode (brand guidance: light is the first choice for text-heavy pages).
   Palette is limited to the official purple spectrum and neutrals.
 */
 :root {
@@ -154,7 +154,7 @@ nav {
 
 /*
   TLP label, per FIRST TLP 2.0 (https://www.first.org/tlp/): shown in the header and footer
-  of every page, right-justified, at least 12pt (16px). TLP:CLEAR colour-coding is
+  of every page, right-justified, at least 12pt (16px). TLP:CLEAR color-coding is
   #FFFFFF text on a #000000 background.
 */
 .tlp-label {
