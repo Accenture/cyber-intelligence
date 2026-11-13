@@ -33,6 +33,8 @@ This guide is for Accenture APEX Labs analysts who publish reports to this repos
 │   └── infection-chain.jpg     # Exhibit 2 diagram
 ├── ai-agents-stolen-source-code/
 │   └── index.html              # AI agents weaponizing stolen source code alert
+├── trusted-infrastructure/
+│   └── index.html              # Trusted infrastructure, untrusted payloads alert
 ├── rustyrocket/
 │   └── index.html              # RustyRocket report, with its July 2026 update
 ├── settra-blinder/
