@@ -51,6 +51,7 @@ The reports are published as web pages at **[accenture.github.io/cyber-intellige
 
 | Report | Published | Platform |
 | --- | --- | --- |
+| [**When patch day comes too late**](https://accenture.github.io/cyber-intelligence/micollab-exploitation/)<br>MiCollab flaws exploited before disclosure: a threat actor used the MISA-2026-0012 vulnerabilities before Mitel published the patch, then moved from the MiCollab server to Active Directory in under an hour | November 2026 | Mitel MiCollab (AWV component) |
 | [**Disposable domains, durable code**](https://accenture.github.io/cyber-intelligence/apt43-dimshost/)<br>APT43-linked cluster pairing a Korean-language script chain with the DimsHost HTTPS backdoor, delivered through fake security-software installers | November 2026 | Windows |
 | [**AI agents weaponizing stolen source code**](https://accenture.github.io/cyber-intelligence/ai-agents-stolen-source-code/)<br>Active, AI-enabled campaign that steals private source code through compromised GitHub Personal Access Tokens and uses AI agents to find and chain novel vulnerabilities | September 2026 | Any (via GitHub access) |
 | [**Trusted infrastructure, untrusted payloads**](https://accenture.github.io/cyber-intelligence/trusted-infrastructure/)<br>How threat actors abuse content delivery networks, package mirrors and edge platforms to host malware, phishing and command-and-control, with a case study of the UNC5342 OtterCookie and OtterCandy npm campaign | September 2026 | Any (CDNs, package mirrors, edge platforms) |

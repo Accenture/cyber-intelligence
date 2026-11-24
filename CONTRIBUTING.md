@@ -28,6 +28,8 @@ This guide is for Accenture APEX Labs analysts who publish reports to this repos
 │   ├── apex-tagline-dark.svg             # APEX tagline in Graphik, purple initials, white text (dark theme)
 │   └── icons/                            # Icons exported from the Accenture icon library
 ├── index.html                  # Landing page listing every published report
+├── micollab-exploitation/
+│   └── index.html              # MiCollab exploitation before disclosure alert
 ├── apt43-dimshost/
 │   ├── index.html              # APT43-linked cluster alert (DimsHost backdoor)
 │   └── infection-chain.jpg     # Exhibit 2 diagram
